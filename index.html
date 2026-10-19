@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no" class="notranslate">
 <head>
 <meta charset="UTF-8">
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#222222">
@@ -1382,6 +1383,8 @@ hmiPanel.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") 
 document.addEventListener("pointerdown", e => { if (!hmiPanel.contains(e.target)) hideHmiTooltip(); });
 
 /* لمس: بار اول توضیح ۳ ثانیه نمایش داده می‌شود، لمس دوم (همان دکمه) وارد صفحه می‌شود */
+/* زمان ورود خودکار به صفحه بعد از لمس (میلی‌ثانیه): 1000 = یک ثانیه */
+const AUTO_ENTER_MS = 1000;
 let lastPointerType = "mouse", armedButton = null, armedTimer = null, autoEnterTimer = null;
 hmiPanel.addEventListener("pointerdown", e => { lastPointerType = e.pointerType; }, true);
 hmiPanel.addEventListener("click", e => {
@@ -1394,8 +1397,8 @@ hmiPanel.addEventListener("click", e => {
     armedButton = btn;
     clearTimeout(armedTimer);
     armedTimer = setTimeout(() => { armedButton = null; }, 3000);
-    /* ۲ ثانیه بعد از نمایش توضیح، خودکار وارد صفحه می‌شود (لمس دکمه‌ی دیگر آن را لغو می‌کند) */
-    autoEnterTimer = setTimeout(() => { if (armedButton === btn) btn.click(); }, 2000);
+    /* چند لحظه بعد از نمایش توضیح، خودکار وارد صفحه می‌شود (لمس دکمه‌ی دیگر آن را لغو می‌کند) */
+    autoEnterTimer = setTimeout(() => { if (armedButton === btn) btn.click(); }, AUTO_ENTER_MS);
 }, true);
 
 /* تطبیق اندازه پنل با عرض صفحه (گوشی) */
