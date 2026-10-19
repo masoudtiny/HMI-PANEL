@@ -1332,7 +1332,7 @@ function showHmiTooltip(event) {
     if (event.pointerType === "touch" || event.pointerType === "pen") {
         clearTimeout(touchHideTimer);
         const onBtn = event.target.closest && event.target.closest("button");
-        touchHideTimer = setTimeout(hideHmiTooltip, onBtn ? 3000 : 5000);
+        touchHideTimer = setTimeout(hideHmiTooltip, onBtn ? 2000 : 2000);
     }
     const button = event.target.closest("button");
     if (button && hmiPanel.contains(button)) {
