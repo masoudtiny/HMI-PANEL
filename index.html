@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#222222">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>HMI Panel</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+body{margin:0;padding:0;background:#222;font-family:Vazirmatn,Tahoma,Arial,sans-serif}
+html,body{height:100%}
+body{overflow:hidden;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+#fit{margin:0 auto;overflow:hidden}
+.panel{position:relative;display:inline-block;transform-origin:0 0}
+.panel img{width:1000px;display:block}
+button{position:absolute;padding:0;cursor:pointer;z-index:50;font-family:inherit;box-sizing:border-box;
+  background:transparent!important;border:none!important;color:transparent!important;font-size:0!important;box-shadow:none!important;outline:none!important}
+
+.layout-button{left:438px;top:565px;width:123px;height:50px}
+.back-button{left:3px;top:562px;width:62px;height:60px;z-index:100}
+.axes{left:3px;top:60px;width:110px;height:45px}
+.speed-ramp{left:110px;top:60px;width:110px;height:45px}
+.manual-controls{left:220px;top:60px;width:110px;height:45px}
+.working-data{left:342px;top:58px;width:105px;height:42px}
+.panel-settings{left:0;top:107px;width:107px;height:45px}
+.profinet{left:112px;top:108px;width:107px;height:45px}
+
+.mechanical-configuration{left:450px;top:57px;width:110px;height:45px}
+.vision-system{left:562px;top:57px;width:107px;height:45px}
+.rejects{left:675px;top:57px;width:105px;height:45px}
+.refrigerator{left:780px;top:57px;width:105px;height:45px}
+.recipe{left:890px;top:57px;width:107px;height:45px}
+.knife-bearing-temperature{left:341px;top:105px;width:107px;height:45px}
+.bearing-temperature{left:450px;top:105px;width:107px;height:45px}
+.temperature-control{left:560px;top:105px;width:107px;height:45px}
+.lubrication{left:672px;top:105px;width:107px;height:45px}
+.ifm-sensors{left:781px;top:105px;width:107px;height:45px}
+.main-air{left:892px;top:105px;width:107px;height:45px}
+.btsr-elastics{left:342px;top:155px;width:107px;height:45px}
+.remote-controls{left:450px;top:155px;width:107px;height:45px}
+.print-registration{left:560px;top:155px;width:107px;height:45px}
+.hossbach{left:672px;top:155px;width:107px;height:45px}
+.cellulose{left:781px;top:155px;width:107px;height:45px}
+.sap{left:890px;top:154px;width:107px;height:45px}
+
+.m18{left:15px;top:298px;width:66px;height:23px}
+.m19{left:88px;top:298px;width:66px;height:23px}
+.m01{left:155px;top:298px;width:66px;height:23px}
+.m04{left:225px;top:298px;width:66px;height:23px}
+.m05{left:296px;top:298px;width:66px;height:23px}
+.m06{left:364px;top:298px;width:66px;height:23px}
+.m07{left:434px;top:298px;width:66px;height:23px}
+.m08{left:502px;top:298px;width:66px;height:23px}
+.m09{left:570px;top:298px;width:66px;height:23px}
+.m10{left:641px;top:298px;width:66px;height:23px}
+.m11{left:712px;top:298px;width:66px;height:23px}
+.m12{left:781px;top:298px;width:66px;height:23px}
+.m13{left:851px;top:298px;width:66px;height:23px}
+.m14{left:922px;top:298px;width:66px;height:23px}
+
+.m30{left:246px;top:183px;width:68px;height:23px}
+.m20a{left:17px;top:388px;width:79px;height:22px}
+.m20b{left:15px;top:512px;width:79px;height:22px}
+.m21a{left:164px;top:388px;width:79px;height:22px}
+.m21b{left:164px;top:512px;width:79px;height:22px}
+.m22a{left:309px;top:388px;width:79px;height:22px}
+.m22b{left:309px;top:512px;width:79px;height:22px}
+.m23c{left:457px;top:388px;width:79px;height:22px}
+.m23a{left:602px;top:388px;width:79px;height:22px}
+.m23b{left:602px;top:512px;width:79px;height:22px}
+.m24{left:750px;top:388px;width:79px;height:22px}
+.m25{left:750px;top:512px;width:79px;height:22px}
+.m26a{left:895px;top:388px;width:79px;height:22px}
+.m26b{left:895px;top:512px;width:79px;height:22px}
+
+.m20a-setup{left:17px;top:410px;width:79px;height:22px}
+.m20b-setup{left:15px;top:534px;width:79px;height:22px}
+.m21a-setup{left:164px;top:410px;width:79px;height:22px}
+.m21b-setup{left:164px;top:534px;width:79px;height:22px}
+.m22a-setup{left:309px;top:410px;width:79px;height:22px}
+.m22b-setup{left:309px;top:534px;width:79px;height:22px}
+.m23c-setup{left:457px;top:410px;width:79px;height:22px}
+.m23a-setup{left:602px;top:410px;width:79px;height:22px}
+.m23b-setup{left:602px;top:534px;width:79px;height:22px}
+.m24-setup{left:750px;top:410px;width:79px;height:22px}
+.m25-setup{left:750px;top:534px;width:79px;height:22px}
+.m26a-setup{left:895px;top:410px;width:79px;height:22px}
+.m26b-setup{left:895px;top:534px;width:79px;height:22px}
+
+.motor-button{z-index:160}
+.m18-bt41{left:59px;top:173px;width:72px;height:23px}
+.m18-bt42{left:628px;top:140px;width:69px;height:23px}
+.m18-bt01{left:278px;top:181px;width:70px;height:23px}
+.m18-bt02{left:360px;top:173px;width:70px;height:23px}
+.m18-bv05{left:460px;top:315px;width:70px;height:23px}
+.m18-bv35{left:336px;top:347px;width:70px;height:23px}
+.m18-bv36{left:647px;top:357px;width:70px;height:23px}
+.m18-bv37{left:460px;top:483px;width:70px;height:23px}
+.m19-bt43{left:253px;top:132px;width:70px;height:23px}
+.m19-bt44{left:641px;top:219px;width:70px;height:23px}
+.m19-bt03{left:415px;top:207px;width:70px;height:23px}
+.m19-bv42{left:674px;top:296px;width:70px;height:23px}
+.m19-bv39{left:275px;top:323px;width:70px;height:23px}
+.m19-bc13{left:382px;top:365px;width:70px;height:23px}
+.m19-bp13{left:386px;top:401px;width:70px;height:23px}
+.m19-bv43{left:407px;top:435px;width:70px;height:23px}
+.m19-bp05{left:147px;top:520px;width:70px;height:23px}
+.m19-bv40{left:373px;top:520px;width:70px;height:23px}
+.m19-bv41{left:663px;top:520px;width:70px;height:23px}
+.m01-bt04{left:168px;top:183px;width:70px;height:23px}
+.m01-bp01{left:439px;top:334px;width:70px;height:23px}
+.m01-bp14{left:329px;top:362px;width:70px;height:23px}
+.m01-bv07{left:135px;top:487px;width:70px;height:23px}
+.m04-bp10{left:240px;top:172px;width:70px;height:23px}
+.m04-bv08{left:506px;top:179px;width:70px;height:23px}
+.m04-bp11{left:435px;top:240px;width:70px;height:23px}
+.m04-bv09{left:75px;top:321px;width:70px;height:23px}
+.m04-bv10{left:494px;top:380px;width:70px;height:23px}
+.m04-bv11{left:712px;top:373px;width:70px;height:23px}
+.m04-bv46{left:424px;top:443px;width:70px;height:23px}
+.m04-bv45{left:240px;top:462px;width:70px;height:23px}
+.m04-bv47{left:537px;top:494px;width:70px;height:23px}
+.m05-bp12{left:300px;top:167px;width:70px;height:23px}
+.m05-bt05{left:598px;top:188px;width:70px;height:23px}
+.m05-bv12{left:375px;top:253px;width:70px;height:23px}
+.m05-bc04{left:642px;top:291px;width:70px;height:23px}
+.m05-bv48{left:148px;top:359px;width:70px;height:23px}
+.m05-bv49{left:287px;top:392px;width:70px;height:23px}
+.m05-bp06{left:613px;top:381px;width:70px;height:23px}
+.m05-bv14{left:666px;top:483px;width:70px;height:23px}
+.m05-bp17{left:332px;top:525px;width:70px;height:23px}
+.m05-bv13{left:518px;top:524px;width:70px;height:23px}
+.m06-bp18{left:154px;top:184px;width:70px;height:23px}
+.m06-bt06{left:471px;top:167px;width:70px;height:23px}
+.m06-bt45{left:324px;top:213px;width:70px;height:23px}
+.m06-bc09{left:81px;top:250px;width:70px;height:23px}
+.m06-bv52{left:239px;top:244px;width:70px;height:23px}
+.m06-bv51{left:437px;top:288px;width:70px;height:23px}
+.m06-bp19{left:402px;top:339px;width:70px;height:23px}
+.m06-bv54{left:486px;top:319px;width:70px;height:23px}
+.m06-bp20{left:593px;top:318px;width:70px;height:23px}
+.m06-bv53{left:436px;top:414px;width:70px;height:23px}
+.m06-bv55{left:593px;top:414px;width:70px;height:23px}
+.m06-bv50{left:36px;top:436px;width:70px;height:23px}
+.m06-bc10{left:189px;top:503px;width:70px;height:23px}
+.m06-bc11{left:189px;top:526px;width:70px;height:23px}
+.m06-bv15{left:655px;top:525px;width:70px;height:23px}
+.m07-bv56{left:142px;top:428px;width:70px;height:23px}
+.m07-bv70{left:623px;top:218px;width:70px;height:23px}
+.m07-bv57{left:320px;top:285px;width:70px;height:23px}
+.m07-bt07{left:552px;top:319px;width:70px;height:23px}
+.m07-bv16{left:643px;top:482px;width:70px;height:23px}
+.m08-bt08{left:92px;top:146px;width:70px;height:23px}
+.m08-bt09{left:82px;top:185px;width:70px;height:23px}
+.m08-bc15{left:284px;top:189px;width:70px;height:22px}
+.m08-bc16{left:284px;top:212px;width:70px;height:22px}
+.m08-bc17{left:284px;top:235px;width:70px;height:22px}
+.m08-bc18{left:284px;top:258px;width:70px;height:22px}
+.m08-bp21{left:159px;top:245px;width:70px;height:23px}
+.m08-bv71{left:34px;top:255px;width:70px;height:23px}
+.m08-bv44{left:62px;top:310px;width:70px;height:23px}
+.m08-bp07{left:365px;top:315px;width:70px;height:23px}
+.m08-bp08{left:459px;top:324px;width:70px;height:23px}
+.m08-bc07{left:616px;top:401px;width:70px;height:22px}
+.m08-bc08{left:616px;top:425px;width:70px;height:22px}
+.m08-bv17{left:301px;top:524px;width:70px;height:23px}
+.m08-bv18{left:531px;top:523px;width:70px;height:23px}
+.m09-bv59{left:190px;top:232px;width:70px;height:23px}
+.m09-bv38{left:178px;top:270px;width:70px;height:23px}
+.m09-bv58{left:567px;top:260px;width:70px;height:23px}
+.m09-bp22{left:168px;top:361px;width:70px;height:23px}
+.m09-bv19{left:619px;top:407px;width:70px;height:23px}
+.m09-bc19{left:193px;top:451px;width:70px;height:22px}
+.m09-bc20{left:193px;top:474px;width:70px;height:22px}
+.m09-bc21{left:193px;top:498px;width:70px;height:22px}
+.m09-bc22{left:193px;top:521px;width:70px;height:22px}
+.m10-bt12{left:332px;top:176px;width:70px;height:23px}
+.m10-bv62{left:437px;top:265px;width:70px;height:23px}
+.m10-bp09{left:204px;top:299px;width:70px;height:23px}
+.m10-bv61{left:208px;top:343px;width:70px;height:23px}
+.m10-bv60{left:130px;top:379px;width:70px;height:23px}
+.m10-bv63{left:674px;top:359px;width:70px;height:23px}
+.m10-bp24{left:674px;top:408px;width:70px;height:23px}
+.m10-bp23{left:130px;top:492px;width:70px;height:23px}
+.m10-bv20{left:494px;top:525px;width:70px;height:23px}
+.m11-bv64{left:159px;top:148px;width:70px;height:23px}
+.m11-bc03{left:337px;top:217px;width:70px;height:23px}
+.m11-br14{left:581px;top:244px;width:70px;height:23px}
+.m11-bp03{left:321px;top:305px;width:70px;height:23px}
+.m11-bv67{left:148px;top:329px;width:70px;height:23px}
+.m11-bv66{left:481px;top:349px;width:70px;height:23px}
+.m11-bv23{left:596px;top:445px;width:70px;height:23px}
+.m11-bv21{left:239px;top:517px;width:70px;height:23px}
+.m11-bv22{left:407px;top:528px;width:70px;height:23px}
+.m12-bt14{left:136px;top:148px;width:70px;height:23px}
+.m12-bv68{left:668px;top:193px;width:70px;height:23px}
+.m12-bv65{left:117px;top:272px;width:70px;height:23px}
+.m12-bv27{left:665px;top:321px;width:70px;height:23px}
+.m12-bv25{left:333px;top:447px;width:70px;height:23px}
+.m13-bv69{left:127px;top:155px;width:70px;height:23px}
+.m13-br16{left:415px;top:159px;width:70px;height:23px}
+.m13-bt15{left:579px;top:172px;width:70px;height:23px}
+.m13-bv29{left:108px;top:329px;width:70px;height:23px}
+.m13-bp15{left:450px;top:332px;width:70px;height:23px}
+.m14-bt16{left:148px;top:138px;width:70px;height:23px}
+.m14-bt55{left:95px;top:208px;width:70px;height:23px}
+.m14-bt56{left:464px;top:224px;width:70px;height:23px}
+.m14-bc14{left:676px;top:246px;width:70px;height:23px}
+.m14-bv33{left:708px;top:404px;width:70px;height:23px}
+.m14-bv30{left:70px;top:432px;width:70px;height:23px}
+.m14-bv31{left:183px;top:513px;width:70px;height:23px}
+.m14-bp16{left:397px;top:525px;width:70px;height:23px}
+.m14-bv32{left:521px;top:527px;width:70px;height:23px}
+.m30-bv01{left:255px;top:146px;width:70px;height:23px}
+.m30-bv02{left:696px;top:146px;width:70px;height:23px}
+
+.page-button{left:921px;width:75px;height:36px}
+.page1{top:59px}.page2{top:102px}.page3{top:145px}.page4{top:188px}.page5{top:229px}
+.page6{top:270px}.page7{top:312px}.page8{top:355px}.page9{top:398px}
+
+.advanced-diagnostic{left:870px;top:62px;width:122px;height:65px}
+.working-data-sub{left:500px;top:470px;width:107px;height:45px}
+.current-shift-working-data{left:693px;top:468px;width:105px;height:47px}
+.knife-counters-working-data{left:900px;top:514px;width:71px;height:36px}
+.shift1-current-shift,.shift1-shift1,.shift1-shift2{left:920px;top:323px;width:75px;height:37px}
+.shift2-current-shift,.shift2-shift1,.shift2-shift2{left:920px;top:372px;width:75px;height:37px}
+.main-counter-current-shift,.main-counter-shift1,.main-counter-shift2{left:923px;top:495px;width:72px;height:38px}
+.current-shift-shift1,.current-shift-shift2{left:923px;top:450px;width:75px;height:37px}
+
+.bp04{left:21px;top:144px;width:82px;height:42px}.bp05{left:112px;top:144px;width:82px;height:42px}
+.bc13-bp13{left:112px;top:189px;width:82px;height:42px}.bp01{left:201px;top:144px;width:82px;height:42px}
+.bp14{left:201px;top:188px;width:82px;height:42px}.bp10{left:292px;top:144px;width:82px;height:42px}
+.bp11{left:292px;top:189px;width:82px;height:42px}.bp12{left:383px;top:144px;width:82px;height:42px}
+.bc04-bp06{left:383px;top:189px;width:82px;height:42px}.bp17{left:383px;top:234px;width:82px;height:42px}
+.bc09-bp18{left:475px;top:144px;width:82px;height:42px}.bc10{left:475px;top:189px;width:82px;height:42px}
+.bc11{left:475px;top:234px;width:82px;height:42px}.bp19{left:475px;top:279px;width:82px;height:42px}
+.bp20{left:475px;top:323px;width:82px;height:42px}.bp21{left:656px;top:142px;width:82px;height:42px}
+.bc15-bc16-bc17-bc18{left:656px;top:187px;width:82px;height:42px}.bp07{left:656px;top:232px;width:82px;height:42px}
+.bp08{left:656px;top:277px;width:82px;height:42px}.bc07-bc08{left:656px;top:322px;width:82px;height:42px}
+.bp22{left:747px;top:144px;width:82px;height:42px}.bc19-bc20-bc21-bc22{left:747px;top:189px;width:82px;height:42px}
+.bp09{left:833px;top:144px;width:82px;height:42px}.bp23{left:833px;top:189px;width:82px;height:42px}
+.bp24{left:833px;top:234px;width:82px;height:42px}.bc03-bp03{left:20px;top:374px;width:82px;height:42px}
+.bp15{left:200px;top:374px;width:82px;height:42px}.bp16{left:295px;top:374px;width:82px;height:42px}
+.bc14{left:294px;top:417px;width:82px;height:42px}
+
+.sensors{left:65px;top:565px;width:122px;height:55px}
+.unwinders{left:191px;top:565px;width:122px;height:55px}
+.module-phasing{left:314px;top:565px;width:122px;height:55px}
+.melter{left:565px;top:565px;width:122px;height:55px}
+.valves{left:692px;top:565px;width:122px;height:55px}
+.asynchronous-motors{left:817px;top:565px;width:120px;height:55px}
+.alarm-list{left:940px;top:565px;width:59px;height:55px}
+
+.active-alarm-sub-button{z-index:150;width:120px;height:31px}
+.alarm-list-sub{left:872px;top:492px}
+.warning-history{left:872px;top:525px}
+.alarm-list-sub-button{z-index:150;width:120px;height:48px}
+.alarm-list-history{left:317px;top:505px}
+.alarm-list-warning{left:440px;top:505px}
+
+.valves-button,.valves-page2-button,.micro-reed-button,.micro-reed-page2-button,.proportional-valve-button,.proportional-valve-page2-button{z-index:200}
+.valves-micro-reed{left:925px;top:450px;width:69px;height:41px}
+.valves-page2{left:927px;top:103px;width:69px;height:41px}
+.valves-proportional{left:925px;top:500px;width:69px;height:41px}
+.valves-page2-page1{left:927px;top:61px;width:69px;height:41px}
+.valves-page2-micro-reed{left:925px;top:450px;width:69px;height:41px}
+.valves-page2-proportional{left:925px;top:500px;width:69px;height:41px}
+.micro-reed-page2{left:925px;top:103px;width:69px;height:41px}
+.micro-reed-valve{left:925px;top:400px;width:69px;height:41px}
+.micro-reed-proportional{left:925px;top:500px;width:69px;height:41px}
+.micro-reed-page2-page1{left:927px;top:63px;width:69px;height:41px}
+.micro-reed-page2-valve{left:925px;top:400px;width:69px;height:41px}
+.micro-reed-page2-proportional{left:925px;top:500px;width:69px;height:41px}
+.proportional-valve-page2{left:925px;top:103px;width:69px;height:41px}
+.proportional-valve-valve{left:925px;top:400px;width:69px;height:41px}
+.proportional-valve-micro-reed{left:925px;top:444px;width:69px;height:41px}
+.proportional-valve-page2-page1{left:925px;top:61px;width:69px;height:41px}
+.proportional-valve-page2-valve{left:925px;top:400px;width:69px;height:41px}
+.proportional-valve-page2-micro-reed{left:925px;top:444px;width:69px;height:41px}
+
+.module-phasing-page-button{z-index:175}
+.module-phasing-page1{left:905px;top:64px;width:93px;height:53px}
+.module-phasing-page2{left:905px;top:122px;width:93px;height:53px}
+.module-phasing-group{left:905px;top:178px;width:93px;height:53px}
+
+.vision-page-button,.pressure-sensor-page-button,.vacuum-sensor-page-button,.glue-sensor-page-button{left:928px;width:69px;height:39px;z-index:150}
+.vision-page1,.pressure-sensor-page1,.vacuum-sensor-page1,.glue-sensor-page1{top:63px}
+.vision-page2,.pressure-sensor-page2,.vacuum-sensor-page2,.glue-sensor-page2{top:108px}
+.pressure-sensor-page3,.vacuum-sensor-page3{top:153px}
+.vacuum-sensor-page4{top:198px}
+
+.temp-page-button,.resistances-check-button,.temperature-control-return-button,.resistance-page-button{z-index:150}
+.temp-page1{left:928px;top:63px;width:69px;height:39px}
+.temp-page2{left:928px;top:108px;width:69px;height:39px}
+.resistances-check-button{left:915px;top:508px;width:82px;height:42px}
+.resistance-page1{left:928px;top:63px;width:69px;height:39px}
+.resistance-page2{left:928px;top:108px;width:69px;height:39px}
+.temperature-control-return-button{left:922px;top:508px;width:75px;height:42px}
+
+.ifm-sensor-button{width:230px;height:155px;z-index:160}
+.ifm-pressure-sensors{left:120px;top:85px}
+.ifm-glue-sensors{left:120px;top:355px}
+.ifm-vacuum-sensors{left:647px;top:85px}
+.ifm-vibration-sensors{left:647px;top:355px}
+
+.asynchronous-motors-page-button{z-index:175}
+.asynchronous-motors-page1{left:929px;top:61px;width:67px;height:41px}
+.asynchronous-motors-page2{left:929px;top:105px;width:67px;height:41px}
+
+.print-registration-br-button{width:207px;height:100px;z-index:160}
+.print-registration-br14{left:145px;top:235px}
+.print-registration-br16{left:633px;top:235px}
+
+.melter-page-button{z-index:190;width:77px;height:35px;left:914px}
+.melter-page1{top:66px}.melter-page2{top:104px}.melter-page3{top:145px}
+.melter-page4{top:183px}.melter-page5{top:224px}.melter-page6{top:265px}
+
+.melter-pump-button{width:60px;height:35px;z-index:195}
+.melter-pump1{left:133px;top:115px}.melter-pump2{left:133px;top:159px}
+.melter-pump3{left:133px;top:202px}.melter-pump4{left:133px;top:245px}
+.melter1-temp{left:227px;top:503px;width:76px;height:39px}
+.melter1-phase{left:305px;top:503px;width:76px;height:39px}
+.melter2-pump1{left:583px;top:115px}
+.melter2-temp{left:677px;top:503px;width:76px;height:39px}
+.melter2-phas{left:757px;top:503px;width:76px;height:39px}
+.melter3-pump1{left:133px;top:115px}
+.melter3-temp{left:227px;top:505px;width:76px}
+.melter3-phase{left:305px;top:505px;width:76px}
+.melter4-pump1{left:583px;top:202px}.melter4-pump2{left:583px;top:247px}
+.melter4-temp{left:677px;top:505px;width:76px}
+.melter5-pump1{left:133px;top:113px}.melter5-pump2{left:133px;top:157px}
+.melter5-pump5{left:133px;top:286px}.melter5-pump6{left:133px;top:329px}
+.melter5-pump7{left:133px;top:373px}.melter5-pump8{left:133px;top:418px}
+.melter5-temp{left:227px;top:503px;width:76px;height:39px}
+.melter5-phase{left:305px;top:503px;width:76px;height:39px}
+.melter6-pump1{left:583px;top:113px}
+.melter6-temp{left:677px;top:503px;width:76px;height:39px}
+.melter6-phase{left:757px;top:503px;width:76px;height:39px}
+.melter7-pump1{left:133px;top:113px}
+.melter7-temp{left:227px;top:503px;width:76px;height:39px}
+.melter7-phase{left:305px;top:503px;width:76px;height:39px}
+.melter8-pump1{left:583px;top:113px}.melter8-pump2{left:583px;top:157px}.melter8-pump3{left:583px;top:202px}
+.melter8-temp{left:677px;top:503px;width:76px;height:39px}
+.melter8-phase{left:757px;top:503px;width:76px;height:39px}
+.melter9-pump1{left:133px;top:113px}.melter9-pump2{left:133px;top:157px}
+.melter9-pump3{left:133px;top:202px}.melter9-pump4{left:133px;top:245px}
+.melter9-temp{left:227px;top:503px;width:76px;height:39px}
+.melter9-phase{left:305px;top:503px;width:76px;height:39px}
+.melter10-pump1{left:583px;top:113px}.melter10-pump2{left:583px;top:157px}
+.melter10-temp{left:677px;top:503px;width:76px;height:39px}
+.melter11-pump1{left:133px;top:113px}
+.melter11-temp{left:227px;top:503px;width:76px;height:39px}
+
+.melter-image-button{left:65px;top:476px;width:108px;height:48px;z-index:196}
+.melter5-phase-extra-button{width:108px;height:48px;z-index:198}
+.melter5-phase-extra{left:915px;top:516px;height:36px;width:76px}
+.melter5-page2-button{width:108px;height:48px;z-index:199}
+.melter5-page2-page1{left:915px;top:476px;height:36px;width:76px}
+.melter5-page2-image2{left:65px;top:476px}
+
+.unwinder-position-button{width:50px;height:46px;z-index:170}
+.uw-nw-cuff-setup{left:390px;top:119px}.uw-nw-cuff-sensor{left:442px;top:119px}
+.uw-nw-topsheet-setup{left:390px;top:184px}.uw-nw-topsheet-sensor{left:442px;top:184px}
+.uw-aql-setup{left:390px;top:245px}.uw-aql-sensor{left:442px;top:245px}
+.uw-upper-nw-setup{left:390px;top:305px}.uw-upper-nw-sensor{left:442px;top:305px}
+.uw-lower-nw-setup{left:390px;top:364px}.uw-lower-nw-sensor{left:442px;top:364px}
+.uw-back-ears-setup{left:390px;top:425px}.uw-back-ears-sensor{left:442px;top:425px}
+.uw-nw-for-tape-setup{left:390px;top:486px}.uw-nw-for-tape-sensor{left:442px;top:486px}
+.uw-tape-pre-glu-setup{left:890px;top:118px}.uw-tape-pre-glu-sensor{left:941px;top:118px}
+.uw-hook-setup{left:890px;top:182px}.uw-hook-sensor{left:941px;top:182px}
+.uw-front-ears-setup{left:890px;top:245px}.uw-front-ears-sensor{left:941px;top:245px}
+.uw-frontal-tape-setup{left:890px;top:303px}.uw-frontal-tape-sensor{left:941px;top:303px}
+.uw-nw-backsheet-setup{left:890px;top:364px}.uw-nw-backsheet-sensor{left:941px;top:364px}
+.uw-poly-bksheet-setup{left:890px;top:425px}.uw-poly-bksheet-sensor{left:941px;top:425px}
+.unwinder-buffer-button{left:1px;top:1px;width:132px;height:60px;z-index:180}
+
+.debug-on .alarm-list-sub,.debug-on .alarm-list-history,.debug-on .alarm-list-warning,.debug-on .warning-history,
+.debug-on .m18,.debug-on .m19,.debug-on .m01,.debug-on .m04,.debug-on .m05,.debug-on .m06,.debug-on .m07,.debug-on .m08,.debug-on .m09,.debug-on .m10,.debug-on .m11,.debug-on .m12,.debug-on .m13,.debug-on .m14,
+.debug-on .m30,.debug-on .m20a,.debug-on .m20b,.debug-on .m21a,.debug-on .m21b,.debug-on .m22a,.debug-on .m22b,.debug-on .m23a,.debug-on .m23b,.debug-on .m23c,.debug-on .m24,.debug-on .m25,.debug-on .m26a,.debug-on .m26b,
+.debug-on .m20a-setup,.debug-on .m20b-setup,.debug-on .m21a-setup,.debug-on .m21b-setup,.debug-on .m22a-setup,.debug-on .m22b-setup,.debug-on .m23a-setup,.debug-on .m23b-setup,.debug-on .m23c-setup,.debug-on .m24-setup,.debug-on .m25-setup,.debug-on .m26a-setup,.debug-on .m26b-setup{color:#fff!important;font-size:12px!important;font-weight:bold;text-shadow:0 0 3px #000;overflow:hidden;line-height:1.1;background:rgba(255,220,0,.55)!important;border:2px solid #ffdc00!important}
+.debug-on .alarm-list-sub{background:rgba(40,120,255,.55)!important;border:2px solid #2878ff!important}
+.debug-on .alarm-list-history{background:rgba(255,40,40,.55)!important;border:2px solid #ff3030!important}
+.debug-on .alarm-list-warning,.debug-on .warning-history{background:rgba(255,140,0,.55)!important;border:2px solid #ff8c00!important}
+#coordBox{display:none;position:fixed;top:6px;right:6px;z-index:5000;background:#000;color:#3f3;font:14px monospace;padding:6px 10px;border:1px solid #3f3;border-radius:6px;pointer-events:none}
+
+.hmi-tooltip{position:absolute;display:none;width:200px;max-width:200px;box-sizing:border-box;padding:6px 10px;
+  background:linear-gradient(135deg,#1e252c 0%,#171d23 100%);color:#f1f5f8;border:1px solid #65c8e8;border-radius:9px;
+  direction:rtl;text-align:right;font-family:Vazirmatn,Tahoma,Arial,sans-serif;font-size:15px;line-height:1.5;
+  box-shadow:0 6px 20px rgba(0,0,0,.55),0 0 0 1px rgba(101,200,232,.15);z-index:2000;pointer-events:none;white-space:pre-line;backdrop-filter:blur(3px)}
+.hmi-tooltip.wide{width:450px;max-width:450px}
+.hmi-tooltip-title{display:block;color:#65c8e8;font-weight:800;font-size:15px;margin-bottom:4px;padding-bottom:3px;
+  border-bottom:1px solid rgba(101,200,232,.35);direction:ltr;text-align:left;overflow-wrap:anywhere;letter-spacing:.4px}
+.hmi-tooltip-text{display:block;color:#e8eef3;font-size:15px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+</style>
+</head><body>
+<div id="fit"><div class="panel">
+<img id="panelImage" src="images/Layout.png" alt="HMI Panel">
+<div id="coordBox"></div>
+<div id="hmiTooltip" class="hmi-tooltip">
+<span id="hmiTooltipTitle" class="hmi-tooltip-title"></span>
+<span id="hmiTooltipText" class="hmi-tooltip-text"></span>
+</div>
+</div></div>
+
+<script>
+const TOOLTIP_TEXTS = {
+    "back-button":["BACK","برگشت به صفحه قبل"],
+    "layout-button":["LAYOUT","صفحه اصلی"],
+    "axes":["AXES ENABLE AND DIAGN.","فعال سازی و عیب یابی موتور ها"],
+    "page1":["PAGE 1","موتور ها صفحه اول"],
+    "page2":["PAGE 2","موتور ها صفحه دوم"],
+    "page3":["PAGE 3","موتور ها صفحه سوم"],
+    "page4":["PAGE 4","موتور ها صفحه چهارم"],
+    "page5":["PAGE 5","موتور ها صفحه پنجم"],
+    "page6":["PAGE 6","موتور ها صفحه ششم"],
+    "page7":["PAGE 7","موتور ها صفحه هفتم"],
+    "page8":["PAGE 8","موتور ها صفحه هشتم"],
+    "page9":["PAGE 9","موتور ها صفحه نهم"],
+    "speed-ramp":["SPEED RAMP","پلکان سرعت"],
+    "manual-controls":["MANUAL CONTROLS","حالت دستی قسمت های گروه بندی شده"],
+    "working-data":["WORKING DATA","آمار تولید"],
+    "panel-settings":["PANEL SETTINGS","تنظیمات پیشرفته-پنل وکاربر "],
+    "profinet":["PROFINET DIAGNOSTIC","عیب یابی شبکه"],
+    "advanced-diagnostic":["ADVANCED DIAGNOSTIC","عیب یابی شبکه"],
+    "mechanical-configuration":["MECHANICAL CONFIGURATION","تنظیمات مکانیکی (هومینگ)"],
+    "vision-system":["VISION SYSTEM","دوربین ها"],
+    "rejects":["REJECTS","ریجکت"],
+    "refrigerator":["REFRIGERATOR","یخچال"],
+    "recipe":["RECIPE","تغییر سایز"],
+    "knife-bearing-temperature":["KNIFE BEARING TEMPERATURE","دمای بلبرینگ تیغه ها"],
+    "bearing-temperature":["BEARING TEMPERATURE","دمای بلبرینگ موتورهای مکنده"],
+    "temperature-control":["TEMPERATURE CONTROL","دمای دوخت ها"],
+    "lubrication":["LUBRICATION","روغن زن ها"],
+    "ifm-sensors":["IFM SENSORS","سنسور های القایی"],
+    "main-air":["MAIN AIR","باد اصلی"],
+    "btsr-elastics":["BTSR ELASTICS","کش ها"],
+    "remote-controls":["REMOTE CONTROLS","کنترل از راه دور"],
+    "print-registration":["PRINT REGISTRATION","مارک خوان"],
+    "hossbach":["HOSSBACH","هوسباخ (وزن پودر و پالپ)"],
+    "cellulose":["CELLULOSE","پالپ"],
+    "sap":["SAP","پودر جاذب"],
+    "sensors":["SENSORS","سنسور های جام"],
+    "unwinders":["UNWINDERS","آنویندر ها (رول گردان)"],
+    "module-phasing":["MODULE PHASING","تنظیمات فاز به جلو و عقب"],
+    "melter":["MELTER","چسب زن ها"],
+    "valves":["VALVES","شیر ها / باد جک ها"],
+    "asynchronous-motors":["ASYNCHRONOUS MOTORS","موتورهای آسنکرون (فن)"],
+    "alarm-list":["ACTIVE ALARM","آلارم های فعال"],
+    "alarm-list-sub":["ALARM LIST","لیست آلارم ها"],
+    "alarm-list-history":["ALARM HISTORY","تاریخچه آلارم ها"],
+    "alarm-list-warning":["WARNING HISTORY","تاریخچه هشدارها"],
+    "warning-history":["WARNING HISTORY","تاریخچه هشدارها"],
+    "vision-page1":["PAGE 1","دوربین ها صفحه اول"],
+    "vision-page2":["PAGE 2","دوربین ها صفحه دوم"],
+    "ifm-pressure-sensors":["PRESSURE SENSORS","سنسور فشار"],
+    "ifm-glue-sensors":["GLUE SENSORS","سنسور چسب"],
+    "ifm-vacuum-sensors":["VACUUM SENSORS","سنسور مکش"],
+    "ifm-vibration-sensors":["VIBRATION SENSORS","سنسور ویبره"],
+    "pressure-sensor-page1":["PAGE 1","سنسور فشار صفحه اول"],
+    "pressure-sensor-page2":["PAGE 2","سنسور فشار صفحه دوم"],
+    "pressure-sensor-page3":["PAGE 3","سنسور فشار صفحه سوم"],
+    "vacuum-sensor-page1":["PAGE 1","سنسور مکش صفحه اول"],
+    "vacuum-sensor-page2":["PAGE 2","سنسور مکش صفحه دوم"],
+    "vacuum-sensor-page3":["PAGE 3","سنسور مکش صفحه سوم"],
+    "vacuum-sensor-page4":["PAGE 4","سنسور مکش صفحه چهارم"],
+    "glue-sensor-page1":["PAGE 1","سنسور چسب صفحه اول"],
+    "glue-sensor-page2":["PAGE 2","سنسور چسب صفحه دوم"],
+    "temp-page1":["PAGE 1","دمای دوخت ها صفحه اول"],
+    "temp-page2":["PAGE 2","دمای دوخت ها صفحه دوم"],
+    "resistances-check-button":["RESISTANCES CHECK","مقاومت دمای دوخت ها"],
+    "resistance-page1":["PAGE 1","مقاومت دمای دوخت ها صفحه اول"],
+    "resistance-page2":["PAGE 2","مقاومت دمای دوخت ها صفحه دوم"],
+    "temperature-control-return-button":["RETURN","دمای دوخت ها"],
+    "print-registration-br14":["PRINT REGISTRATION BR14","مارک خوان عروسکی"],
+    "print-registration-br16":["PRINT REGISTRATION BR16","مارک خوان فویل"],
+    "melter-page1":["PAGE 1","چسب زن ها صفحه اول"],
+    "melter-page2":["PAGE 2","چسب زن ها صفحه دوم"],
+    "melter-page3":["PAGE 3","چسب زن ها صفحه سوم"],
+    "melter-page4":["PAGE 4","چسب زن ها صفحه چهارم"],
+    "melter-page5":["PAGE 5","چسب زن ها صفحه پنجم"],
+    "melter-page6":["PAGE 6","چسب زن ها صفحه ششم"],
+    "melter5-phase-extra":["MELTER 5 PAGE 2","چسب زن پنج فاز صفحه دوم"],
+    "melter5-page2-page1":["MELTER 5 PHASE","برگشت به چسب زن پنج فاز"],
+    "melter5-page2-image2":["MELTER 5 IMAGE 2","چسب زن پنج تصویر دوم"],
+    "valves-micro-reed":["MICRO REED","سنسور جک ها"],
+    "valves-page2":["VALVE PAGE 2","شیر ها / باد جک ها صفحه دوم"],
+    "valves-proportional":["PROPORTIONAL VALVE","باد پشت بلوک ها"],
+    "valves-page2-page1":["VALVES","شیر ها / باد جک ها صفحه اول"],
+    "valves-page2-micro-reed":["MICRO REED","سنسور جک ها"],
+    "valves-page2-proportional":["PROPORTIONAL VALVE","باد پشت بلوک ها"],
+    "micro-reed-page2":["MICRO REED PAGE 2","سنسور جک ها صفحه دوم"],
+    "micro-reed-valve":["VALVES","شیر ها / باد جک ها"],
+    "micro-reed-proportional":["PROPORTIONAL VALVE","باد پشت بلوک ها"],
+    "micro-reed-page2-page1":["MICRO REED","سنسور جک ها صفحه اول"],
+    "micro-reed-page2-valve":["VALVES","شیر ها / باد جک ها"],
+    "micro-reed-page2-proportional":["PROPORTIONAL VALVE","باد پشت بلوک ها"],
+    "proportional-valve-page2":["PROPORTIONAL VALVE PAGE 2","باد پشت بلوک ها صفحه دوم"],
+    "proportional-valve-valve":["VALVES","شیر ها / باد جک ها"],
+    "proportional-valve-micro-reed":["MICRO REED","سنسور جک ها"],
+    "proportional-valve-page2-page1":["PROPORTIONAL VALVE","باد پشت بلوک ها صفحه اول"],
+    "proportional-valve-page2-valve":["VALVES","شیر ها / باد جک ها"],
+    "proportional-valve-page2-micro-reed":["MICRO REED","سنسور جک ها"],
+    "asynchronous-motors-page1":["PAGE 1","موتورهای آسنکرون (فن) صفحه اول"],
+    "asynchronous-motors-page2":["PAGE 2","موتورهای آسنکرون (فن) صفحه دوم"],
+    "module-phasing-page1":["PAGE 1","تنظیمات فاز به جلو و عقب صفحه اول"],
+    "module-phasing-page2":["PAGE 2","تنظیمات فاز به جلو و عقب صفحه دوم"],
+    "module-phasing-group":["GROUP","تنظیمات فاز به جلو و عقب (گروهی)"],
+    "working-data-sub":["WORKING DATA","آمار تولید"],
+    "current-shift-working-data":["CURRENT SHIFT","آمار تولید روزانه"],
+    "knife-counters-working-data":["KNIFE COUNTERS","کانتر تیغه های برش"],
+    "bp01":["BP01","درام فرمینگ"],
+    "bp04":["BP04","سیلینگ دوخت 2 رول لگکاف"],
+    "bp05":["BP05","سیلینگ دوخت ساید"],
+    "bp07":["BP07","ترنر اول بکرز"],
+    "bp08":["BP08","ترنر دوم بکرز"],
+    "bp09":["BP09","تیغه برش هلالی فرونترز"],
+    "bp10":["BP10","پرس کانال"],
+    "bp11":["BP11","دوخت کانال"],
+    "bp12":["BP12","پرس فاز (دوسر)"],
+    "bp14":["BP14","پرس پالپ روی درام"],
+    "bp15":["BP15","برش دوسر"],
+    "bp16":["BP16","تاکن عرضی"],
+    "bp17":["BP17","پرس پالپ"],
+    "bp19":["BP19","دوخت چسب بغل"],
+    "bp20":["BP20","پرس نقطه ای چسب بغل"],
+    "bp21":["BP21","برش بکرز"],
+    "bp22":["BP22","برش فرونترز"],
+    "bp23":["BP23","دوخت بکرز"],
+    "bp24":["BP24","پرس پروداکت"],
+    "bc03-bp03":["BC03-BP03","تیغه عروسکی - بلوک برش عروسکی"],
+    "bc04-bp06":["BC04-BP06","تیغه برش پالپ - بلوک برش پالپ"],
+    "bc07-bc08":["BC07-BC08","ریپیچ دو"],
+    "bc09-bp18":["BC09-BP18","تیغه چسب بغل - بلوک برش چسب بغل"],
+    "bc10":["BC10","پرس چسب بغل بیرونی"],
+    "bc11":["BC11","پرس چسب بغل داخلی"],
+    "bc13-bp13":["BC13-BP13","تیغه اکشن - بلوک برش اکشن"],
+    "bc14":["BC14","جک ریجکت"],
+    "bc15-bc16-bc17-bc18":["BC15-BC16-BC17-BC18","ریپیچ یک بکرز"],
+    "bc19-bc20-bc21-bc22":["BC19-BC20-BC21-BC22","ریپیچ فرونترز"]
+};
+
+const MODULES = {
+    "M18":["M18","ماژول لگکاف"],
+    "M19":["M19","ماژول لایه جذب"],
+    "M01":["M01","ماژول درام پالپ"],
+    "M04":["M04","ماژول پرس کانال"],
+    "M05":["M05","ماژول پد پرس / برش پالپ"],
+    "M06":["M06","ماژول چسب بغل"],
+    "M07":["M07","ماژول لمینه چسب بغل"],
+    "M08":["M08","ماژول بکرز"],
+    "M09":["M09","ماژول فرونترز"],
+    "M10":["M10","ماژول درام اتصال"],
+    "M11":["M11","ماژول نوار جلو"],
+    "M12":["M12","ماژول تاکن طولی پوشک"],
+    "M13":["M13","ماژول برش نهایی پوشک"],
+    "M14":["M14","ماژول تری فولدر"],
+    "M20":["M20","ماژول لگکاف / تاپشیت (آنویندر)"],
+    "M21":["M21","ماژول لایه جذب / آپر (آنویندر)"],
+    "M22":["M22","ماژول لاور / بکرز (آنویندر)"],
+    "M23":["M23","ماژول چسب بغل / لمینه (آنویندر)"],
+    "M24":["M24","ماژول فرونترز (آنویندر)"],
+    "M25":["M25","ماژول نوار جلو (آنویندر)"],
+    "M26":["M26","ماژول فویل بکشیت / لمینه (آنویندر)"],
+    "M29":["M29","میز پنل"],
+    "M30":["M30","ماژول روتور و پودر جاذب"]
+};
+Object.entries(MODULES).forEach(([code, v]) => {
+    TOOLTIP_TEXTS[code.toLowerCase()] = [v[0], v[1]];
+});
+
+Object.assign(TOOLTIP_TEXTS, {
+    "m20a":["M20-A","ماژول لگکاف (آنویندر)"],
+    "m20b":["M20-B","ماژول تاپشیت (آنویندر)"],
+    "m21a":["M21-A","ماژول لایه جذب (آنویندر)"],
+    "m21b":["M21-B","ماژول آپر (آنویندر)"],
+    "m22a":["M22-A","ماژول لاور (آنویندر)"],
+    "m22b":["M22-B","ماژول بکرز (آنویندر)"],
+    "m23a":["M23-A","ماژول چسب بغل (آنویندر)"],
+    "m23b":["M23-B","ماژول چسب بغل (آنویندر)"],
+    "m23c":["M23-C","ماژول لمینه چسب بغل (آنویندر)"],
+    "m24":["M24","ماژول فرونترز (آنویندر)"],
+    "m25":["M25","ماژول نوار جلو (آنویندر)"],
+    "m26a":["M26-A","ماژول لمینه بکشیت (آنویندر)"],
+    "m26b":["M26-B","ماژول فویل بکشیت (آنویندر)"],
+    "m20a-setup":["M20-A SETUP","تنظیمات لگکاف"],
+    "m20b-setup":["M20-B SETUP","تنظیمات تاپشیت"],
+    "m21a-setup":["M21-A SETUP","تنظیمات لایه جذب"],
+    "m21b-setup":["M21-B SETUP","تنظیمات آپر"],
+    "m22a-setup":["M22-A SETUP","تنظیمات لاور"],
+    "m22b-setup":["M22-B SETUP","تنظیمات بکرز"],
+    "m23a-setup":["M23-A SETUP","تنظیمات چسب بغل"],
+    "m23b-setup":["M23-B SETUP","تنظیمات چسب بغل"],
+    "m23c-setup":["M23-C SETUP","تنظیمات لمینه چسب بغل"],
+    "m24-setup":["M24 SETUP","تنظیمات فرونترز"],
+    "m25-setup":["M25 SETUP","تنظیمات نوار جلو"],
+    "m26a-setup":["M26-A SETUP","تنظیمات لمینه بکشیت"],
+    "m26b-setup":["M26-B SETUP","تنظیمات فویل بکشیت"]
+});
+
+const PAGE_DESCRIPTIONS = {
+    "M20-BU01":"رول گردان لگکاف","M20-BU02":"رول گردان لگکاف","M20-BL01":"بافر لگکاف",
+    "M18-BT01":"نیپ رول سوم لگکاف بعد از 45 درجه","M18-BT02":"نیپ رول سوم تاپشیت بعد از 45 درجه",
+    "M19-BT03":"نیپ رول سوم لایه جذب بعد از 45 درجه","M01-M01.01":"فایف UPPER",
+    "M18-AS04":"تیغه برش طولی لگکاف","M18-BV05":"بلوک دوخت دو رول لگکاف (سیلینگ)",
+    "M01-BV07":"نیپ رول چهارم UPPER (قبل از فایف)","M04-BV08":"نیپ رول چهارم LOWER",
+    "M01-BV09":"کانوایر زیر درام فرمینگ پالپ","M04-M04.01":"فایف LOWER",
+    "M05-M05.01":"فایف دوم لگکاف نانواون","M04-BV10":"غلطک تفلونی تاکن نانواون",
+    "M19-CAM 01":"دوربین یک","M20-BU03":"رول گردان تاپشیت","M20-BU04":"رول گردان تاپشیت",
+    "M20-BL02":"بافر تاپشیت","M01-BT04":"نیپ رول سوم UPPER","M05-BT05":"نیپ رول سوم LOWER",
+    "M06-BT06":"نیپ رول دوم بکرز بعد از 45","M06-M06.01":"فایف اول بکرز",
+    "M04-BV11":"کانوایر تاکن نانواون","M01-BP01":"درام فرمینگ پالپ",
+    "M05-BV12":"تسمه کشنده قبل از تیغه برش پالپ","M21-BU05":"رول گردان لایه جذب",
+    "M21-BU06":"رول گردان لایه جذب","M21-BL03":"بافر لایه جذب",
+    "M08-BT08":"نیپ رول دوم چسب بغل داخلی","M08-BT09":"نیپ رول دوم چسب بغل بیرونی",
+    "M10-BT12":"نیپ رول دوم فرونترز قبل از فایف","M06-M06.02":"فایف بیرونی چسب بغل",
+    "M05-BV13":"درام ترانسفر پالپ","M11-BC03":"بلوک برش نوار جلو (تیغه)",
+    "M11-BP03":"بلوک برش نوار جلو (آنویل)","M21-BU07":"رول گردان UPPER",
+    "M21-BU08":"رول گردان UPPER","M21-BL04":"بافر UPPER","M12-BT14":"نیپ رول دوم نوار جلو",
+    "M14-BT16":"نیپ رول سوم بکشیت","M20-BT21":"نیپ رول اول لگکاف (آنویندر)",
+    "M05-BV14":"کانوایر اول لگکاف نانواون","M06-M06.03":"فایف داخلی چسب بغل",
+    "M22-BU09":"رول گردان LOWER","M22-BU10":"رول گردان LOWER","M22-BL05":"بافر LOWER",
+    "M20-BT22":"نیپ رول اول تاپشیت","M21-BT23":"نیپ رول اول لایه جذب",
+    "M21-BT24":"نیپ رول اول UPPER","M06-BV15":"کانوایر دوم لگکاف نانواون",
+    "M08-M08.02":"فایف دوم بکرز","M01-CAM 02":"دوربین دو","M19-BP05":"بلوک دوخت ساید",
+    "M01-AS01":"برس درام فرمینگ پالپ","M05-BP06":"بلوک برش پالپ (آنویل)",
+    "M07-BV16":"کانوایر سوم لگکاف نانواون","M08-BP07":"ترنر یک",
+    "M08-BV17":"کانوایر چهارم زیر بلوک تیغه بکرز","M04-CAM 03":"دوربین سوم",
+    "M08-BP08":"ترنر دو","M08-BV18":"نیپ رول سوم لگکاف نانواون",
+    "M08-BV19":"کانوایر اتصال بکرز و فرونترز","M10-BV20":"کانوایر زیر درام اتصال",
+    "M11-BV21":"کانوایر خط اصلی","M10-BP09":"برش طولی فرونترز",
+    "M11-BV22":"کانوایر بالای دوربین 9","M05-CAM 04":"دوربین چهار",
+    "M11-BV23":"نیپ رول چهارم لگکاف نانواون","M05-BC04":"بلوک برش پالپ (تیغه)",
+    "M04-BP10":"بلوک پرس کانال (پرس)","M12-BV24":"درام قبل از تاکن اول پوشک",
+    "M22-BU11":"رول گردان بکرز","M22-BU12":"رول گردان بکرز","M22-BL06":"بافر بکرز",
+    "M22-BT25":"نیپ رول اول LOWER (آنویندر)","M22-BT26":"نیپ رول اول بکرز (آنویندر)",
+    "M09-M09.01":"فایف بیرونی فرونترز","M08-BC07":"ریپیچ دو (1) بکرز",
+    "M08-BC08":"ریپیچ دو (2) فرونترز","M06-CAM 05":"دوربین پنجم",
+    "M04-BP11":"بلوک دوخت کانال (سیلینگ)","M12-BV25":"کانوایر تاکن اول پوشک",
+    "M12-BV26":"درام قبل از تاکن دوم پوشک","M12-BV27":"کانوایر تاکن دوم پوشک",
+    "M05-BP12":"بلوک پرس فاز","M13-BV29":"کانوایر دوقلو",
+    "M13-BV30":"کانوایر بعد از تیغه برش نهایی","M09-M09.02":"فایف داخلی فرونترز",
+    "M14-BV31":"کانوایر تری فولدر","M19-BP13":"بلوک تیغه لایه جذب (آنویل)",
+    "M06-BC09":"بلوک برش چسب بغل (تیغه)","M06-BC10":"پرس چسب بیرونی",
+    "M06-BC11":"پرس چسب داخلی","M19-BC13":"بلوک تیغه لایه جذب (تیغه)",
+    "M14-BC14":"جک ریجکت","M01-BP14":"پرس کانال روی درام فرمینگ پالپ",
+    "M08-BC15":"ریپیچ یک (1) بکرز","M08-BC16":"ریپیچ یک (2) بکرز",
+    "M23-BU15":"رول گردان چسب بغل","M23-BU16":"رول گردان چسب بغل",
+    "M23-BU17":"رول گردان چسب بغل","M23-BU18":"رول گردان چسب بغل",
+    "M23-BT28":"نیپ رول اول چپ","M23-BT29":"نیپ رول اول راست",
+    "M24-BT32":"نیپ رول اول فرونترز","M25-BT34":"نیپ رول اول نوار جلو",
+    "M14-BV32":"کانوایر تری فولدر","M10-M10.01":"فایف فرونترز قبل از برش طولی",
+    "M11-M11.01":"فایف بکشیت","M14-BV33":"کانوایر پرس آخر",
+    "M08-BC17":"ریپیچ یک (3) بکرز","M13-BP15":"بلوک تیغه برش نهایی",
+    "M24-BU23":"رول گردان فرونترز","M24-BU24":"رول گردان فرونترز",
+    "M26-BT36":"نیپ رول اول بکشیت","M18-BT41":"نیپ رول دوم لگکاف قبل از 45 درجه",
+    "M11-M11.02":"فایف بکشیت","M14-BP16":"تاکن پوشک",
+    "M18-BV35":"نیپ رول چهارم بعد از تاکن کش لگکاف","M12-M12.01":"فایف نوار جلو",
+    "M12-M12.03":"فایف بکشیت","M18-BV36":"نیپ رول پنجم لگکاف بعد از دوخت دو رول",
+    "M18-BV37":"بلوک دوخت دو رول لگکاف (زیر سیلینگ)","M06-BP18":"بلوک برش چسب بغل (آنویل)",
+    "M08-BC18":"ریپیچ یک (4) بکرز","M09-BC19":"ریپیچ یک (1) فرونترز",
+    "M09-BC20":"ریپیچ یک (2) فرونترز","M09-BC21":"ریپیچ یک (3) فرونترز",
+    "M25-BU27":"رول گردان نوار جلو","M25-BU28":"رول گردان نوار جلو",
+    "M18-BT42":"نیپ رول دوم تاپشیت قبل از 45 درجه","M19-BT43":"نیپ رول دوم لایه جذب قبل از 45 درجه",
+    "M09-BV38":"نیپ رول چهارم فرونترز","M13-M13.01":"فایف بکشیت",
+    "M11-BR14":"تسمه کشنده قبل از برش نوار جلو","M09-BC22":"ریپیچ یک (4) فرونترز",
+    "M06-BP19":"بلوک دوخت چسب بغل (سیلینگ)","M26-BU31":"رول گردان بکشیت",
+    "M26-BU32":"رول گردان بکشیت","M26-BL16":"بافر بکشیت",
+    "M01-BT44":"نیپ رول دوم UPPER قبل از 45 درجه","M06-BT45":"نیپ رول دوم LOWER قبل از 45 درجه",
+    "M14-BT56":"نیپ رول دوم بکشیت قبل از 45 درجه","M18-M18.01":"فایف قبل از برش طولی لگکاف",
+    "M13-BR16":"نیپ رول چهارم بکشیت بالی بلوک برش نهایی","M19-BV39":"غلطک خنک کننده",
+    "M19-M19.01":"فایف داخلی لگکاف","M19-BV40":"بلوک دوخت ساید (زیر سیلینگ)",
+    "M19-BV41":"نیپ رول اول لگکاف نانواون","M19-M19.02":"فایف بیرونی لگکاف",
+    "M19-BV42":"تسمه کشنده لایه جذب","M19-BV43":"درام ترنسفر",
+    "M19-M19.03":"فایف تاپشیت","M08-BV44":"تسمه کشنده قبل از بلوک برش بکرز",
+    "M19-M19.04":"فایف اول لگکاف نانواون","M06-BP20":"بلوک دوخت چسب بغل تا شده",
+    "M04-BV45":"بلوک پرس کانال (زیر سیلینگ)","M04-BV46":"بلوک دوخت کانال (زیر سیلینگ)",
+    "M10-CAM 06":"دوربین شش","M04-BV47":"نیپرول دوم لگکاف نانواون",
+    "M19-M19.05":"فایف لایه جذب","M05-BV48":"بلوک پرس فلت",
+    "M05-BV49":"بلوک پرس فاز","M06-BV50":"بلوک پرس جلو و عقب پالپ",
+    "M06-BV51":"نیپ رول سوم قبل از تسمه کشنده چسب بغل","M06-BV52":"تسمه کشنده قبل از برش چسب بغل",
+    "M06-BV53":"بلوک دوخت چسب بغل (زیر سیلینگ)","M06-BV54":"کانوایر تاکن دوم",
+    "M08-BP21":"بلوک برش بکرز","M06-BV55":"بلوک دوخت چسب بغل تا شده",
+    "M07-BV56":"نیپ رول سوم بکرز بعد از دوخت چسب بغل","M09-BV58":"نیپ رول سوم فرونترز",
+    "M04-CAM 07":"دوربین هفت","M10-CAM 08":"دوربین هشت",
+    "M09-BP22":"بلوک برش نهایی فرونترز","M09-BV59":"تسمه کشنده قبل از بلوک برش نهایی فرونترز",
+    "M10-BV60":"بلوک دوخت بکرز","M10-BV61":"بلوک کانوایر پرس بکرز و فرونترز",
+    "M11-CAM 09":"دوربین نه","M10-BV62":"درام (اتصال)",
+    "M10-BV63":"بلوک پرس کانال نهایی","M11-BV64":"نیپ رول هفتم بکشیت",
+    "M12-BV65":"نیپ رول سوم نوار جلو","M11-BV66":"پرس نوار جلو",
+    "M10-BP23":"بلوک دوخت بکرز (سیلینگ)","M11-BV67":"نیپ رول هشتم بکشیت",
+    "M14-CAM11":"دوربین یازده","M12-BV68":"نیپ رول ششم بکشیت",
+    "M13-BV69":"نیپ رول پنجم بکشیت","M10-BP24":"بلوک پرس کانال نهایی",
+    "M07-BV70":"تیغه برش هلالی چسب بغل لمینت شده",
+    "M30-BV01":"کشنده پالپ","M30-BV02":"کشنده پالپ","M05-BP17":"پرس پالپ",
+    "M26-A-BT35":"نیپ رول اول لمینه فویل","M14-BT55":"نیپ رول دوم لمینه فویل","M13-BT15":"نیپ رول سوم لمینه فویل",
+    "M23-C-BT27":"نیپ رول اول لمینه چسب بغل","M07-BT07":"نیپ رول دوم لمینه چسب بغل","M07-BV57":"نیپ رول اتصال لمینه چسب بغل و هوک","M08-BV71":"نیپ رول چهارم بکرز قبل از فایف"
+};
+
+/* ============================================================ */
+/* ====== توضیحات کامل صفحات (برای نمایش داخل صفحه) ============ */
+/* ============================================================ */
+const HELP_KEY_PATTERN = {
+    "Melter": /^MELTER( PAGE \d+)?$/i,
+    "NW TOPSHEET SETUP": /^(NW CUFF|NW TOPSHEET|AQL|UPPER NW|LOWER NW|BACK EARS|TAPE PRE-GLU|HOOK|NW FOR TAPE|FRONT EARS|FRONTAL TAPE|NW BACKSHEET|POLY BKSHEET) SETUP$/i
+};
+
+const PAGE_FULL_HELP = {
+    "Speed Ramp": "SPEED REDUCTION - پله کاهش سرعت را اعمال نمایید.\nSTARTING SPEED - سرعت اولیه استارت را اعمال کنید.\nMAXIMUM SPEED - حداکثر سرعت خط تولید را اعمال کنید.\nAUTOMATIC RAMP - با فشردن کلید استارت، سرعت به صورت اتوماتیک تا پله اول و با فشردن مجدد به پله دوم و با فشردن مجدد به پله سوم خواهد رسید .",
+    "Axes": "AXIS NAME - نام موتور\nTECH. OBJECT FAULT CODE - کد خطای موتور\nDRIVE OBJECT FAULT CODE - کد خطای درایور\nDRIVE TEMPERATURE - دمای درایور\nENABLE-DISABLE- حالت فعال/غیر فعال کردن موتور",
+    "Axes Configuration": "ENABLE-DISABLE- حالت فعال/غیر فعال کردن موتور\nJOG MODE - فعال یا غیر فعال کردن حالت حرکت آهسته\nJOG START - شروع حرکت آهسته\nJOG SPEED - تنظیم سرعت حرکت آهسته\nPITCH LENGTH - طول مواد مصرفی\nSET-POINT POSITION - درصد کشش\nACTUAL POSITION - نمایش واقعی درصد کشش\nGAIN (K) - تنظیم مقدار تاثیر گرفتن سرعت موتور از PITCH LENGTH و دنسر\nTEMPERATURE - دمای موتور\nTORQUE - گشتاور موتور\nSPEED - سرعت موتور",
+    "Manual Controls": "DRY RUN - درای ران (روشن / خاموش)\nSIMULATION - تجهیز برقی تابلو برق (روشن / خاموش)\nJOG MODE - حالت حرکت خیلی آهسته  (روشن / خاموش)\nPAD GROUP - ماژول پالپ\nMAIN GROUP - ماژول اصلی\nBACK EARS GROUP - ماژول بکرز\nBACKSHEET GROUP - ماژول فویل بکشیت",
+    "Vision System": "CAMERA ON/OFF - فعال وغیر فعال کردن دوربین ها\nCMD JOB - عدد سایز\nPOSITION - تنظیم موقعیت فاز دوربین\nWAIT FOR REJECT - فاصله تعداد پد از لحظه ردیابی تا جک ریجکت\nPIECES TO REJECT - تعداد پد جهت ریجکت",
+    "Rejects": "NUMBER OF PIECES TO REJECT AT MACHINE START - تعداد پوشک ریجکت شده در راه اندازی تا ورود به استکر\nREJECT AT MINIMUM MACHINE SPEED - حداقل سرعت برای رد شدن پوشک به استکر\nSPEED REDUCTION FOR STACKER NOT READY - پایین آمدن سرعت در صورت آماده نبودن استکر\nSPEED REDUCTION FOR BAGGER READY - پایین آمدن سرعت در صورت آماده نبودن بسته بندی\nMACHINE STOP FOR MAX NUM REJECT - حد تعیین شده ریجکت جهت توقف دستگاه\nSTOP MACHINE AFTER - حد تعیین شده زمان جهت توقف در صورت آماده نبودن استکر\nSTACKER STATUS - فعال یا غیر فعال بودن استکر نمایش داده می شود.\nPACKAGING STATUS - فعال یا غیر فعال بودن بسته بندی را نمایش می دهد.",
+    "Refrigerator": "POWER - روشن و خاموش کردن یخچال\nENABLED/DISABLED - فعال یا غیر فعال کردن هر قسمت\nACTUAL VALUE - نمایش دمای واقعی\nSET POINT AT RUN - تنظیم دما در زمان کارکرد دستگاه\nSET POINT AT STOP - تنظیم دما در زمان توقف دستگاه\nTOLERANCE - قدرت تحمل دما",
+    "Recipe": "هدف:\nجلوگیری از پاک شدن داده های سایز و اعمال صحیح تغییر سایز.\n\nهشدار:\nعدم انجام صحیح تغییر سایز باعث پاک شدن داده های سایز و دوباره کاری در تنظیمات سایز تولیدی و افزایش زمان راه اندازی خط تولید می شود.\n\nروش صحیح:\nبرای انجام تغییر سایز ابتدا می بایست از صفحه اصلی پنل وارد قسمت RECIPE شوید. پس از ورود از قسمت DATA RECORD NAME لیست کشویی موجود در این قسمت را باز کرده و از داده های ذخیره شده سایز جدید را انتخاب می کنیم.\nپس از انتخاب سایز جدید، جهت اعمال تنظیمات سایز به روی گزینه مشخص شده از قسمت TRANSFER SELECTED RECIPE TO PLC کلیک نمایید تا گزینه CHARGE یا CARICA نمایش داده و سایز جدید در PLC بارگذاری شود. سپس شماره ردیف سایز ACTUAL RECIPE NUMBER و نام سایز واقعی ACTUAL RECIPE می بایست همانند سایز انتخاب شده و ردیف آن باشد.\n\nنکته: لازم به ذکر است نحوه انجام صحیح تغییر سایز و ذخیره داده های پنل در دستورالعمل تغییر سایز خطوط پوشک جدید کانال دار به صورت کامل توضیح داده شده است.",
+    "Temperature Control": "ENABLED - روشن و خاموش کردن دوخت\nACTUAL VALUE - نمایش دمای واقعی\nSET-POINT - تنظیم دما\nRELAY STATUS - وضعیت رله",
+    "Lubrication": "ENABLED/DISABLED - روشن و خاموش کردن پمپاژ روغن\nMANUAL - حالت دستی\nCOUNTER - شمارشگر پمپاژ\nRESET - شروع مجدد شمارشگر\nDELAY - تاخیر در هر پمپاژ\nON FOR - مدت زمان هر پمپاژ\nSTATE - نمایش عملکرد پمپاژ",
+    "IFM Sensors": "PRESSURE SENSORS - سنسورهای فشار\nVACUUM SENSORS - سنسورهای مکش\nGLUE SENSORS - سنسورهای چسب\nVIBRATION SENSORS - سنسورهای ویبره",
+    "Pressure Sensors": "ENABLE -DISABLE روشن و خاموش کردن سنسورها\nMIN - حد پایین آلارم\nACTUAL - فشار واقعی\nMAX - حد بالا آلارم",
+    "Main Air": "MACHINE AIR - فشار باد\nLOW THRESHOLD ALARM - حد پایین آلارم فشار باد\nACTUAL PRESSURE - فشار واقعی باد\nHIGH THRESHOLD ALARM - حد بالا آلارم فشار باد\nMACHINE BLOWS -  فوت\nLOW THRESHOLD ALARM - حد پایین آلارم فوت\nACTUAL PRESSURE - فشار واقعی فوت\nHIGH THRESHOLD ALARM - حد بالا آلارم فوت",
+    "BTSR Elastics": "LEG ELASTICS - کش دور پا\nCUFF ELASTICS - کش لگ کاف\nN° - شماره کش ها\nENABLE -DISABLE- روشن و خاموش کردن موتور کش ها\nSET POINT - گزینه تغییر مقدار درصد کشش\nVALUE ACTUALE - درصد واقعی کشش\nSTART BTSR -  دور موتور کش بر حسب دقیقه در زمان استارت\nSTOP BTSR -  دور موتور کش بر حسب دقیقه در زمان توقف",
+    "Active Alarm": "AIR ON MACHINE - در صورت وصل بودن باد ماشین ON می شود. در غیر این صورت OFF\nMACHINE STATUS - نشان دهنده وضعیت آماده بودن خط و شامل دو حالت Running , Stopped می باشد.\nFILTER STATUS - نشان دهنده وضعیت فیلتر متصل به ماشین و شامل دو حالت Ready , ready not می باشد.\nSAFETY STATUS - نشان دهنده وضعیت safety و شامل دو حالت Ready , ready not safety می باشد.\nRAMP MODE - نمایش دهنده وضعیت یا مد استارت ماشین می باشد که دو حالت Automatic , Manual می باشد.\nSTACKER STATUS - نشان دهنده وضعیت بسته بندی و شامل دو حالت Ready , ready not می باشد.",
+    "Remote Controls": "ALARMS DISPLAY - نمایش آلارم ها\nMACHINE START - استارت دستگاه\nSPEED DECREASE - پایین آوردن سرعت\nSPEED INCREASE - بالا بردن سرعت\nAIR - باد دستگاه\nSEQUENCE START - روشن کردن موتور های مکنده\nSTOP SEQUENCE - خاموش کردن موتور های مکنده\nSTOP - توقف دستگاه",
+    "Print Registration BR16": "COMMAND POSITION - تنظیم موقعیت کادر روی فویل\nENABLE CORRECTION - خاموش و روشن کردن سنسور کادر\nBR16 LENGTH - طول کادر\nBR16 K FACTOR - حساسیت سنسور در تشخیص کادر (می بایست نزدیک به صفر تنظیم شود)\nBR16 MARK ERROR - نمایش مقدار خطا و جابجایی کادر بر حسب درجه\nMARK ACTUAL PITCH - نمایش واقعی فاصله کادر\nENABLE REJECT - خاموش و روشن کردن سنسور ریجکت مارک \nEXPECTED POSITION-تنظیم موقعیت سنسور مارک ریجکت\nHIGH LIMIT-حد بالا\nLOW LIMIT-حد پایین\nMARK POSITION-موقعیت مارک\nWAIT FOR REJECT - فاصله تعداد پد از لحظه ردیابی تا جک ریجکت\nPIECES TO REJECT - تعداد پد جهت ریجکت",
+    "Hossbach": "OFFSET - تنظیم موقعیت فاز هوسباخ به جلو و عقب\nDROPIN - زمان تاخیر عملکرد سنسور در زمان ورود پد به موقعیت سنسور\nPATTERN - مقدار الگو مشخص\nDROPOUT - زمان تاخیر عملکرد سنسور در زمان خروج پد از موقعیت سنسور\nSETPOINT SET IN HOSSBACH - تنظیم مقدار\nREJECT ENABLE - روشن و خاموش کردن ریجکت\nPIECES TO WAIT - فاصله تعداد پد از لحظه ردیابی سنسور تا جک ریجکت\nTOLERANCE - مقدار محدوده مجاز\nPIECES TO REJECT - تعداد پد جهت ریجکت",
+    "Cellulose": "MOTOR SETTINGS - تنظیمات موتور\nREEL SETTINGS - تنظیمات رول پالپ\nENABLED -DISABLE- فعال و غیر فعال کردن موتورها\nPRODUCT WEIGHT - گزینه تنظیم مقدار پالپ مصرفی در هر پد\nSPECIFIC WEIGHT - گزینه تنظیم گراماژ پالپ\nWIDTH - تنظیم طبق عرض پالپ مصرفی\nBEARINGS TEMPERATURE - دمای بلبرینگ موتورها\nWARNING THRESHOLD - مقدار دمای هشدار\nALARM THRESHOLD - مقدار دمای (بلبرینگ ها) که باعث توقف خط می شود",
+    "SAP": "POWER - روشن و خاموش کردن تابلو برق پودر جاذب\nENABLED - فعال یا غیر فعال کردن ریزش پودر جاذب\nREFILL WEIGHT - مقدار پودر جاذب داخل مخزن\nAUTO INSERTION SPEED - سرعت ریزش پودر جاذب\nQUANTITY - مقدار ریزش پودر در هر پد\nACTUAL FEED RATE - مقدار واقعی ریزش پودر جاذب\nMAX FEED RATE - حداکثر ریزش پودر جاذب در ساعت\nPRESS FOR CUP TEST - تنظیمات کاپ تست پودر جاذب\nREF SPEED - سرعت انجام کاپ تست\nCUP TEST DURATION - مدت زمان انجام کاپ تست\nFLOW CONTROL SENSORS - روشن و خاموش کردن سنسورهای کنترلی پودر جاذب",
+    "Melter": "PHASE - تنظیمات موقعیت چسب ها روی پوشک\nSET-UP - تنظیمات پمپ\nPUMP (Application) - شماره پمپ و نام هد چسب حرارتی\nSTAND BY - فعال یا غیرفعال سازی حالت آماده به کار\nPURGE OFF - تست کیفیت پاشش\nCOLLECTOR STANDBY ON - حالت آماده کار در وضعیت فعال یا غیر فعال\nSTANDBY ON TIME - زمان سپری شده جهت فعال شدن حالت آماده به کار\nSTANDBY OFF TIME - زمان سپری شده جهت غیرفعال شدن حالت آماده به کار\nON - فعال کردن چسب زن",
+    "Valves": "ON/OFF - فعال یا غیر فعال سازی جک ها\nAUTO - فعال سازی حالت دستی و اتوماتیک",
+    "Module Phasing": "FORWARD/BACKWARD - جابجا کننده به جلو و عقب",
+    "Asynchronous Motors": "MODE (AUTO/MANUAL) - تنظیمات موتورهای القایی و مکنده\nSTATUS (MOTOR IN RUN/STOP) - وضعیت موتورها\nFAULT (TM/DRIVE OK) - خطای موتور\nSET-POINT (Hz) - تنظیم دور موتورهای مکنده\nACTUAL (RPM) - مقدار دور واقعی موتور\nSPEED REDUCTION - کاهش سرعت کلیه موتورها",
+    "Mechanical Configuration": "روش انجام هومینگ:\n1- ابتدا می بایست درب دستگاه بسته و (safety) فعال باشد.\n2- هومینگ به دو روش انجام می شود: داینامیک (با سنسور) و استاتیک (درجا، مکانیکی).\n3- با توجه به اینکه بلوک مورد نظر دارای سنسور موقعیت می باشد یا خیر، گزینه استاتیک یا داینامیک زده شود.\n4- جهت تایید کلید (EXECUTE) را فشار دهید.\n5- اگر هوم به صورت استاتیک انجام شود در لحظه ACTUAL POSITION صفر خواهد شد. اگر به صورت داینامیک هوم شود باید دکمه (START) را فشرده تا موقعیت به حالت صفر برسد و عملیات هوم پایان یابد.\nنکته: در هومینگ تیغه ها مراحل به روش قبل انجام خواهد شد. مقادیر نمایش داده شده HOLES NUMBER PER PRODUCT این مقدار با توجه به طول مواد مصرفی وارد می شود. باید این عدد را تغییر داده تا به طول مورد نظر برسیم. OFFSET BETWEEN HOLES در مواقعی که تیغه برش روی سوراخ های Anvil برخورد کند با وارد کردن این مقدار موقعیت نسبت به نقطه صفر تغییر و در نتیجه موقعیت برش جابجا می شود.",
+    "Working Data": "MACHINE LIFE COUNTER - کانتر اصلی\nPADS - پد تولیدی\nTOTAL REJECT - ریجکت واقعی\nGOOD - پد تولیدی سالم\nSTACKER NOT READY - ریجکت در استکر\nMINIMUM SPEED - تعداد ریجکت در سرعت پایین\nINITIAL PIECES - تعداد ریجکت در استارت های اولیه\nMACHINE RUNNING - مدت زمان کارکرد دستگاه\nMACHINE STOP - مدت زمان توقف دستگاه\nTOTAL REJECT CAMERA - مجموع ریجکت دوربین ها\nTOTAL JOINTS - مجموع ریجکت اسپلایس\nMATERIAL REJECT - مجموع ریجکت سنسور مارک و هوسباخ\nMANUAL REJECT - پدهایی که اپراتور دستی ریجکت کرده",
+    "NW TOPSHEET SETUP": "SPINDLE (75 MM) TO SENSOR DISTANCE - فاصله سنسور قطر خوان تا رول گردان (چپ و راست)\nMINIMUM DIAMETER ALARM IN MANUAL - فاصله سنسور تا رولگردان و حداقل مقدار قطر برای آلارم\nSPLICE DIAMETER - انتهای رول\nSTART OPENING DIAMETER - شروع باز شدن بافر\nPIECES TO WAIT BEFORE REJECT: FIRST - موقعیت مواد از لحظه ردیابی سنسور\nPIECES TO REJECT - تعداد ریجکت\nDANCER ACTUAL POSITION - موقعیت دنسر و بافر و تنظیمات هومینگ بافر و ریست آن\nBUFFER ACTUAL POSITION - جهت چرخش رولها و نمایش مقدار مواد"
+};/* ============================================================ */
+/* ====== صفحاتی که کلیدهای ماژول در آن‌ها نمایش داده می‌شود ==== */
+/* ============================================================ */
+const MODULE_PAGES = [
+    "M18-BT41","M19-BT43","M01-BT04","M04-BP10","M05-BV48","M06-BP18",
+    "M07-BV56","M08-BT08","M09-BV59","M10-BT12","M11-BV64","M12-BT14",
+    "M13-BV69","M14-BT16","M30-BV01",
+    "M20-A-BT21","M20-B-BT22","M21-A-BT23","M21-B-BT24","M22-A-BT25","M22-B-BT26",
+    "M23-C-BT27","M23-A-BT28","M23-B-BT29","M24-BT32","M25-BT34","M26-A-BT35","M26-B-BT36"
+];
+
+/* موتورهای هر ماژول (کلیدهایی که داخل همه‌ی صفحه‌های همان ماژول کار می‌کنند) */
+const MODULE_MOTORS = {
+    "M18": ["BT41","BT42","BT01","BT02","BV05","BV35","BV36","BV37"],
+    "M19": ["BT43","BT44","BT03","BV39","BC13","BP13","BV43","BV42","BP05","BV40","BV41"],
+    "M01": ["BT04","BP01","BP14","BV07"],
+    "M04": ["BP10","BV08","BP11","BV09","BV10","BV11","BV46","BV45","BV47"],
+    "M05": ["BV48","BP12","BT05","BV12","BC04","BV49","BP06","BV14","BP17","BV13"],
+    "M06": ["BP18","BT06","BT45","BC09","BV52","BV51","BP19","BV54","BP20","BV53","BV55","BV50","BC10","BC11","BV15"],
+    "M07": ["BV56","BV70","BV57","BT07","BV16"],
+    "M08": ["BT08","BT09","BC15","BC16","BC17","BC18","BP21","BV71","BV44","BP07","BP08","BC07","BC08","BV17","BV18"],
+    "M09": ["BV59","BV38","BV58","BP22","BV19","BC19","BC20","BC21","BC22"],
+    "M10": ["BT12","BV62","BP09","BV61","BV60","BV63","BP24","BP23","BV20"],
+    "M11": ["BV64","BC03","BR14","BP03","BV67","BV66","BV23","BV21","BV22"],
+    "M12": ["BT14","BV68","BV65","BV27","BV25"],
+    "M13": ["BV69","BR16","BT15","BV29","BP15"],
+    "M14": ["BT16","BT55","BT56","BC14","BV33","BV30","BV31","BP16","BV32"],
+    "M30": ["BV01","BV02"]
+};
+const motorClass = (mod, m) => mod.toLowerCase() + "-" + m.toLowerCase();
+
+/* توضیح صفحه: اول اسم دقیق (مثل M19-BT43)، اگر نبود فقط با اسم موتور (مثل BT44) */
+function pageDescription(key) {
+    if (PAGE_DESCRIPTIONS[key]) return PAGE_DESCRIPTIONS[key];
+    const m = key.match(/^M\d+(?:-[A-C])?-(.+)$/);
+    if (m) { const hit = Object.keys(PAGE_DESCRIPTIONS).find(k => k.endsWith("-" + m[1])); if (hit) return PAGE_DESCRIPTIONS[hit]; }
+    return "";
+}
+Object.entries(MODULE_MOTORS).forEach(([mod, list]) => list.forEach(m => {
+    const key = mod + "-" + m;
+    if (!MODULE_PAGES.includes(key)) MODULE_PAGES.push(key);
+    TOOLTIP_TEXTS[motorClass(mod, m)] = [m, pageDescription(key)];
+}));
+function motorSelectorsForPage(key) {
+    const mod = (key.match(/^M\d+/) || [""])[0];
+    return (MODULE_MOTORS[mod] || []).map(m => ".motor-button." + motorClass(mod, m));
+}
+
+/* ماژول‌ها (بدون m23b) — فقط در صفحات BT/BP/BV */
+const moduleButtons = [
+    ".m18",".m19",".m01",".m04",".m05",".m06",".m07",".m08",".m09",".m10",
+    ".m11",".m12",".m13",".m14",".m30",
+    ".m20a",".m20b",".m21a",".m21b",".m22a",".m22b",
+    ".m23a",".m23c",".m24",".m25",".m26a",".m26b"
+];
+
+/* ============================================================ */
+/* ====== مختصات داینامیک ماژول‌ها در صفحات BT/BP/BV ========== */
+/* ============================================================ */
+const MODULE_W = 57, MODULE_H = 28;
+const MODULE_X0 = 11, MODULE_GAP = 62;
+const MODULE_ROW1_Y = 60, MODULE_ROW2_Y = 95;
+const MODULE_ROW1 = [
+    "m18","m19","m01","m04","m05","m06","m07","m08","m09","m10",
+    "m11","m12","m13","m14","m20a"
+];
+const MODULE_ROW2 = [
+    "m20b","m21a","m21b","m22a","m22b","m23a","m23c",
+    "m24","m25","m26a","m26b","m30"
+];
+
+(function buildModuleCoords(){
+    let css = "";
+    MODULE_ROW1.forEach((m, i) => {
+        css += `.page-module .${m}{left:${MODULE_X0 + i*MODULE_GAP}px;top:${MODULE_ROW1_Y}px;width:${MODULE_W}px;height:${MODULE_H}px}\n`;
+    });
+    MODULE_ROW2.forEach((m, i) => {
+        css += `.page-module .${m}{left:${MODULE_X0 + i*MODULE_GAP}px;top:${MODULE_ROW2_Y}px;width:${MODULE_W}px;height:${MODULE_H}px}\n`;
+    });
+    const style = document.createElement("style");
+    style.textContent = css;
+    document.head.appendChild(style);
+})();
+
+const SHOW_BUTTONS = false;
+const MAX_HISTORY = 5;
+let pageHistory = [];
+let currentPage = { key:"Layout", image:"images/Layout.png", state:"layout" };
+const panelImage = document.getElementById("panelImage");
+const hmiPanel = document.querySelector(".panel");
+
+const DEBUG_LABEL_CLASSES = ["alarm-list-sub","alarm-list-history","alarm-list-warning","warning-history",
+    "m18","m19","m01","m04","m05","m06","m07","m08","m09","m10","m11","m12","m13","m14",
+    "m30","m20a","m20b","m21a","m21b","m22a","m22b","m23a","m23b","m23c","m24","m25","m26a","m26b",
+    "m20a-setup","m20b-setup","m21a-setup","m21b-setup","m22a-setup","m22b-setup","m23a-setup","m23b-setup","m23c-setup","m24-setup","m25-setup","m26a-setup","m26b-setup"];
+
+function mk(cls, fn, data) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = cls;
+    if (SHOW_BUTTONS && cls.split(' ').some(c => DEBUG_LABEL_CLASSES.includes(c))) {
+        b.textContent = cls.split(' ').pop().toUpperCase();
+    }
+    if (data) Object.assign(b.dataset, data);
+    b.addEventListener("click", fn);
+    hmiPanel.appendChild(b);
+    return b;
+}
+const normal = (cls, folder) => mk(cls, () => openNormalPage(folder, "images/" + folder + "/" + folder + ".png"));
+
+mk("back-button", () => goBack());
+mk("layout-button", () => goHome());
+mk("axes", () => openAxes());
+mk("speed-ramp", () => openSpeedRamp());
+mk("manual-controls", () => openManualControls());
+mk("working-data", () => openWorkingData());
+mk("panel-settings", () => openPanelSettings());
+mk("profinet", () => openProfinetDiagnostic());
+mk("mechanical-configuration", () => openMechanicalConfiguration());
+mk("vision-system", () => openVisionSystem());
+mk("temperature-control", () => openTemperatureControl());
+mk("ifm-sensors", () => openIfmSensors());
+mk("print-registration", () => openPrintRegistration());
+
+mk("m18", () => openNormalPage("M18-BT41","images/M18/BT41.png"));
+mk("m19", () => openNormalPage("M19-BT43","images/M19/BT43.png"));
+mk("m01", () => openNormalPage("M01-BT04","images/M01/BT04.png"));
+mk("m04", () => openNormalPage("M04-BP10","images/M04/BP10.png"));
+mk("m05", () => openNormalPage("M05-BV48","images/M05/BV48.png"));
+mk("m06", () => openNormalPage("M06-BP18","images/M06/BP18.png"));
+mk("m07", () => openNormalPage("M07-BV56","images/M07/BV56.png"));
+mk("m08", () => openNormalPage("M08-BT08","images/M08/BT08.png"));
+mk("m09", () => openNormalPage("M09-BV59","images/M09/BV59.png"));
+mk("m10", () => openNormalPage("M10-BT12","images/M10/BT12.png"));
+mk("m11", () => openNormalPage("M11-BV64","images/M11/BV64.png"));
+mk("m12", () => openNormalPage("M12-BT14","images/M12/BT14.png"));
+mk("m13", () => openNormalPage("M13-BV69","images/M13/BV69.png"));
+mk("m14", () => openNormalPage("M14-BT16","images/M14/BT16.png"));
+mk("m30",  () => openNormalPage("M30-BV01","images/M30/BV01.png"));
+mk("m20a", () => openNormalPage("M20-A-BT21","images/M20-A/BT21.png"));
+mk("m20b", () => openNormalPage("M20-B-BT22","images/M20-B/BT22.png"));
+mk("m21a", () => openNormalPage("M21-A-BT23","images/M21-A/BT23.png"));
+mk("m21b", () => openNormalPage("M21-B-BT24","images/M21-B/BT24.png"));
+mk("m22a", () => openNormalPage("M22-A-BT25","images/M22-A/BT25.png"));
+mk("m22b", () => openNormalPage("M22-B-BT26","images/M22-B/BT26.png"));
+mk("m23c", () => openNormalPage("M23-C-BT27","images/M23-C/BT27.png"));
+mk("m23a", () => openNormalPage("M23-A-BT28","images/M23-A/BT28.png"));
+mk("m23b", () => openNormalPage("M23-B-BT29","images/M23-B/BT29.png"));
+mk("m24",  () => openNormalPage("M24-BT32","images/M24/BT32.png"));
+mk("m25",  () => openNormalPage("M25-BT34","images/M25/BT34.png"));
+mk("m26a", () => openNormalPage("M26-A-BT35","images/M26-A/BT35.png"));
+mk("m26b", () => openNormalPage("M26-B-BT36","images/M26-B/BT36.png"));
+
+/* Setup */
+mk("m20a-setup", () => openNormalPage("NW CUFF SETUP","images/UNWINDERS/NW CUFF SETUP.png"));
+mk("m20b-setup", () => openNormalPage("NW TOPSHEET SETUP","images/UNWINDERS/NW TOPSHEET SETUP.png"));
+mk("m21a-setup", () => openNormalPage("AQL SETUP","images/UNWINDERS/AQL SETUP.png"));
+mk("m21b-setup", () => openNormalPage("UPPER NW SETUP","images/UNWINDERS/UPPER NW SETUP.png"));
+mk("m22a-setup", () => openNormalPage("LOWER NW SETUP","images/UNWINDERS/LOWER NW SETUP.png"));
+mk("m22b-setup", () => openNormalPage("BACK EARS SETUP","images/UNWINDERS/BACK EARS SETUP.png"));
+mk("m23a-setup", () => openNormalPage("TAPE PRE-GLU SETUP","images/UNWINDERS/TAPE PRE-GLU SETUP.png"));
+mk("m23b-setup", () => openNormalPage("HOOK SETUP","images/UNWINDERS/HOOK SETUP.png"));
+mk("m23c-setup", () => openNormalPage("NW FOR TAPE SETUP","images/UNWINDERS/NW FOR TAPE SETUP.png"));
+mk("m24-setup", () => openNormalPage("FRONT EARS SETUP","images/UNWINDERS/FRONT EARS SETUP.png"));
+mk("m25-setup", () => openNormalPage("FRONTAL TAPE SETUP","images/UNWINDERS/FRONTAL TAPE SETUP.png"));
+mk("m26a-setup", () => openNormalPage("NW BACKSHEET SETUP","images/UNWINDERS/NW BACKSHEET SETUP.png"));
+mk("m26b-setup", () => openNormalPage("POLY BKSHEET SETUP","images/UNWINDERS/POLY BKSHEET SETUP.png"));
+
+/* موتورهای ماژول‌ها */
+Object.entries(MODULE_MOTORS).forEach(([mod, list]) => list.forEach(m => {
+    const cls = motorClass(mod, m);
+    DEBUG_LABEL_CLASSES.push(cls);
+    mk("motor-button " + cls, () => openNormalPage(mod + "-" + m, "images/" + mod + "/" + m + ".png"));
+}));
+[["rejects","REJECTS"],["refrigerator","REFRIGERATOR"],["recipe","RECIPE"],
+ ["knife-bearing-temperature","KNIFE BEARING TEMPERATURE"],["bearing-temperature","BEARING TEMPERATURE"],
+ ["lubrication","LUBRICATION"],["main-air","MAIN AIR"],["btsr-elastics","BTSR ELASTICS"],
+ ["remote-controls","REMOTE CONTROLS"],["hossbach","HOSSBACH"],["cellulose","CELLULOSE"],["sap","SAP"],
+ ["sensors","SENSORS"]
+].forEach(([c, f]) => normal(c, f));
+
+mk("unwinders", () => openUnwinders());
+mk("module-phasing", () => openModulePhasing());
+mk("melter", () => openMelter());
+mk("valves", () => openValves());
+mk("asynchronous-motors", () => openAsynchronousMotors());
+mk("alarm-list", () => openActiveAlarm());
+mk("active-alarm-sub-button alarm-list-sub", () => openAlarmList());
+mk("active-alarm-sub-button warning-history", () => openNormalPage("WARNING HISTORY","images/ALARM LIST/WARNING HISTORY.png"));
+mk("alarm-list-sub-button alarm-list-history", () => openAlarmHistory());
+mk("alarm-list-sub-button alarm-list-warning", () => openNormalPage("WARNING HISTORY","images/ALARM LIST/WARNING HISTORY.png"));
+
+for (let i = 1; i <= 9; i++) mk("page-button page" + i, () => showPage(i));
+[1,2].forEach(n => mk("vision-page-button vision-page" + n, () => openVisionPage(n)));
+[1,2,3].forEach(n => mk("pressure-sensor-page-button pressure-sensor-page" + n, () => openPressureSensorPage(n)));
+[1,2,3,4].forEach(n => mk("vacuum-sensor-page-button vacuum-sensor-page" + n, () => openVacuumSensorPage(n)));
+[1,2].forEach(n => mk("glue-sensor-page-button glue-sensor-page" + n, () => openGlueSensorPage(n)));
+["BR14","BR16"].forEach(b => mk("print-registration-br-button print-registration-" + b.toLowerCase(), () => openPrintRegistrationBR(b)));
+[1,2].forEach(n => mk("temp-page-button temp-page" + n, () => openTemperaturePage(n)));
+mk("resistances-check-button", () => openResistancesCheck());
+[1,2].forEach(n => mk("resistance-page-button resistance-page" + n, () => openResistancePage(n)));
+mk("temperature-control-return-button", () => openTemperatureControl());
+mk("ifm-sensor-button ifm-pressure-sensors", () => openPressureSensors());
+mk("ifm-sensor-button ifm-glue-sensors", () => openGlueSensors());
+mk("ifm-sensor-button ifm-vacuum-sensors", () => openVacuumSensors());
+mk("ifm-sensor-button ifm-vibration-sensors", () => openIfmSensorPage("VIBRATION SENSORS","images/IFM SENSORS/VIBRATION SENSORS.png"));
+mk("asynchronous-motors-page-button asynchronous-motors-page1", () => openAsynchronousMotorsPage1());
+mk("asynchronous-motors-page-button asynchronous-motors-page2", () => openAsynchronousMotorsPage2());
+
+const unwinderBufferPageMap = {};
+const UNWINDER_ITEMS = [
+    ["nw-cuff","NW CUFF","لگکاف"],["nw-topsheet","NW TOPSHEET","نانواون"],["aql","AQL","اکشن"],
+    ["upper-nw","UPPER NW","آپر"],["lower-nw","LOWER NW","لاور"],["back-ears","BACK EARS","بکرز"],
+    ["nw-for-tape","NW FOR TAPE","لمینه چسب بغل"],["tape-pre-glu","TAPE PRE-GLU","چسب بغل داخلی"],
+    ["hook","HOOK","چسب بغل بیرونی"],["front-ears","FRONT EARS","فرونترز"],
+    ["frontal-tape","FRONTAL TAPE","عروسکی"],["nw-backsheet","NW BACKSHEET","لمینه فویل"],
+    ["poly-bksheet","POLY BKSHEET","فویل"]
+];
+const BUFFER_ITEMS = ["nw-cuff","nw-topsheet","aql","upper-nw","lower-nw","back-ears","nw-backsheet","poly-bksheet"];
+UNWINDER_ITEMS.forEach(([cls, en, fa]) => {
+    TOOLTIP_TEXTS["uw-" + cls + "-setup"]  = [en + " SETUP",  fa];
+    TOOLTIP_TEXTS["uw-" + cls + "-sensor"] = [en + " SENSOR", "سنسور " + fa];
+    if (BUFFER_ITEMS.includes(cls)) TOOLTIP_TEXTS["buffer-" + cls + "-button"] = ["BUFFER " + en, "بافر " + fa];
+});
+BUFFER_ITEMS.forEach(c => {
+    const en = UNWINDER_ITEMS.find(u => u[0] === c)[1];
+    unwinderBufferPageMap[en + " SETUP"] = ".buffer-" + c + "-button";
+});
+const unwinderBufferButtons = Object.values(unwinderBufferPageMap);
+UNWINDER_ITEMS.forEach(([c, en]) => {
+    ["SETUP","SENSOR"].forEach(t => {
+        const name = en + " " + t;
+        mk("unwinder-position-button uw-" + c + "-" + t.toLowerCase(), () => openUnwinderItem(name));
+    });
+});
+BUFFER_ITEMS.forEach(c => {
+    const en = UNWINDER_ITEMS.find(u => u[0] === c)[1];
+    const name = "BUFFER " + en;
+    mk("unwinder-buffer-button buffer-" + c + "-button", () => navigateTo(name, "images/UNWINDERS/" + name + ".png", "normal"));
+});
+
+[["page1","PAGE 1"],["page2","PAGE 2"],["group","GROUP"]].forEach(([c, n]) =>
+    mk("module-phasing-page-button module-phasing-" + c, () => navigateTo("Module Phasing " + n, "images/MODULE PHASING/" + n + ".png", "module-phasing")));
+
+for (let n = 1; n <= 6; n++) mk("melter-page-button melter-page" + n, () => openMelterPage(n));
+
+const FA_WORD = ["","یک","دو","سه","چهار","پنج","شش","هفت","هشت","نه","ده","یازده"];
+const MELTER_SPEC = [
+    [1,[1,2,3,4],"PHASE"],[2,[1],"PHAS"],[3,[1],"PHASE"],[4,[3,4],null],
+    [5,[1,2,5,6,7,8],"PHASE"],[6,[1],"PHASE"],[7,[1],"PHASE"],
+    [8,[1,2,3],"PHASE"],[9,[1,2,3,4],"PHASE"],[10,[1,2],null],[11,[1],null]
+];
+const MELTER_FILES = {};
+MELTER_SPEC.forEach(([n, pumps, phase]) => {
+    pumps.forEach((k, i) => {
+        const cls = n === 1 ? "melter-pump" + k : "melter" + n + "-pump" + (n === 4 ? i + 1 : k);
+        MELTER_FILES[cls] = "MELTER " + n + " PUMP " + k;
+    });
+    MELTER_FILES["melter" + n + "-temp"] = "MELTER " + n + " TEMP";
+    if (phase) MELTER_FILES["melter" + n + (phase === "PHAS" ? "-phas" : "-phase")] = "MELTER " + n + " " + phase;
+    if (n <= 9) TOOLTIP_TEXTS["melter" + n + "-image"] = ["MELTER " + n + " IMAGE", "الگوی چسب زن " + FA_WORD[n]];
+});
+Object.entries(MELTER_FILES).forEach(([cls, file]) => {
+    const m = file.match(/^MELTER (\d+) (?:PUMP (\d+)|TEMP|PHASE?)$/);
+    const kind = m[2] ? "پمپ " + FA_WORD[+m[2]] : (/TEMP$/.test(file) ? "دما" : "فاز");
+    TOOLTIP_TEXTS[cls] = [file, "چسب زن " + FA_WORD[+m[1]] + " " + kind];
+});
+Object.keys(MELTER_FILES).forEach(cls => mk("melter-pump-button " + cls, () => openMelterEquipment(MELTER_FILES[cls])));
+for (let n = 1; n <= 9; n++) mk("melter-image-button melter" + n + "-image", () => openMelterImage("MELTER " + n + " IMAGE"));
+mk("melter5-phase-extra-button melter5-phase-extra", () => openMelter5PhaseExtra());
+mk("melter5-page2-button melter5-page2-page1", () => openMelter5Page2Item("MELTER 5 PAGE 1"));
+mk("melter5-page2-button melter5-page2-image2", () => openMelter5Page2Item("MELTER 5 IMAGE 2"));
+
+const VALVE_NAV = {
+    "VALVES":["VALVES","valves"],"VALVE PAGE 2":["VALVE PAGE 2","valves-page2"],
+    "MICRO REED":["MICRO REED","micro-reed"],"MICRO REED PAGE 2":["MICRO REED PAGE 2","micro-reed-page2"],
+    "PROPORTIONAL VALVE":["PROPORTIONAL VALVE","proportional-valve"],
+    "PROPORTIONAL VALVE PAGE 2":["PROPORTIONAL VALVE PAGE 2","proportional-valve-page2"]
+};
+function openValvesNav(name) {
+    const t = VALVE_NAV[name];
+    if (t) navigateTo(t[0], "images/VALVES/" + t[0] + ".png", t[1]);
+}
+[
+ ["valves",[["micro-reed","MICRO REED"],["page2","VALVE PAGE 2"],["proportional","PROPORTIONAL VALVE"]]],
+ ["valves-page2",[["page1","VALVES"],["micro-reed","MICRO REED"],["proportional","PROPORTIONAL VALVE"]]],
+ ["micro-reed",[["page2","MICRO REED PAGE 2"],["valve","VALVES"],["proportional","PROPORTIONAL VALVE"]]],
+ ["micro-reed-page2",[["page1","MICRO REED"],["valve","VALVES"],["proportional","PROPORTIONAL VALVE"]]],
+ ["proportional-valve",[["page2","PROPORTIONAL VALVE PAGE 2"],["valve","VALVES"],["micro-reed","MICRO REED"]]],
+ ["proportional-valve-page2",[["page1","PROPORTIONAL VALVE"],["valve","VALVES"],["micro-reed","MICRO REED"]]]
+].forEach(([prefix, items]) => items.forEach(([suffix, target]) =>
+    mk(prefix + "-button " + prefix + "-" + suffix, () => openValvesNav(target))));
+
+mk("working-data-sub", () => showCurrentShift());
+mk("current-shift-working-data", () => showCurrentShift());
+mk("knife-counters-working-data", () => openKnifeCounters());
+["current-shift","shift1","shift2"].forEach(s => {
+    if (s !== "current-shift") mk("current-shift-" + s, () => showCurrentShift());
+    mk("shift1-" + s, () => showShiftPage(1));
+    mk("shift2-" + s, () => showShiftPage(2));
+    mk("main-counter-" + s, () => showWorkingDataPage());
+});
+mk("advanced-diagnostic", () => openAdvancedDiagnostic());
+
+["bp04","bp05","bc13-bp13","bp01","bp14","bp10","bp11","bp12","bc04-bp06","bp17","bc09-bp18","bc10","bc11",
+ "bp19","bp20","bp21","bc15-bc16-bc17-bc18","bp07","bp08","bc07-bc08","bp22","bc19-bc20-bc21-bc22","bp09",
+ "bp23","bp24","bc03-bp03","bp15","bp16","bc14"
+].forEach(c => {
+    const N = c.toUpperCase();
+    mk("mechanical-button " + c, () => openNormalPage(N, "images/MECHANICAL CONFIGURATION/" + N + ".png"));
+});
+
+/* ============================================================ */
+/* ============ لیست گروه‌ها برای show/hide =================== */
+/* ============================================================ */
+const allMainButtons = [".axes",".speed-ramp",".manual-controls",".working-data",".panel-settings",".profinet"];
+const allLayoutButtons = [".mechanical-configuration",".vision-system",".rejects",".refrigerator",".recipe",".knife-bearing-temperature",".bearing-temperature",".temperature-control",".lubrication",".ifm-sensors",".main-air",".btsr-elastics",".remote-controls",".print-registration",".hossbach",".cellulose",".sap",
+    ".m18",".m19",".m01",".m04",".m05",".m06",".m07",".m08",".m09",".m10",".m11",".m12",".m13",".m14",".m30",".m20a",".m20b",".m21a",".m21b",".m22a",".m22b",".m23a",".m23b",".m23c",".m24",".m25",".m26a",".m26b",
+    ".m20a-setup",".m20b-setup",".m21a-setup",".m21b-setup",".m22a-setup",".m22b-setup",".m23a-setup",".m23b-setup",".m23c-setup",".m24-setup",".m25-setup",".m26a-setup",".m26b-setup"];
+const mechanicalButtons = [".bp04",".bp05",".bc13-bp13",".bp01",".bp14",".bp10",".bp11",".bp12",".bc04-bp06",".bp17",".bc09-bp18",".bc10",".bc11",".bp19",".bp20",".bp21",".bc15-bc16-bc17-bc18",".bp07",".bp08",".bc07-bc08",".bp22",".bc19-bc20-bc21-bc22",".bp09",".bp23",".bp24",".bc03-bp03",".bp15",".bp16",".bc14"];
+const axesButtons = [".page-button"];
+const visionButtons = [".vision-page1",".vision-page2"];
+const pressureSensorButtons = [".pressure-sensor-page1",".pressure-sensor-page2",".pressure-sensor-page3"];
+const vacuumSensorButtons = [".vacuum-sensor-page1",".vacuum-sensor-page2",".vacuum-sensor-page3",".vacuum-sensor-page4"];
+const glueSensorButtons = [".glue-sensor-page1",".glue-sensor-page2"];
+const printRegistrationButtons = [".print-registration-br14",".print-registration-br16"];
+const temperatureButtons = [".temp-page1",".temp-page2",".resistances-check-button",".resistance-page1",".resistance-page2",".temperature-control-return-button"];
+const ifmButtons = [".ifm-pressure-sensors",".ifm-glue-sensors",".ifm-vacuum-sensors",".ifm-vibration-sensors"];
+const asynchronousMotorsButtons = [".asynchronous-motors-page1",".asynchronous-motors-page2"];
+const workingButtons = [".working-data-sub",".current-shift-working-data",".knife-counters-working-data",".shift1-current-shift",".shift2-current-shift",".main-counter-current-shift",".current-shift-shift1",".shift1-shift1",".shift2-shift1",".main-counter-shift1",".current-shift-shift2",".shift1-shift2",".shift2-shift2",".main-counter-shift2"];
+const profinetButtons = [".advanced-diagnostic"];
+const activeAlarmButtons = [".alarm-list-sub",".warning-history"];
+const alarmListButtons = [".alarm-list-history",".alarm-list-warning"];
+const alarmHistoryButtons = [];
+const modulePhasingButtons = [".module-phasing-page1",".module-phasing-page2",".module-phasing-group"];
+const melterButtons = [1,2,3,4,5,6].map(n => ".melter-page" + n);
+const melterPumpButtons = [".melter-pump1",".melter-pump2",".melter-pump3",".melter-pump4",".melter1-temp",".melter1-phase",".melter2-pump1",".melter2-temp",".melter2-phas"];
+const melterPage2Buttons = [".melter3-pump1",".melter3-temp",".melter3-phase",".melter4-pump1",".melter4-pump2",".melter4-temp"];
+const melterPage3Buttons = [".melter5-pump1",".melter5-pump2",".melter5-pump5",".melter5-pump6",".melter5-pump7",".melter5-pump8",".melter5-temp",".melter5-phase",".melter6-pump1",".melter6-temp",".melter6-phase"];
+const melterPage4Buttons = [".melter7-pump1",".melter7-temp",".melter7-phase",".melter8-pump1",".melter8-pump2",".melter8-pump3",".melter8-temp",".melter8-phase"];
+const melterPage5Buttons = [".melter9-pump1",".melter9-pump2",".melter9-pump3",".melter9-pump4",".melter9-temp",".melter9-phase",".melter10-pump1",".melter10-pump2",".melter10-temp"];
+const melterPage6Buttons = [".melter11-pump1",".melter11-temp"];
+const melterImageButtons = [1,2,3,4,5,6,7,8,9].map(n => ".melter" + n + "-image");
+const melter5PhaseExtraButtons = [".melter5-phase-extra"];
+const melter5Page2Buttons = [".melter5-page2-page1",".melter5-page2-image2"];
+const valvesButtons = [".valves-micro-reed",".valves-page2",".valves-proportional"];
+const valvesPage2Buttons = [".valves-page2-page1",".valves-page2-micro-reed",".valves-page2-proportional"];
+const microReedButtons = [".micro-reed-page2",".micro-reed-valve",".micro-reed-proportional"];
+const microReedPage2Buttons = [".micro-reed-page2-page1",".micro-reed-page2-valve",".micro-reed-page2-proportional"];
+const proportionalValveButtons = [".proportional-valve-page2",".proportional-valve-valve",".proportional-valve-micro-reed"];
+const proportionalValvePage2Buttons = [".proportional-valve-page2-page1",".proportional-valve-page2-valve",".proportional-valve-page2-micro-reed"];
+
+function hideSelectors(selectors) {
+    selectors.forEach(s => document.querySelectorAll(s).forEach(el => { el.style.display = "none"; }));
+}
+function showSelectors(selectors) {
+    selectors.forEach(s => document.querySelectorAll(s).forEach(el => { el.style.display = "block"; }));
+}
+function hideSpecialButtons() {
+    hideSelectors([
+        ...axesButtons, ...workingButtons, ...profinetButtons, ...activeAlarmButtons, ...alarmListButtons, ...alarmHistoryButtons, ...mechanicalButtons, ...visionButtons,
+        ...pressureSensorButtons, ...vacuumSensorButtons, ...glueSensorButtons, ...printRegistrationButtons,
+        ...temperatureButtons, ...ifmButtons, ...asynchronousMotorsButtons,
+        ".unwinder-position-button", ".motor-button", ...unwinderBufferButtons, ...modulePhasingButtons, ...melterButtons,
+        ...melterPumpButtons, ...melterPage2Buttons, ...melterPage3Buttons, ...melterPage4Buttons,
+        ...melterPage5Buttons, ...melterPage6Buttons, ...melterImageButtons, ...melter5PhaseExtraButtons,
+        ...melter5Page2Buttons, ...valvesButtons, ...valvesPage2Buttons, ...microReedButtons,
+        ...microReedPage2Buttons, ...proportionalValveButtons, ...proportionalValvePage2Buttons
+    ]);
+}
+function hideMainMenu() { hideSelectors(allMainButtons); }
+function showMainMenu() { showSelectors(allMainButtons); }
+function hideLayoutButtons() { hideSelectors(allLayoutButtons); }
+function showLayoutButtons() { showSelectors(allLayoutButtons); }
+function hideAllSpecial() { hideMainMenu(); hideLayoutButtons(); hideSpecialButtons(); }
+function showButtons(selectors) { showSelectors(selectors); }
+function showTemperatureButtons(selectors) { hideSelectors(temperatureButtons); showSelectors(selectors); }
+
+function saveCurrentPage() {
+    pageHistory.push({ key: currentPage.key, image: currentPage.image, state: currentPage.state });
+    if (pageHistory.length > MAX_HISTORY) pageHistory.shift();
+}
+function navigateTo(key, image, state) {
+    if (currentPage.key === key && currentPage.image === image) return;
+    saveCurrentPage();
+    currentPage = { key, image, state };
+    panelImage.src = image;
+
+    hmiPanel.classList.remove("page-module");
+    if (MODULE_PAGES.includes(key)) hmiPanel.classList.add("page-module");
+
+    hideHmiTooltip();
+    restorePageState(state);
+}
+
+function restorePageState(state) {
+    hideAllSpecial();
+    if (state === "layout") { showMainMenu(); showLayoutButtons(); }
+    else if (state === "normal") {
+        if (MODULE_PAGES.includes(currentPage.key)) { showSelectors(moduleButtons); showSelectors(motorSelectorsForPage(currentPage.key)); }
+    }
+    else if (state === "axes") { showButtons([".page-button"]); }
+    else if (state === "vision-system") showSelectors(visionButtons);
+    else if (state === "pressure-sensors") showSelectors(pressureSensorButtons);
+    else if (state === "vacuum-sensors") showSelectors(vacuumSensorButtons);
+    else if (state === "glue-sensors") showSelectors(glueSensorButtons);
+    else if (state === "ifm-sensors") showSelectors(ifmButtons);
+    else if (state === "asynchronous-motors") showSelectors([".asynchronous-motors-page2"]);
+    else if (state === "asynchronous-motors-page2") showSelectors([".asynchronous-motors-page1"]);
+    else if (state === "print-registration") showSelectors(printRegistrationButtons);
+    else if (state === "unwinders") showSelectors([".unwinder-position-button"]);
+    else if (state === "unwinder-setup") {
+        const sel = unwinderBufferPageMap[currentPage.key];
+        if (sel) showSelectors([sel]);
+    }
+    else if (state === "module-phasing") showSelectors(modulePhasingButtons);
+    else if (state === "melter") { showSelectors(melterButtons); showSelectors(melterPumpButtons); }
+    else if (state === "melter-page") {
+        showSelectors(melterButtons);
+        const pages = { "Melter PAGE 1":melterPumpButtons, "Melter PAGE 2":melterPage2Buttons, "Melter PAGE 3":melterPage3Buttons,
+                        "Melter PAGE 4":melterPage4Buttons, "Melter PAGE 5":melterPage5Buttons, "Melter PAGE 6":melterPage6Buttons };
+        if (pages[currentPage.key]) showSelectors(pages[currentPage.key]);
+    }
+    else if (state === "melter-phase") {
+        const m = currentPage.key.match(/^MELTER (\d+) PHASE?$/);
+        if (m) showSelectors([".melter" + m[1] + "-image"]);
+        if (currentPage.key === "MELTER 5 PHASE") showSelectors(melter5PhaseExtraButtons);
+    }
+    else if (state === "melter5-page2") showSelectors(melter5Page2Buttons);
+    else if (state === "valves") showSelectors(valvesButtons);
+    else if (state === "valves-page2") showSelectors(valvesPage2Buttons);
+    else if (state === "micro-reed") showSelectors(microReedButtons);
+    else if (state === "micro-reed-page2") showSelectors(microReedPage2Buttons);
+    else if (state === "proportional-valve") showSelectors(proportionalValveButtons);
+    else if (state === "proportional-valve-page2") showSelectors(proportionalValvePage2Buttons);
+    else if (state === "temperature-control" || state === "temperature-page") showTemperatureButtons([".temp-page1",".temp-page2",".resistances-check-button"]);
+    else if (state === "resistances-check") showTemperatureButtons([".resistance-page1",".resistance-page2",".temperature-control-return-button"]);
+    else if (state === "working-data-main") { showMainMenu(); showButtons([".current-shift-working-data",".knife-counters-working-data"]); }
+    else if (state === "current-shift") { showMainMenu(); showButtons([".shift1-current-shift",".shift2-current-shift",".main-counter-current-shift"]); }
+    else if (state === "shift1") { showMainMenu(); showButtons([".current-shift-shift1",".shift1-shift1",".shift2-shift1",".main-counter-shift1"]); }
+    else if (state === "shift2") { showMainMenu(); showButtons([".current-shift-shift2",".shift1-shift2",".shift2-shift2",".main-counter-shift2"]); }
+    else if (state === "active-alarm") showSelectors(activeAlarmButtons);
+    else if (state === "alarm-list") showSelectors(alarmListButtons);
+    else if (state === "alarm-history") showSelectors(alarmHistoryButtons);
+    else if (state === "profinet") { showMainMenu(); showButtons([".advanced-diagnostic"]); }
+    else if (state === "mechanical") { showMainMenu(); showSelectors(mechanicalButtons); }
+}
+
+function goBack() {
+    if (pageHistory.length === 0) return;
+    const prev = pageHistory.pop();
+    currentPage = { key: prev.key, image: prev.image, state: prev.state };
+    panelImage.src = prev.image;
+    hmiPanel.classList.remove("page-module");
+    if (MODULE_PAGES.includes(prev.key)) hmiPanel.classList.add("page-module");
+    hideHmiTooltip();
+    restorePageState(prev.state);
+}
+function goHome(addToHistory = true) {
+    if (currentPage.key === "Layout") { restorePageState("layout"); return; }
+    if (addToHistory) saveCurrentPage();
+    currentPage = { key:"Layout", image:"images/Layout.png", state:"layout" };
+    panelImage.src = "images/Layout.png";
+    hmiPanel.classList.remove("page-module");
+    hideHmiTooltip();
+    restorePageState("layout");
+}
+
+function openNormalPage(key, image) { navigateTo(key, image, "normal"); }
+function openAxes() { navigateTo("Axes","images/AXES ENABLE AND DIAGN/PAGE 1.png","axes"); }
+function showPage(n) { navigateTo("Axes Page " + n,"images/AXES ENABLE AND DIAGN/PAGE " + n + ".png","axes"); }
+function openMechanicalConfiguration() { navigateTo("Mechanical Configuration","images/MECHANICAL CONFIGURATION/MECHANICAL CONFIGURATION.png","mechanical"); }
+function openSpeedRamp() { navigateTo("Speed Ramp","images/SPEED RAMP/SPEED RAMP.png","normal"); }
+function openManualControls() { navigateTo("Manual Controls","images/MANUAL CONTROLS/MANUAL CONTROLS.png","normal"); }
+function openPanelSettings() { navigateTo("Panel Settings","images/PANEL SETTINGS/PANEL SETTINGS.png","normal"); }
+function openProfinetDiagnostic() { navigateTo("Profinet Diagnostic","images/PROFINET DIAGNOSTIC/PROFINET DIAGNOSTIC.png","profinet"); }
+function openAdvancedDiagnostic() { navigateTo("Advanced Diagnostic","images/PROFINET DIAGNOSTIC/Advanced Diagnostic info.png","normal"); }
+function openWorkingData() { navigateTo("Working Data","images/WORKING DATA/WORKING DATA.png","working-data-main"); }
+function showCurrentShift() { navigateTo("Current Shift","images/WORKING DATA/CURRENT SHIFT.png","current-shift"); }
+function showShiftPage(n) { navigateTo("Shift " + n,"images/WORKING DATA/SHIFT " + n + ".png","shift" + n); }
+function showWorkingDataPage() { navigateTo("Working Data","images/WORKING DATA/WORKING DATA.png","working-data-main"); }
+function openActiveAlarm() { navigateTo("ACTIVE ALARM","images/ALARM LIST/ACTIVE ALARM.png","active-alarm"); }
+function openAlarmList() { navigateTo("ALARM LIST","images/ALARM LIST/ALARM LIST.png","alarm-list"); }
+function openAlarmHistory() { navigateTo("ALARM HISTORY","images/ALARM LIST/ALARM HISTORY.png","alarm-history"); }
+function openKnifeCounters() { navigateTo("Knife Counters","images/WORKING DATA/KNIFE COUNTERS.png","normal"); }
+
+function openVisionSystem() { navigateTo("Vision System","images/VISION SYSTEM/VISION SYSTEM.png","vision-system"); }
+function openVisionPage(n) { navigateTo("Vision System PAGE " + n,"images/VISION SYSTEM/PAGE " + n + ".png","vision-system"); }
+function openIfmSensors() { navigateTo("IFM Sensors","images/IFM SENSORS/IFM SENSORS.png","ifm-sensors"); }
+function openIfmSensorPage(name, path) { navigateTo(name, path, "normal"); }
+function openPressureSensors() { navigateTo("PRESSURE SENSORS","images/IFM SENSORS/PRESSURE SENSORS.png","pressure-sensors"); }
+function openPressureSensorPage(n) { navigateTo("PRESSURE SENSORS PAGE " + n,"images/IFM SENSORS/PRESSURE SENSORS PAGE " + n + ".png","pressure-sensors"); }
+function openVacuumSensors() { navigateTo("VACUUM SENSORS","images/IFM SENSORS/VACUUM SENSORS.png","vacuum-sensors"); }
+function openVacuumSensorPage(n) { navigateTo("VACUUM SENSORS PAGE " + n,"images/IFM SENSORS/VACUUM SENSORS PAGE " + n + ".png","vacuum-sensors"); }
+function openGlueSensors() { navigateTo("GLUE SENSORS","images/IFM SENSORS/GLUE SENSORS.png","glue-sensors"); }
+function openGlueSensorPage(n) { navigateTo("GLUE SENSORS PAGE " + n,"images/IFM SENSORS/GLUE SENSORS PAGE " + n + ".png","glue-sensors"); }
+function openPrintRegistration() { navigateTo("Print Registration","images/PRINT REGISTRATION/PRINT REGISTRATION.png","print-registration"); }
+function openPrintRegistrationBR(br) { navigateTo("PRINT REGISTRATION " + br,"images/PRINT REGISTRATION/PRINT REGISTRATION " + br + ".png","normal"); }
+function openTemperatureControl() { navigateTo("Temperature Control","images/TEMPERATURE CONTROL/TEMPERATURE CONTROL.png","temperature-control"); }
+function openTemperaturePage(n) { navigateTo("Temperature Control PAGE " + n,"images/TEMPERATURE CONTROL/PAGE " + n + ".png","temperature-page"); }
+function openResistancesCheck() { navigateTo("RESISTANCES CHECK","images/TEMPERATURE CONTROL/RESISTANCES CHECK.png","resistances-check"); }
+function openResistancePage(n) { navigateTo("RESISTANCES PAGE " + n,"images/TEMPERATURE CONTROL/RESISTANCES PAGE " + n + ".png","resistances-check"); }
+function openAsynchronousMotors() { navigateTo("Asynchronous Motors","images/ASYNCHRONOUS MOTORS/ASYNCHRONOUS MOTORS.png","asynchronous-motors"); }
+function openAsynchronousMotorsPage1() { openAsynchronousMotors(); }
+function openAsynchronousMotorsPage2() { navigateTo("Asynchronous Motors PAGE 2","images/ASYNCHRONOUS MOTORS/ASYNCHRONOUS MOTORS PAGE 2.png","asynchronous-motors-page2"); }
+function openUnwinders() { navigateTo("Unwinders","images/UNWINDERS/UNWINDERS.png","unwinders"); }
+function openUnwinderItem(pageName) {
+    navigateTo(pageName, "images/UNWINDERS/" + pageName + ".png", unwinderBufferPageMap[pageName] ? "unwinder-setup" : "normal");
+}
+function openModulePhasing() { navigateTo("Module Phasing","images/MODULE PHASING/MODULE PHASING.png","module-phasing"); }
+function openMelter() { navigateTo("Melter","images/MELTER/MELTER.png","melter"); }
+function openMelterPage(n) { navigateTo("Melter PAGE " + n,"images/MELTER/PAGE " + n + ".png","melter-page"); }
+function openMelterEquipment(name) {
+    navigateTo(name, "images/MELTER/" + name + ".png", /PHASE?$/i.test(name) ? "melter-phase" : "melter-equipment");
+}
+function openMelterImage(name) { navigateTo(name,"images/MELTER/" + name + ".png","melter-equipment"); }
+function openMelter5PhaseExtra() { navigateTo("MELTER 5 PAGE 2","images/MELTER/MELTER 5 PAGE 2.png","melter5-page2"); }
+function openMelter5Page2Item(name) {
+    if (name === "MELTER 5 PAGE 1") navigateTo("MELTER 5 PHASE","images/MELTER/MELTER 5 PHASE.png","melter-phase");
+    else if (name === "MELTER 5 IMAGE 2") navigateTo("MELTER 5 IMAGE 2","images/MELTER/MELTER 5 IMAGE 2.png","melter-equipment");
+}
+function openValves() { openValvesNav("VALVES"); }
+
+const hmiTooltip = document.getElementById("hmiTooltip");
+const hmiTooltipTitle = document.getElementById("hmiTooltipTitle");
+const hmiTooltipText = document.getElementById("hmiTooltipText");
+
+function getTooltipDescription(button) {
+    const classes = [...button.classList];
+    for (const c of classes) if (TOOLTIP_TEXTS[c]) return TOOLTIP_TEXTS[c];
+    const last = classes[classes.length - 1] || "";
+    return [last.replace(/-/g, " ").toUpperCase() || "HMI BUTTON", ""];
+}
+function positionHmiTooltip(event) {
+    const r = hmiPanel.getBoundingClientRect();
+    const k = (r.width / hmiPanel.offsetWidth) || 1;
+    const mx = (event.clientX - r.left) / k, my = (event.clientY - r.top) / k;
+    const tw = hmiTooltip.offsetWidth, th = hmiTooltip.offsetHeight;
+    const pw = hmiPanel.clientWidth, ph = hmiPanel.clientHeight;
+    let left = mx + 16, top = my + 16;
+    if (left + tw > pw - 5) left = mx - tw - 16;
+    if (top + th > ph - 5) top = my - th - 16;
+    hmiTooltip.style.left = Math.max(5, Math.min(left, pw - tw - 5)) + "px";
+    hmiTooltip.style.top = Math.max(5, Math.min(top, ph - th - 5)) + "px";
+}
+
+function showHmiTooltip(event) {
+    const button = event.target.closest("button");
+    if (button && hmiPanel.contains(button)) {
+        // وقتی روی دکمه هستیم، توضیحات کوتاه دکمه (Layout) نمایش داده میشه
+        const d = getTooltipDescription(button);
+        hmiTooltipTitle.textContent = d[0];
+        hmiTooltipText.textContent = d[1];
+        hmiTooltip.classList.remove("wide");
+    } else {
+        // وقتی داخل صفحه هستیم (نه روی دکمه)
+        hmiTooltipTitle.textContent = currentPage.key || "HMI";
+
+        let fullHelp = "";
+        let isMotorPage = false;
+        let isShortHelp = false;
+
+        // 1. بررسی اینکه آیا صفحه فعلی یکی از صفحات موتورهاست؟ (مثل M18-BT41)
+        const motorMatch = currentPage.key.match(/^M\d+(?:-[A-C])?-[A-Z]{2}\d+$/);
+        if (motorMatch) {
+            fullHelp = PAGE_FULL_HELP["Axes Configuration"];
+            isMotorPage = true;
+        } else if (/^B[PC]\d\d(?:-.+)?$/.test(currentPage.key) && TOOLTIP_TEXTS[currentPage.key.toLowerCase()]) {
+            // صفحات داخلی هومینگ: اسم موتور + معنی + راهنمای هومینگ
+            const t = TOOLTIP_TEXTS[currentPage.key.toLowerCase()];
+            fullHelp = t[0] + " = " + t[1];
+            isShortHelp = true;
+        } else {
+            // 2. اگر صفحه موتور نبود، بقیه صفحات رو چک کن
+            for (const k in PAGE_FULL_HELP) {
+                if (HELP_KEY_PATTERN[k] ? HELP_KEY_PATTERN[k].test(currentPage.key) : currentPage.key.toUpperCase().startsWith(k.toUpperCase())) {
+                    fullHelp = PAGE_FULL_HELP[k];
+                    if (k === "Axes") {
+                        const am = currentPage.key.match(/^Axes Page (\d+)$/i);
+                        if ((am ? +am[1] : 1) > 7) fullHelp = fullHelp.split("\n").filter(l => !/^ENABLE-DISABLE/.test(l)).join("\n");
+                    }
+                    break;
+                }
+            }
+        }
+
+        // اگر توضیح کامل داشت، کاملش رو نشون میده. اگه نه، توضیح کوتاه قبلی
+        hmiTooltipText.textContent = fullHelp || pageDescription(currentPage.key);
+        hmiTooltip.classList.toggle("wide", (!!fullHelp && !isShortHelp) || isMotorPage);
+    }
+    hmiTooltip.style.display = "block";
+    positionHmiTooltip(event);
+}
+
+function hideHmiTooltip() { hmiTooltip.style.display = "none"; }
+
+hmiPanel.addEventListener("pointermove", showHmiTooltip);
+hmiPanel.addEventListener("pointerleave", hideHmiTooltip);
+window.addEventListener("resize", hideHmiTooltip);
+panelImage.addEventListener("load", hideHmiTooltip);
+
+if (SHOW_BUTTONS) {
+    hmiPanel.classList.add("debug-on");
+    const coordBox = document.getElementById("coordBox");
+    coordBox.style.display = "block";
+    coordBox.textContent = "x: -  y: -";
+    hmiPanel.addEventListener("pointermove", e => {
+        const r = hmiPanel.getBoundingClientRect();
+        const k = 1000 / r.width;
+        coordBox.textContent = "x: " + Math.round((e.clientX - r.left) * k) + "   y: " + Math.round((e.clientY - r.top) * k);
+    });
+}
+
+hideSpecialButtons();
+showMainMenu();
+showLayoutButtons();
+/* ===== جا دادن پنل در صفحه (گوشی/تبلت) ===== */
+const fitBox = document.getElementById("fit");
+function fitPanel() {
+    const w = hmiPanel.offsetWidth || 1000;
+    const h = panelImage.offsetHeight || Math.round(w * 667 / 1067);
+    const s = Math.min(1, window.innerWidth / w, window.innerHeight / h);
+    hmiPanel.style.transform = "scale(" + s + ")";
+    fitBox.style.width = Math.round(w * s) + "px";
+    fitBox.style.height = Math.round(h * s) + "px";
+}
+window.addEventListener("resize", fitPanel);
+window.addEventListener("orientationchange", fitPanel);
+panelImage.addEventListener("load", fitPanel);
+fitPanel();
+
+/* ===== نصب به‌صورت اپ و کار کردن بدون اینترنت ===== */
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+</script>
+</body>
+</html>
