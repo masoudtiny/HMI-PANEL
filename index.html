@@ -1382,17 +1382,20 @@ hmiPanel.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") 
 document.addEventListener("pointerdown", e => { if (!hmiPanel.contains(e.target)) hideHmiTooltip(); });
 
 /* لمس: بار اول توضیح ۳ ثانیه نمایش داده می‌شود، لمس دوم (همان دکمه) وارد صفحه می‌شود */
-let lastPointerType = "mouse", armedButton = null, armedTimer = null;
+let lastPointerType = "mouse", armedButton = null, armedTimer = null, autoEnterTimer = null;
 hmiPanel.addEventListener("pointerdown", e => { lastPointerType = e.pointerType; }, true);
 hmiPanel.addEventListener("click", e => {
     if (lastPointerType === "mouse") return;
     const btn = e.target.closest("button");
     if (!btn || !hmiPanel.contains(btn) || btn.classList.contains("back-button")) return;
+    clearTimeout(autoEnterTimer);
     if (armedButton === btn) { armedButton = null; clearTimeout(armedTimer); return; }
     e.stopImmediatePropagation(); e.preventDefault();
     armedButton = btn;
     clearTimeout(armedTimer);
     armedTimer = setTimeout(() => { armedButton = null; }, 3000);
+    /* ۲ ثانیه بعد از نمایش توضیح، خودکار وارد صفحه می‌شود (لمس دکمه‌ی دیگر آن را لغو می‌کند) */
+    autoEnterTimer = setTimeout(() => { if (armedButton === btn) btn.click(); }, 2000);
 }, true);
 
 /* تطبیق اندازه پنل با عرض صفحه (گوشی) */
