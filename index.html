@@ -1377,13 +1377,15 @@ document.addEventListener("pointerdown", e => { if (!hmiPanel.contains(e.target)
 
 /* تطبیق اندازه پنل با عرض صفحه (گوشی) */
 function fitPanel() {
-    const vw = Math.min(window.innerWidth, window.screen.width || window.innerWidth);
+    const land = window.matchMedia("(orientation: landscape)").matches;
+    const sc = window.screen, sMax = Math.max(sc.width||0, sc.height||0), sMin = Math.min(sc.width||0, sc.height||0);
+    const vw = Math.min(window.innerWidth, (land ? sMax : sMin) || window.innerWidth);
     const s = Math.min(1, vw / 1000);
     hmiPanel.style.transform = s < 1 ? "scale(" + s + ")" : "";
     document.getElementById("fitWrap").style.height = s < 1 ? Math.ceil(panelImage.offsetHeight * s) + "px" : "";
 }
 window.addEventListener("resize", fitPanel);
-window.addEventListener("orientationchange", fitPanel);
+window.addEventListener("orientationchange", () => { fitPanel(); setTimeout(fitPanel, 300); });
 panelImage.addEventListener("load", fitPanel);
 fitPanel();
 window.addEventListener("resize", hideHmiTooltip);
