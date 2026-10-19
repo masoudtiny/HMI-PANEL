@@ -1330,7 +1330,8 @@ let touchHideTimer = null;
 function showHmiTooltip(event) {
     if (event.pointerType === "touch" || event.pointerType === "pen") {
         clearTimeout(touchHideTimer);
-        touchHideTimer = setTimeout(hideHmiTooltip, 5000);
+        const onBtn = event.target.closest && event.target.closest("button");
+        touchHideTimer = setTimeout(hideHmiTooltip, onBtn ? 3000 : 5000);
     }
     const button = event.target.closest("button");
     if (button && hmiPanel.contains(button)) {
@@ -1379,6 +1380,20 @@ hmiPanel.addEventListener("pointermove", showHmiTooltip);
 hmiPanel.addEventListener("pointerdown", showHmiTooltip);
 hmiPanel.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") hideHmiTooltip(); });
 document.addEventListener("pointerdown", e => { if (!hmiPanel.contains(e.target)) hideHmiTooltip(); });
+
+/* لمس: بار اول توضیح ۳ ثانیه نمایش داده می‌شود، لمس دوم (همان دکمه) وارد صفحه می‌شود */
+let lastPointerType = "mouse", armedButton = null, armedTimer = null;
+hmiPanel.addEventListener("pointerdown", e => { lastPointerType = e.pointerType; }, true);
+hmiPanel.addEventListener("click", e => {
+    if (lastPointerType === "mouse") return;
+    const btn = e.target.closest("button");
+    if (!btn || !hmiPanel.contains(btn) || btn.classList.contains("back-button")) return;
+    if (armedButton === btn) { armedButton = null; clearTimeout(armedTimer); return; }
+    e.stopImmediatePropagation(); e.preventDefault();
+    armedButton = btn;
+    clearTimeout(armedTimer);
+    armedTimer = setTimeout(() => { armedButton = null; }, 3000);
+}, true);
 
 /* تطبیق اندازه پنل با عرض صفحه (گوشی) */
 function fitPanel() {
