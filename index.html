@@ -2,21 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#222222">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HMI Panel</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
-body{margin:0;padding:0;background:#222;font-family:Vazirmatn,Tahoma,Arial,sans-serif}
-html,body{height:100%}
-body{overflow:hidden;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
-#fit{margin:0 auto;overflow:hidden}
-.panel{position:relative;display:inline-block;transform-origin:0 0}
+body{margin:0;padding:0;background:#222;overflow-x:hidden;font-family:Vazirmatn,Tahoma,Arial,sans-serif}
+.panel{position:relative;display:inline-block;transform-origin:0 0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .panel img{width:1000px;display:block}
 button{position:absolute;padding:0;cursor:pointer;z-index:50;font-family:inherit;box-sizing:border-box;
   background:transparent!important;border:none!important;color:transparent!important;font-size:0!important;box-shadow:none!important;outline:none!important}
@@ -382,30 +373,54 @@ button{position:absolute;padding:0;cursor:pointer;z-index:50;font-family:inherit
 .debug-on .alarm-list-sub,.debug-on .alarm-list-history,.debug-on .alarm-list-warning,.debug-on .warning-history,
 .debug-on .m18,.debug-on .m19,.debug-on .m01,.debug-on .m04,.debug-on .m05,.debug-on .m06,.debug-on .m07,.debug-on .m08,.debug-on .m09,.debug-on .m10,.debug-on .m11,.debug-on .m12,.debug-on .m13,.debug-on .m14,
 .debug-on .m30,.debug-on .m20a,.debug-on .m20b,.debug-on .m21a,.debug-on .m21b,.debug-on .m22a,.debug-on .m22b,.debug-on .m23a,.debug-on .m23b,.debug-on .m23c,.debug-on .m24,.debug-on .m25,.debug-on .m26a,.debug-on .m26b,
-.debug-on .m20a-setup,.debug-on .m20b-setup,.debug-on .m21a-setup,.debug-on .m21b-setup,.debug-on .m22a-setup,.debug-on .m22b-setup,.debug-on .m23a-setup,.debug-on .m23b-setup,.debug-on .m23c-setup,.debug-on .m24-setup,.debug-on .m25-setup,.debug-on .m26a-setup,.debug-on .m26b-setup{color:#fff!important;font-size:12px!important;font-weight:bold;text-shadow:0 0 3px #000;overflow:hidden;line-height:1.1;background:rgba(255,220,0,.55)!important;border:2px solid #ffdc00!important}
+.debug-on .m20a-setup,.debug-on .m20b-setup,.debug-on .m21a-setup,.debug-on .m21b-setup,.debug-on .m22a-setup,.debug-on .m22b-setup,.debug-on .m23a-setup,.debug-on .m23b-setup,.debug-on .m23c-setup,.debug-on .m24-setup,.debug-on .m25-setup,.debug-on .m26a-setup,.debug-on .m26b-setup,
+.debug-on .close-popup-button {color:#fff!important;font-size:12px!important;font-weight:bold;text-shadow:0 0 3px #000;overflow:hidden;line-height:1.1;background:rgba(255,220,0,.55)!important;border:2px solid #ffdc00!important}
 .debug-on .alarm-list-sub{background:rgba(40,120,255,.55)!important;border:2px solid #2878ff!important}
 .debug-on .alarm-list-history{background:rgba(255,40,40,.55)!important;border:2px solid #ff3030!important}
 .debug-on .alarm-list-warning,.debug-on .warning-history{background:rgba(255,140,0,.55)!important;border:2px solid #ff8c00!important}
 #coordBox{display:none;position:fixed;top:6px;right:6px;z-index:5000;background:#000;color:#3f3;font:14px monospace;padding:6px 10px;border:1px solid #3f3;border-radius:6px;pointer-events:none}
 
-.hmi-tooltip{position:absolute;display:none;width:200px;max-width:200px;box-sizing:border-box;padding:6px 10px;
-  background:linear-gradient(135deg,#1e252c 0%,#171d23 100%);color:#f1f5f8;border:1px solid #65c8e8;border-radius:9px;
-  direction:rtl;text-align:right;font-family:Vazirmatn,Tahoma,Arial,sans-serif;font-size:15px;line-height:1.5;
-  box-shadow:0 6px 20px rgba(0,0,0,.55),0 0 0 1px rgba(101,200,232,.15);z-index:2000;pointer-events:none;white-space:pre-line;backdrop-filter:blur(3px)}
-.hmi-tooltip.wide{width:450px;max-width:450px}
-.hmi-tooltip-title{display:block;color:#65c8e8;font-weight:800;font-size:15px;margin-bottom:4px;padding-bottom:3px;
-  border-bottom:1px solid rgba(101,200,232,.35);direction:ltr;text-align:left;overflow-wrap:anywhere;letter-spacing:.4px}
-.hmi-tooltip-text{display:block;color:#e8eef3;font-size:15px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+/* 🌟 استایل جدید و شیک‌تر برای کادر Tooltip */
+.hmi-tooltip {
+    position: absolute; display: none; width: 220px; max-width: 220px; box-sizing: border-box; padding: 8px 12px;
+    background: rgba(30, 37, 44, 0.85); color: #f1f5f8; border: 1px solid rgba(101, 200, 232, 0.6); border-radius: 12px;
+    direction: rtl; text-align: right; font-family: Vazirmatn, Tahoma, Arial, sans-serif; font-size: 15px; line-height: 1.6;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 15px rgba(101,200,232,0.15); z-index: 2000; pointer-events: none; white-space: pre-line; backdrop-filter: blur(8px);
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+.hmi-tooltip.wide { width: 480px; max-width: 480px; }
+.hmi-tooltip-title {
+    display: block; color: #65c8e8; font-weight: 800; font-size: 16px; margin-bottom: 6px; padding-bottom: 5px;
+    border-bottom: 1px solid rgba(101, 200, 232, 0.3); direction: ltr; text-align: left; overflow-wrap: anywhere; letter-spacing: 0.5px;
+}
+.hmi-tooltip-text {
+    display: block; color: #e8eef3; font-size: 14px; font-weight: 600; line-height: 1.7; overflow-wrap: anywhere;
+}
+/* جدا کردن کلمه انگلیسی از فارسی در Tooltip */
+.hmi-tooltip-text b { color: #65c8e8; font-weight: 800; direction: ltr; display: inline-block; }
+
+/* ✅ دکمه ضربدر تمیز و شفاف (بدون رنگ debug) */
+.close-popup-button {
+    z-index: 250; 
+    left: 680px; 
+    top: 143px; 
+    width: 30px; 
+    height: 30px;
+}
+.hmi-tooltip{position:fixed!important;max-width:calc(100vw - 10px)!important}
+.hmi-tooltip.wide{max-width:calc(100vw - 10px)!important}
 </style>
 </head><body>
-<div id="fit"><div class="panel">
+<div id="fitWrap" style="width:100%;overflow:hidden">
+<div class="panel">
 <img id="panelImage" src="images/Layout.png" alt="HMI Panel">
 <div id="coordBox"></div>
 <div id="hmiTooltip" class="hmi-tooltip">
 <span id="hmiTooltipTitle" class="hmi-tooltip-title"></span>
 <span id="hmiTooltipText" class="hmi-tooltip-text"></span>
 </div>
-</div></div>
+</div>
+</div>
 
 <script>
 const TOOLTIP_TEXTS = {
@@ -710,33 +725,33 @@ const HELP_KEY_PATTERN = {
 };
 
 const PAGE_FULL_HELP = {
-    "Speed Ramp": "SPEED REDUCTION - پله کاهش سرعت را اعمال نمایید.\nSTARTING SPEED - سرعت اولیه استارت را اعمال کنید.\nMAXIMUM SPEED - حداکثر سرعت خط تولید را اعمال کنید.\nAUTOMATIC RAMP - با فشردن کلید استارت، سرعت به صورت اتوماتیک تا پله اول و با فشردن مجدد به پله دوم و با فشردن مجدد به پله سوم خواهد رسید .",
-    "Axes": "AXIS NAME - نام موتور\nTECH. OBJECT FAULT CODE - کد خطای موتور\nDRIVE OBJECT FAULT CODE - کد خطای درایور\nDRIVE TEMPERATURE - دمای درایور\nENABLE-DISABLE- حالت فعال/غیر فعال کردن موتور",
-    "Axes Configuration": "ENABLE-DISABLE- حالت فعال/غیر فعال کردن موتور\nJOG MODE - فعال یا غیر فعال کردن حالت حرکت آهسته\nJOG START - شروع حرکت آهسته\nJOG SPEED - تنظیم سرعت حرکت آهسته\nPITCH LENGTH - طول مواد مصرفی\nSET-POINT POSITION - درصد کشش\nACTUAL POSITION - نمایش واقعی درصد کشش\nGAIN (K) - تنظیم مقدار تاثیر گرفتن سرعت موتور از PITCH LENGTH و دنسر\nTEMPERATURE - دمای موتور\nTORQUE - گشتاور موتور\nSPEED - سرعت موتور",
-    "Manual Controls": "DRY RUN - درای ران (روشن / خاموش)\nSIMULATION - تجهیز برقی تابلو برق (روشن / خاموش)\nJOG MODE - حالت حرکت خیلی آهسته  (روشن / خاموش)\nPAD GROUP - ماژول پالپ\nMAIN GROUP - ماژول اصلی\nBACK EARS GROUP - ماژول بکرز\nBACKSHEET GROUP - ماژول فویل بکشیت",
-    "Vision System": "CAMERA ON/OFF - فعال وغیر فعال کردن دوربین ها\nCMD JOB - عدد سایز\nPOSITION - تنظیم موقعیت فاز دوربین\nWAIT FOR REJECT - فاصله تعداد پد از لحظه ردیابی تا جک ریجکت\nPIECES TO REJECT - تعداد پد جهت ریجکت",
-    "Rejects": "NUMBER OF PIECES TO REJECT AT MACHINE START - تعداد پوشک ریجکت شده در راه اندازی تا ورود به استکر\nREJECT AT MINIMUM MACHINE SPEED - حداقل سرعت برای رد شدن پوشک به استکر\nSPEED REDUCTION FOR STACKER NOT READY - پایین آمدن سرعت در صورت آماده نبودن استکر\nSPEED REDUCTION FOR BAGGER READY - پایین آمدن سرعت در صورت آماده نبودن بسته بندی\nMACHINE STOP FOR MAX NUM REJECT - حد تعیین شده ریجکت جهت توقف دستگاه\nSTOP MACHINE AFTER - حد تعیین شده زمان جهت توقف در صورت آماده نبودن استکر\nSTACKER STATUS - فعال یا غیر فعال بودن استکر نمایش داده می شود.\nPACKAGING STATUS - فعال یا غیر فعال بودن بسته بندی را نمایش می دهد.",
-    "Refrigerator": "POWER - روشن و خاموش کردن یخچال\nENABLED/DISABLED - فعال یا غیر فعال کردن هر قسمت\nACTUAL VALUE - نمایش دمای واقعی\nSET POINT AT RUN - تنظیم دما در زمان کارکرد دستگاه\nSET POINT AT STOP - تنظیم دما در زمان توقف دستگاه\nTOLERANCE - قدرت تحمل دما",
-    "Recipe": "هدف:\nجلوگیری از پاک شدن داده های سایز و اعمال صحیح تغییر سایز.\n\nهشدار:\nعدم انجام صحیح تغییر سایز باعث پاک شدن داده های سایز و دوباره کاری در تنظیمات سایز تولیدی و افزایش زمان راه اندازی خط تولید می شود.\n\nروش صحیح:\nبرای انجام تغییر سایز ابتدا می بایست از صفحه اصلی پنل وارد قسمت RECIPE شوید. پس از ورود از قسمت DATA RECORD NAME لیست کشویی موجود در این قسمت را باز کرده و از داده های ذخیره شده سایز جدید را انتخاب می کنیم.\nپس از انتخاب سایز جدید، جهت اعمال تنظیمات سایز به روی گزینه مشخص شده از قسمت TRANSFER SELECTED RECIPE TO PLC کلیک نمایید تا گزینه CHARGE یا CARICA نمایش داده و سایز جدید در PLC بارگذاری شود. سپس شماره ردیف سایز ACTUAL RECIPE NUMBER و نام سایز واقعی ACTUAL RECIPE می بایست همانند سایز انتخاب شده و ردیف آن باشد.\n\nنکته: لازم به ذکر است نحوه انجام صحیح تغییر سایز و ذخیره داده های پنل در دستورالعمل تغییر سایز خطوط پوشک جدید کانال دار به صورت کامل توضیح داده شده است.",
-    "Temperature Control": "ENABLED - روشن و خاموش کردن دوخت\nACTUAL VALUE - نمایش دمای واقعی\nSET-POINT - تنظیم دما\nRELAY STATUS - وضعیت رله",
-    "Lubrication": "ENABLED/DISABLED - روشن و خاموش کردن پمپاژ روغن\nMANUAL - حالت دستی\nCOUNTER - شمارشگر پمپاژ\nRESET - شروع مجدد شمارشگر\nDELAY - تاخیر در هر پمپاژ\nON FOR - مدت زمان هر پمپاژ\nSTATE - نمایش عملکرد پمپاژ",
-    "IFM Sensors": "PRESSURE SENSORS - سنسورهای فشار\nVACUUM SENSORS - سنسورهای مکش\nGLUE SENSORS - سنسورهای چسب\nVIBRATION SENSORS - سنسورهای ویبره",
-    "Pressure Sensors": "ENABLE -DISABLE روشن و خاموش کردن سنسورها\nMIN - حد پایین آلارم\nACTUAL - فشار واقعی\nMAX - حد بالا آلارم",
-    "Main Air": "MACHINE AIR - فشار باد\nLOW THRESHOLD ALARM - حد پایین آلارم فشار باد\nACTUAL PRESSURE - فشار واقعی باد\nHIGH THRESHOLD ALARM - حد بالا آلارم فشار باد\nMACHINE BLOWS -  فوت\nLOW THRESHOLD ALARM - حد پایین آلارم فوت\nACTUAL PRESSURE - فشار واقعی فوت\nHIGH THRESHOLD ALARM - حد بالا آلارم فوت",
-    "BTSR Elastics": "LEG ELASTICS - کش دور پا\nCUFF ELASTICS - کش لگ کاف\nN° - شماره کش ها\nENABLE -DISABLE- روشن و خاموش کردن موتور کش ها\nSET POINT - گزینه تغییر مقدار درصد کشش\nVALUE ACTUALE - درصد واقعی کشش\nSTART BTSR -  دور موتور کش بر حسب دقیقه در زمان استارت\nSTOP BTSR -  دور موتور کش بر حسب دقیقه در زمان توقف",
-    "Active Alarm": "AIR ON MACHINE - در صورت وصل بودن باد ماشین ON می شود. در غیر این صورت OFF\nMACHINE STATUS - نشان دهنده وضعیت آماده بودن خط و شامل دو حالت Running , Stopped می باشد.\nFILTER STATUS - نشان دهنده وضعیت فیلتر متصل به ماشین و شامل دو حالت Ready , ready not می باشد.\nSAFETY STATUS - نشان دهنده وضعیت safety و شامل دو حالت Ready , ready not safety می باشد.\nRAMP MODE - نمایش دهنده وضعیت یا مد استارت ماشین می باشد که دو حالت Automatic , Manual می باشد.\nSTACKER STATUS - نشان دهنده وضعیت بسته بندی و شامل دو حالت Ready , ready not می باشد.",
-    "Remote Controls": "ALARMS DISPLAY - نمایش آلارم ها\nMACHINE START - استارت دستگاه\nSPEED DECREASE - پایین آوردن سرعت\nSPEED INCREASE - بالا بردن سرعت\nAIR - باد دستگاه\nSEQUENCE START - روشن کردن موتور های مکنده\nSTOP SEQUENCE - خاموش کردن موتور های مکنده\nSTOP - توقف دستگاه",
-    "Print Registration BR16": "COMMAND POSITION - تنظیم موقعیت کادر روی فویل\nENABLE CORRECTION - خاموش و روشن کردن سنسور کادر\nBR16 LENGTH - طول کادر\nBR16 K FACTOR - حساسیت سنسور در تشخیص کادر (می بایست نزدیک به صفر تنظیم شود)\nBR16 MARK ERROR - نمایش مقدار خطا و جابجایی کادر بر حسب درجه\nMARK ACTUAL PITCH - نمایش واقعی فاصله کادر\nENABLE REJECT - خاموش و روشن کردن سنسور ریجکت مارک \nEXPECTED POSITION-تنظیم موقعیت سنسور مارک ریجکت\nHIGH LIMIT-حد بالا\nLOW LIMIT-حد پایین\nMARK POSITION-موقعیت مارک\nWAIT FOR REJECT - فاصله تعداد پد از لحظه ردیابی تا جک ریجکت\nPIECES TO REJECT - تعداد پد جهت ریجکت",
-    "Hossbach": "OFFSET - تنظیم موقعیت فاز هوسباخ به جلو و عقب\nDROPIN - زمان تاخیر عملکرد سنسور در زمان ورود پد به موقعیت سنسور\nPATTERN - مقدار الگو مشخص\nDROPOUT - زمان تاخیر عملکرد سنسور در زمان خروج پد از موقعیت سنسور\nSETPOINT SET IN HOSSBACH - تنظیم مقدار\nREJECT ENABLE - روشن و خاموش کردن ریجکت\nPIECES TO WAIT - فاصله تعداد پد از لحظه ردیابی سنسور تا جک ریجکت\nTOLERANCE - مقدار محدوده مجاز\nPIECES TO REJECT - تعداد پد جهت ریجکت",
-    "Cellulose": "MOTOR SETTINGS - تنظیمات موتور\nREEL SETTINGS - تنظیمات رول پالپ\nENABLED -DISABLE- فعال و غیر فعال کردن موتورها\nPRODUCT WEIGHT - گزینه تنظیم مقدار پالپ مصرفی در هر پد\nSPECIFIC WEIGHT - گزینه تنظیم گراماژ پالپ\nWIDTH - تنظیم طبق عرض پالپ مصرفی\nBEARINGS TEMPERATURE - دمای بلبرینگ موتورها\nWARNING THRESHOLD - مقدار دمای هشدار\nALARM THRESHOLD - مقدار دمای (بلبرینگ ها) که باعث توقف خط می شود",
-    "SAP": "POWER - روشن و خاموش کردن تابلو برق پودر جاذب\nENABLED - فعال یا غیر فعال کردن ریزش پودر جاذب\nREFILL WEIGHT - مقدار پودر جاذب داخل مخزن\nAUTO INSERTION SPEED - سرعت ریزش پودر جاذب\nQUANTITY - مقدار ریزش پودر در هر پد\nACTUAL FEED RATE - مقدار واقعی ریزش پودر جاذب\nMAX FEED RATE - حداکثر ریزش پودر جاذب در ساعت\nPRESS FOR CUP TEST - تنظیمات کاپ تست پودر جاذب\nREF SPEED - سرعت انجام کاپ تست\nCUP TEST DURATION - مدت زمان انجام کاپ تست\nFLOW CONTROL SENSORS - روشن و خاموش کردن سنسورهای کنترلی پودر جاذب",
-    "Melter": "PHASE - تنظیمات موقعیت چسب ها روی پوشک\nSET-UP - تنظیمات پمپ\nPUMP (Application) - شماره پمپ و نام هد چسب حرارتی\nSTAND BY - فعال یا غیرفعال سازی حالت آماده به کار\nPURGE OFF - تست کیفیت پاشش\nCOLLECTOR STANDBY ON - حالت آماده کار در وضعیت فعال یا غیر فعال\nSTANDBY ON TIME - زمان سپری شده جهت فعال شدن حالت آماده به کار\nSTANDBY OFF TIME - زمان سپری شده جهت غیرفعال شدن حالت آماده به کار\nON - فعال کردن چسب زن",
-    "Valves": "ON/OFF - فعال یا غیر فعال سازی جک ها\nAUTO - فعال سازی حالت دستی و اتوماتیک",
-    "Module Phasing": "FORWARD/BACKWARD - جابجا کننده به جلو و عقب",
-    "Asynchronous Motors": "MODE (AUTO/MANUAL) - تنظیمات موتورهای القایی و مکنده\nSTATUS (MOTOR IN RUN/STOP) - وضعیت موتورها\nFAULT (TM/DRIVE OK) - خطای موتور\nSET-POINT (Hz) - تنظیم دور موتورهای مکنده\nACTUAL (RPM) - مقدار دور واقعی موتور\nSPEED REDUCTION - کاهش سرعت کلیه موتورها",
-    "Mechanical Configuration": "روش انجام هومینگ:\n1- ابتدا می بایست درب دستگاه بسته و (safety) فعال باشد.\n2- هومینگ به دو روش انجام می شود: داینامیک (با سنسور) و استاتیک (درجا، مکانیکی).\n3- با توجه به اینکه بلوک مورد نظر دارای سنسور موقعیت می باشد یا خیر، گزینه استاتیک یا داینامیک زده شود.\n4- جهت تایید کلید (EXECUTE) را فشار دهید.\n5- اگر هوم به صورت استاتیک انجام شود در لحظه ACTUAL POSITION صفر خواهد شد. اگر به صورت داینامیک هوم شود باید دکمه (START) را فشرده تا موقعیت به حالت صفر برسد و عملیات هوم پایان یابد.\nنکته: در هومینگ تیغه ها مراحل به روش قبل انجام خواهد شد. مقادیر نمایش داده شده HOLES NUMBER PER PRODUCT این مقدار با توجه به طول مواد مصرفی وارد می شود. باید این عدد را تغییر داده تا به طول مورد نظر برسیم. OFFSET BETWEEN HOLES در مواقعی که تیغه برش روی سوراخ های Anvil برخورد کند با وارد کردن این مقدار موقعیت نسبت به نقطه صفر تغییر و در نتیجه موقعیت برش جابجا می شود.",
-    "Working Data": "MACHINE LIFE COUNTER - کانتر اصلی\nPADS - پد تولیدی\nTOTAL REJECT - ریجکت واقعی\nGOOD - پد تولیدی سالم\nSTACKER NOT READY - ریجکت در استکر\nMINIMUM SPEED - تعداد ریجکت در سرعت پایین\nINITIAL PIECES - تعداد ریجکت در استارت های اولیه\nMACHINE RUNNING - مدت زمان کارکرد دستگاه\nMACHINE STOP - مدت زمان توقف دستگاه\nTOTAL REJECT CAMERA - مجموع ریجکت دوربین ها\nTOTAL JOINTS - مجموع ریجکت اسپلایس\nMATERIAL REJECT - مجموع ریجکت سنسور مارک و هوسباخ\nMANUAL REJECT - پدهایی که اپراتور دستی ریجکت کرده",
-    "NW TOPSHEET SETUP": "SPINDLE (75 MM) TO SENSOR DISTANCE - فاصله سنسور قطر خوان تا رول گردان (چپ و راست)\nMINIMUM DIAMETER ALARM IN MANUAL - فاصله سنسور تا رولگردان و حداقل مقدار قطر برای آلارم\nSPLICE DIAMETER - انتهای رول\nSTART OPENING DIAMETER - شروع باز شدن بافر\nPIECES TO WAIT BEFORE REJECT: FIRST - موقعیت مواد از لحظه ردیابی سنسور\nPIECES TO REJECT - تعداد ریجکت\nDANCER ACTUAL POSITION - موقعیت دنسر و بافر و تنظیمات هومینگ بافر و ریست آن\nBUFFER ACTUAL POSITION - جهت چرخش رولها و نمایش مقدار مواد"
+    "Speed Ramp": "<b>SPEED REDUCTION</b> - پله کاهش سرعت را اعمال نمایید.\n<b>STARTING SPEED</b> - سرعت اولیه استارت را اعمال کنید.\n<b>MAXIMUM SPEED</b> - حداکثر سرعت خط تولید را اعمال کنید.\n<b>AUTOMATIC RAMP</b> - با فشردن کلید استارت، سرعت به صورت اتوماتیک تا پله اول و با فشردن مجدد به پله دوم و با فشردن مجدد به پله سوم خواهد رسید .",
+    "Axes": "<b>AXIS NAME</b> - نام موتور\n<b>TECH. OBJECT FAULT CODE</b> - کد خطای موتور\n<b>DRIVE OBJECT FAULT CODE</b> - کد خطای درایور\n<b>DRIVE TEMPERATURE</b> - دمای درایور\n<b>ENABLE-DISABLE</b> - حالت فعال/غیر فعال کردن موتور",
+    "Axes Configuration": "<b>ENABLE-DISABLE</b> - حالت فعال/غیر فعال کردن موتور\n<b>JOG MODE</b> - فعال یا غیر فعال کردن حالت حرکت آهسته\n<b>JOG START</b> - شروع حرکت آهسته\n<b>JOG SPEED</b> - تنظیم سرعت حرکت آهسته\n<b>PITCH LENGTH</b> - طول مواد مصرفی\n<b>SET-POINT POSITION</b> - درصد کشش\n<b>ACTUAL POSITION</b> - نمایش واقعی درصد کشش\n<b>GAIN (K)</b> - تنظیم مقدار تاثیر گرفتن سرعت موتور از PITCH LENGTH و دنسر\n<b>TEMPERATURE</b> - دمای موتور\n<b>TORQUE</b> - گشتاور موتور\n<b>SPEED</b> - سرعت موتور",
+    "Manual Controls": "<b>DRY RUN</b> - درای ران (روشن / خاموش)\n<b>SIMULATION</b> - تجهیز برقی تابلو برق (روشن / خاموش)\n<b>JOG MODE</b> - حالت حرکت خیلی آهسته  (روشن / خاموش)\n<b>PAD GROUP</b> - ماژول پالپ\n<b>MAIN GROUP</b> - ماژول اصلی\n<b>BACK EARS GROUP</b> - ماژول بکرز\n<b>BACKSHEET GROUP</b> - ماژول فویل بکشیت",
+    "Vision System": "<b>CAMERA ON/OFF</b> - فعال وغیر فعال کردن دوربین ها\n<b>CMD JOB</b> - عدد سایز\n<b>POSITION</b> - تنظیم موقعیت فاز دوربین\n<b>WAIT FOR REJECT</b> - فاصله تعداد پد از لحظه ردیابی تا جک ریجکت\n<b>PIECES TO REJECT</b> - تعداد پد جهت ریجکت",
+    "Rejects": "<b>NUMBER OF PIECES TO REJECT AT MACHINE START</b> - تعداد پوشک ریجکت شده در راه اندازی تا ورود به استکر\n<b>REJECT AT MINIMUM MACHINE SPEED</b> - حداقل سرعت برای رد شدن پوشک به استکر\n<b>SPEED REDUCTION FOR STACKER NOT READY</b> - پایین آمدن سرعت در صورت آماده نبودن استکر\n<b>SPEED REDUCTION FOR BAGGER READY</b> - پایین آمدن سرعت در صورت آماده نبودن بسته بندی\n<b>MACHINE STOP FOR MAX NUM REJECT</b> - حد تعیین شده ریجکت جهت توقف دستگاه\n<b>STOP MACHINE AFTER</b> - حد تعیین شده زمان جهت توقف در صورت آماده نبودن استکر\n<b>STACKER STATUS</b> - فعال یا غیر فعال بودن استکر نمایش داده می شود.\n<b>PACKAGING STATUS</b> - فعال یا غیر فعال بودن بسته بندی را نمایش می دهد.",
+    "Refrigerator": "<b>POWER</b> - روشن و خاموش کردن یخچال\n<b>ENABLED/DISABLED</b> - فعال یا غیر فعال کردن هر قسمت\n<b>ACTUAL VALUE</b> - نمایش دمای واقعی\n<b>SET POINT AT RUN</b> - تنظیم دما در زمان کارکرد دستگاه\n<b>SET POINT AT STOP</b> - تنظیم دما در زمان توقف دستگاه\n<b>TOLERANCE</b> - قدرت تحمل دما",
+    "Recipe": "<b>هدف:</b>\nجلوگیری از پاک شدن داده های سایز و اعمال صحیح تغییر سایز.\n\n<b>هشدار:</b>\nعدم انجام صحیح تغییر سایز باعث پاک شدن داده های سایز و دوباره کاری در تنظیمات سایز تولیدی و افزایش زمان راه اندازی خط تولید می شود.\n\n<b>روش صحیح:</b>\nبرای انجام تغییر سایز ابتدا می بایست از صفحه اصلی پنل وارد قسمت <b>RECIPE</b> شوید. پس از ورود از قسمت <b>DATA RECORD NAME</b> لیست کشویی موجود در این قسمت را باز کرده و از داده های ذخیره شده سایز جدید را انتخاب می کنیم.\nپس از انتخاب سایز جدید، جهت اعمال تنظیمات سایز به روی گزینه مشخص شده از قسمت <b>TRANSFER SELECTED RECIPE TO PLC</b> کلیک نمایید تا گزینه <b>CHARGE</b> یا <b>CARICA</b> نمایش داده و سایز جدید در PLC بارگذاری شود. سپس شماره ردیف سایز <b>ACTUAL RECIPE NUMBER</b> و نام سایز واقعی <b>ACTUAL RECIPE</b> می بایست همانند سایز انتخاب شده و ردیف آن باشد.\n\n<b>نکته:</b> لازم به ذکر است نحوه انجام صحیح تغییر سایز و ذخیره داده های پنل در دستورالعمل تغییر سایز خطوط پوشک جدید کانال دار به صورت کامل توضیح داده شده است.",
+    "Temperature Control": "<b>ENABLED</b> - روشن و خاموش کردن دوخت\n<b>ACTUAL VALUE</b> - نمایش دمای واقعی\n<b>SET-POINT</b> - تنظیم دما\n<b>RELAY STATUS</b> - وضعیت رله",
+    "Lubrication": "<b>ENABLED/DISABLED</b> - روشن و خاموش کردن پمپاژ روغن\n<b>MANUAL</b> - حالت دستی\n<b>COUNTER</b> - شمارشگر پمپاژ\n<b>RESET</b> - شروع مجدد شمارشگر\n<b>DELAY</b> - تاخیر در هر پمپاژ\n<b>ON FOR</b> - مدت زمان هر پمپاژ\n<b>STATE</b> - نمایش عملکرد پمپاژ",
+    "IFM Sensors": "<b>PRESSURE SENSORS</b> - سنسورهای فشار\n<b>VACUUM SENSORS</b> - سنسورهای مکش\n<b>GLUE SENSORS</b> - سنسورهای چسب\n<b>VIBRATION SENSORS</b> - سنسورهای ویبره",
+    "Pressure Sensors": "<b>ENABLE -DISABLE</b> روشن و خاموش کردن سنسورها\n<b>MIN</b> - حد پایین آلارم\n<b>ACTUAL</b> - فشار واقعی\n<b>MAX</b> - حد بالا آلارم",
+    "Main Air": "<b>MACHINE AIR</b> - فشار باد\n<b>LOW THRESHOLD ALARM</b> - حد پایین آلارم فشار باد\n<b>ACTUAL PRESSURE</b> - فشار واقعی باد\n<b>HIGH THRESHOLD ALARM</b> - حد بالا آلارم فشار باد\n<b>MACHINE BLOWS</b> -  فوت\n<b>LOW THRESHOLD ALARM</b> - حد پایین آلارم فوت\n<b>ACTUAL PRESSURE</b> - فشار واقعی فوت\n<b>HIGH THRESHOLD ALARM</b> - حد بالا آلارم فوت",
+    "BTSR Elastics": "<b>LEG ELASTICS</b> - کش دور پا\n<b>CUFF ELASTICS</b> - کش لگ کاف\n<b>N°</b> - شماره کش ها\n<b>ENABLE -DISABLE</b> - روشن و خاموش کردن موتور کش ها\n<b>SET POINT</b> - گزینه تغییر مقدار درصد کشش\n<b>VALUE ACTUALE</b> - درصد واقعی کشش\n<b>START BTSR</b> -  دور موتور کش بر حسب دقیقه در زمان استارت\n<b>STOP BTSR</b> -  دور موتور کش بر حسب دقیقه در زمان توقف",
+    "Active Alarm": "<b>AIR ON MACHINE</b> - در صورت وصل بودن باد ماشین ON می شود. در غیر این صورت OFF\n<b>MACHINE STATUS</b> - نشان دهنده وضعیت آماده بودن خط و شامل دو حالت Running , Stopped می باشد.\n<b>FILTER STATUS</b> - نشان دهنده وضعیت فیلتر متصل به ماشین و شامل دو حالت Ready , ready not می باشد.\n<b>SAFETY STATUS</b> - نشان دهنده وضعیت safety و شامل دو حالت Ready , ready not safety می باشد.\n<b>RAMP MODE</b> - نمایش دهنده وضعیت یا مد استارت ماشین می باشد که دو حالت Automatic , Manual می باشد.\n<b>STACKER STATUS</b> - نشان دهنده وضعیت بسته بندی و شامل دو حالت Ready , ready not می باشد.",
+    "Remote Controls": "<b>ALARMS DISPLAY</b> - نمایش آلارم ها\n<b>MACHINE START</b> - استارت دستگاه\n<b>SPEED DECREASE</b> - پایین آوردن سرعت\n<b>SPEED INCREASE</b> - بالا بردن سرعت\n<b>AIR</b> - باد دستگاه\n<b>SEQUENCE START</b> - روشن کردن موتور های مکنده\n<b>STOP SEQUENCE</b> - خاموش کردن موتور های مکنده\n<b>STOP</b> - توقف دستگاه",
+    "Print Registration BR16": "<b>COMMAND POSITION</b> - تنظیم موقعیت کادر روی فویل\n<b>ENABLE CORRECTION</b> - خاموش و روشن کردن سنسور کادر\n<b>BR16 LENGTH</b> - طول کادر\n<b>BR16 K FACTOR</b> - حساسیت سنسور در تشخیص کادر (می بایست نزدیک به صفر تنظیم شود)\n<b>BR16 MARK ERROR</b> - نمایش مقدار خطا و جابجایی کادر بر حسب درجه\n<b>MARK ACTUAL PITCH</b> - نمایش واقعی فاصله کادر\n<b>ENABLE REJECT</b> - خاموش و روشن کردن سنسور ریجکت مارک \n<b>EXPECTED POSITION</b> - تنظیم موقعیت سنسور مارک ریجکت\n<b>HIGH LIMIT</b> - حد بالا\n<b>LOW LIMIT</b> - حد پایین\n<b>MARK POSITION</b> - موقعیت مارک\n<b>WAIT FOR REJECT</b> - فاصله تعداد پد از لحظه ردیابی تا جک ریجکت\n<b>PIECES TO REJECT</b> - تعداد پد جهت ریجکت",
+    "Hossbach": "<b>OFFSET</b> - تنظیم موقعیت فاز هوسباخ به جلو و عقب\n<b>DROPIN</b> - زمان تاخیر عملکرد سنسور در زمان ورود پد به موقعیت سنسور\n<b>PATTERN</b> - مقدار الگو مشخص\n<b>DROPOUT</b> - زمان تاخیر عملکرد سنسور در زمان خروج پد از موقعیت سنسور\n<b>SETPOINT SET IN HOSSBACH</b> - تنظیم مقدار\n<b>REJECT ENABLE</b> - روشن و خاموش کردن ریجکت\n<b>PIECES TO WAIT</b> - فاصله تعداد پد از لحظه ردیابی سنسور تا جک ریجکت\n<b>TOLERANCE</b> - مقدار محدوده مجاز\n<b>PIECES TO REJECT</b> - تعداد پد جهت ریجکت",
+    "Cellulose": "<b>MOTOR SETTINGS</b> - تنظیمات موتور\n<b>REEL SETTINGS</b> - تنظیمات رول پالپ\n<b>ENABLED -DISABLE</b> - فعال و غیر فعال کردن موتورها\n<b>PRODUCT WEIGHT</b> - گزینه تنظیم مقدار پالپ مصرفی در هر پد\n<b>SPECIFIC WEIGHT</b> - گزینه تنظیم گراماژ پالپ\n<b>WIDTH</b> - تنظیم طبق عرض پالپ مصرفی\n<b>BEARINGS TEMPERATURE</b> - دمای بلبرینگ موتورها\n<b>WARNING THRESHOLD</b> - مقدار دمای هشدار\n<b>ALARM THRESHOLD</b> - مقدار دمای (بلبرینگ ها) که باعث توقف خط می شود",
+    "SAP": "<b>POWER</b> - روشن و خاموش کردن تابلو برق پودر جاذب\n<b>ENABLED</b> - فعال یا غیر فعال کردن ریزش پودر جاذب\n<b>REFILL WEIGHT</b> - مقدار پودر جاذب داخل مخزن\n<b>AUTO INSERTION SPEED</b> - سرعت ریزش پودر جاذب\n<b>QUANTITY</b> - مقدار ریزش پودر در هر پد\n<b>ACTUAL FEED RATE</b> - مقدار واقعی ریزش پودر جاذب\n<b>MAX FEED RATE</b> - حداکثر ریزش پودر جاذب در ساعت\n<b>PRESS FOR CUP TEST</b> - تنظیمات کاپ تست پودر جاذب\n<b>REF SPEED</b> - سرعت انجام کاپ تست\n<b>CUP TEST DURATION</b> - مدت زمان انجام کاپ تست\n<b>FLOW CONTROL SENSORS</b> - روشن و خاموش کردن سنسورهای کنترلی پودر جاذب",
+    "Melter": "<b>PHASE</b> - تنظیمات موقعیت چسب ها روی پوشک\n<b>SET-UP</b> - تنظیمات پمپ\n<b>PUMP (Application)</b> - شماره پمپ و نام هد چسب حرارتی\n<b>STAND BY</b> - فعال یا غیرفعال سازی حالت آماده به کار\n<b>PURGE OFF</b> - تست کیفیت پاشش\n<b>COLLECTOR STANDBY ON</b> - حالت آماده کار در وضعیت فعال یا غیر فعال\n<b>STANDBY ON TIME</b> - زمان سپری شده جهت فعال شدن حالت آماده به کار\n<b>STANDBY OFF TIME</b> - زمان سپری شده جهت غیرفعال شدن حالت آماده به کار\n<b>ON</b> - فعال کردن چسب زن",
+    "Valves": "<b>ON/OFF</b> - فعال یا غیر فعال سازی جک ها\n<b>AUTO</b> - فعال سازی حالت دستی و اتوماتیک",
+    "Module Phasing": "<b>FORWARD/BACKWARD</b> - جابجا کننده به جلو و عقب",
+    "Asynchronous Motors": "<b>MODE (AUTO/MANUAL)</b> - تنظیمات موتورهای القایی و مکنده\n<b>STATUS (MOTOR IN RUN/STOP)</b> - وضعیت موتورها\n<b>FAULT (TM/DRIVE OK)</b> - خطای موتور\n<b>SET-POINT (Hz)</b> - تنظیم دور موتورهای مکنده\n<b>ACTUAL (RPM)</b> - مقدار دور واقعی موتور\n<b>SPEED REDUCTION</b> - کاهش سرعت کلیه موتورها",
+    "Mechanical Configuration": "<b>روش انجام هومینگ:</b>\n1- ابتدا می بایست درب دستگاه بسته و (safety) فعال باشد.\n2- هومینگ به دو روش انجام می شود: داینامیک (با سنسور) و استاتیک (درجا، مکانیکی).\n3- با توجه به اینکه بلوک مورد نظر دارای سنسور موقعیت می باشد یا خیر، گزینه استاتیک یا داینامیک زده شود.\n4- جهت تایید کلید <b>EXECUTE</b> را فشار دهید.\n5- اگر هوم به صورت استاتیک انجام شود در لحظه <b>ACTUAL POSITION</b> صفر خواهد شد. اگر به صورت داینامیک هوم شود باید دکمه <b>START</b> را فشرده تا موقعیت به حالت صفر برسد و عملیات هوم پایان یابد.\n<b>نکته:</b> در هومینگ تیغه ها مراحل به روش قبل انجام خواهد شد. مقادیر نمایش داده شده <b>HOLES NUMBER PER PRODUCT</b> این مقدار با توجه به طول مواد مصرفی وارد می شود. باید این عدد را تغییر داده تا به طول مورد نظر برسیم. <b>OFFSET BETWEEN HOLES</b> در مواقعی که تیغه برش روی سوراخ های Anvil برخورد کند با وارد کردن این مقدار موقعیت نسبت به نقطه صفر تغییر و در نتیجه موقعیت برش جابجا می شود.",
+    "Working Data": "<b>MACHINE LIFE COUNTER</b> - کانتر اصلی\n<b>PADS</b> - پد تولیدی\n<b>TOTAL REJECT</b> - ریجکت واقعی\n<b>GOOD</b> - پد تولیدی سالم\n<b>STACKER NOT READY</b> - ریجکت در استاکر\n<b>MINIMUM SPEED</b> - تعداد ریجکت در سرعت پایین\n<b>INITIAL PIECES</b> - تعداد ریجکت در استارت های اولیه\n<b>MACHINE RUNNING</b> - مدت زمان کارکرد دستگاه\n<b>MACHINE STOP</b> - مدت زمان توقف دستگاه\n<b>TOTAL REJECT CAMERA</b> - مجموع ریجکت دوربین ها\n<b>TOTAL JOINTS</b> - مجموع ریجکت اسپلایس\n<b>MATERIAL REJECT</b> - مجموع ریجکت سنسور مارک و هوسباخ\n<b>MANUAL REJECT</b> - پدهایی که اپراتور دستی ریجکت کرده",
+    "NW TOPSHEET SETUP": "<b>SPINDLE (75 MM) TO SENSOR DISTANCE</b> - فاصله سنسور قطر خوان تا رول گردان (چپ و راست)\n<b>MINIMUM DIAMETER ALARM IN MANUAL</b> - فاصله سنسور تا رولگردان و حداقل مقدار قطر برای آلارم\n<b>SPLICE DIAMETER</b> - انتهای رول\n<b>START OPENING DIAMETER</b> - شروع باز شدن بافر\n<b>PIECES TO WAIT BEFORE REJECT: FIRST</b> - موقعیت مواد از لحظه ردیابی سنسور\n<b>PIECES TO REJECT</b> - تعداد ریجکت\n<b>DANCER ACTUAL POSITION</b> - موقعیت دنسر و بافر و تنظیمات هومینگ بافر و ریست آن\n<b>BUFFER ACTUAL POSITION</b> - جهت چرخش رولها و نمایش مقدار مواد"
 };/* ============================================================ */
 /* ====== صفحاتی که کلیدهای ماژول در آن‌ها نمایش داده می‌شود ==== */
 /* ============================================================ */
@@ -747,6 +762,9 @@ const MODULE_PAGES = [
     "M20-A-BT21","M20-B-BT22","M21-A-BT23","M21-B-BT24","M22-A-BT25","M22-B-BT26",
     "M23-C-BT27","M23-A-BT28","M23-B-BT29","M24-BT32","M25-BT34","M26-A-BT35","M26-B-BT36"
 ];
+
+/* ✅ لیست صفحاتی که دکمه ضربدر نباید داشته باشن */
+const NO_CLOSE_BUTTON_PAGES = ["BC03","BC07","BC09","BC13","BC15","BC19"];
 
 /* موتورهای هر ماژول (کلیدهایی که داخل همه‌ی صفحه‌های همان ماژول کار می‌کنند) */
 const MODULE_MOTORS = {
@@ -831,7 +849,8 @@ const hmiPanel = document.querySelector(".panel");
 const DEBUG_LABEL_CLASSES = ["alarm-list-sub","alarm-list-history","alarm-list-warning","warning-history",
     "m18","m19","m01","m04","m05","m06","m07","m08","m09","m10","m11","m12","m13","m14",
     "m30","m20a","m20b","m21a","m21b","m22a","m22b","m23a","m23b","m23c","m24","m25","m26a","m26b",
-    "m20a-setup","m20b-setup","m21a-setup","m21b-setup","m22a-setup","m22b-setup","m23a-setup","m23b-setup","m23c-setup","m24-setup","m25-setup","m26a-setup","m26b-setup"];
+    "m20a-setup","m20b-setup","m21a-setup","m21b-setup","m22a-setup","m22b-setup","m23a-setup","m23b-setup","m23c-setup","m24-setup","m25-setup","m26a-setup","m26b-setup",
+    "close-popup-button"];
 
 function mk(cls, fn, data) {
     const b = document.createElement("button");
@@ -1049,6 +1068,12 @@ mk("advanced-diagnostic", () => openAdvancedDiagnostic());
     mk("mechanical-button " + c, () => openNormalPage(N, "images/MECHANICAL CONFIGURATION/" + N + ".png"));
 });
 
+/* 🌟 دکمه ضربدر (Close) برای بستن پاپ‌آپ‌های هومینگ — با محافظت برای صفحات استثنا */
+mk("close-popup-button", () => {
+    if (NO_CLOSE_BUTTON_PAGES.some(p => currentPage.key.startsWith(p))) return;
+    goBack();
+});
+
 /* ============================================================ */
 /* ============ لیست گروه‌ها برای show/hide =================== */
 /* ============================================================ */
@@ -1100,11 +1125,13 @@ function hideSpecialButtons() {
         ...axesButtons, ...workingButtons, ...profinetButtons, ...activeAlarmButtons, ...alarmListButtons, ...alarmHistoryButtons, ...mechanicalButtons, ...visionButtons,
         ...pressureSensorButtons, ...vacuumSensorButtons, ...glueSensorButtons, ...printRegistrationButtons,
         ...temperatureButtons, ...ifmButtons, ...asynchronousMotorsButtons,
+        ...moduleButtons,
         ".unwinder-position-button", ".motor-button", ...unwinderBufferButtons, ...modulePhasingButtons, ...melterButtons,
         ...melterPumpButtons, ...melterPage2Buttons, ...melterPage3Buttons, ...melterPage4Buttons,
         ...melterPage5Buttons, ...melterPage6Buttons, ...melterImageButtons, ...melter5PhaseExtraButtons,
         ...melter5Page2Buttons, ...valvesButtons, ...valvesPage2Buttons, ...microReedButtons,
-        ...microReedPage2Buttons, ...proportionalValveButtons, ...proportionalValvePage2Buttons
+        ...microReedPage2Buttons, ...proportionalValveButtons, ...proportionalValvePage2Buttons,
+        ".close-popup-button"
     ]);
 }
 function hideMainMenu() { hideSelectors(allMainButtons); }
@@ -1136,7 +1163,16 @@ function restorePageState(state) {
     hideAllSpecial();
     if (state === "layout") { showMainMenu(); showLayoutButtons(); }
     else if (state === "normal") {
-        if (MODULE_PAGES.includes(currentPage.key)) { showSelectors(moduleButtons); showSelectors(motorSelectorsForPage(currentPage.key)); }
+        if (MODULE_PAGES.includes(currentPage.key)) { 
+            showSelectors(moduleButtons); 
+            showSelectors(motorSelectorsForPage(currentPage.key)); 
+        } else if (/^B[PC]\d\d(?:-.+)?$/.test(currentPage.key)) {
+            // ✅ ضربدر فقط برای صفحاتی که توی لیست استثنا نیستن
+            const hideClose = NO_CLOSE_BUTTON_PAGES.some(p => currentPage.key.startsWith(p));
+            if (!hideClose) {
+                showSelectors([".close-popup-button"]);
+            }
+        }
     }
     else if (state === "axes") { showButtons([".page-button"]); }
     else if (state === "vision-system") showSelectors(visionButtons);
@@ -1181,8 +1217,11 @@ function restorePageState(state) {
     else if (state === "active-alarm") showSelectors(activeAlarmButtons);
     else if (state === "alarm-list") showSelectors(alarmListButtons);
     else if (state === "alarm-history") showSelectors(alarmHistoryButtons);
-    else if (state === "profinet") { showMainMenu(); showButtons([".advanced-diagnostic"]); }
-    else if (state === "mechanical") { showMainMenu(); showSelectors(mechanicalButtons); }
+    else if (state === "profinet") { showButtons([".advanced-diagnostic"]); }
+    else if (state === "mechanical") { 
+        /* ✅ فقط دکمه‌های هومینگ نمایش داده می‌شوند — هیچ دکمه‌ای از Layout بالای صفحه نمی‌آید */
+        showSelectors(mechanicalButtons); 
+    }
 }
 
 function goBack() {
@@ -1270,12 +1309,11 @@ function getTooltipDescription(button) {
     const last = classes[classes.length - 1] || "";
     return [last.replace(/-/g, " ").toUpperCase() || "HMI BUTTON", ""];
 }
+document.body.appendChild(hmiTooltip);
 function positionHmiTooltip(event) {
-    const r = hmiPanel.getBoundingClientRect();
-    const k = (r.width / hmiPanel.offsetWidth) || 1;
-    const mx = (event.clientX - r.left) / k, my = (event.clientY - r.top) / k;
+    const mx = event.clientX, my = event.clientY;
     const tw = hmiTooltip.offsetWidth, th = hmiTooltip.offsetHeight;
-    const pw = hmiPanel.clientWidth, ph = hmiPanel.clientHeight;
+    const pw = window.innerWidth, ph = window.innerHeight;
     let left = mx + 16, top = my + 16;
     if (left + tw > pw - 5) left = mx - tw - 16;
     if (top + th > ph - 5) top = my - th - 16;
@@ -1283,48 +1321,47 @@ function positionHmiTooltip(event) {
     hmiTooltip.style.top = Math.max(5, Math.min(top, ph - th - 5)) + "px";
 }
 
+let touchHideTimer = null;
 function showHmiTooltip(event) {
+    if (event.pointerType === "touch" || event.pointerType === "pen") {
+        clearTimeout(touchHideTimer);
+        touchHideTimer = setTimeout(hideHmiTooltip, 5000);
+    }
     const button = event.target.closest("button");
     if (button && hmiPanel.contains(button)) {
-        // وقتی روی دکمه هستیم، توضیحات کوتاه دکمه (Layout) نمایش داده میشه
         const d = getTooltipDescription(button);
         hmiTooltipTitle.textContent = d[0];
         hmiTooltipText.textContent = d[1];
         hmiTooltip.classList.remove("wide");
     } else {
-        // وقتی داخل صفحه هستیم (نه روی دکمه)
         hmiTooltipTitle.textContent = currentPage.key || "HMI";
 
         let fullHelp = "";
         let isMotorPage = false;
         let isShortHelp = false;
 
-        // 1. بررسی اینکه آیا صفحه فعلی یکی از صفحات موتورهاست؟ (مثل M18-BT41)
         const motorMatch = currentPage.key.match(/^M\d+(?:-[A-C])?-[A-Z]{2}\d+$/);
         if (motorMatch) {
             fullHelp = PAGE_FULL_HELP["Axes Configuration"];
             isMotorPage = true;
         } else if (/^B[PC]\d\d(?:-.+)?$/.test(currentPage.key) && TOOLTIP_TEXTS[currentPage.key.toLowerCase()]) {
-            // صفحات داخلی هومینگ: اسم موتور + معنی + راهنمای هومینگ
             const t = TOOLTIP_TEXTS[currentPage.key.toLowerCase()];
-            fullHelp = t[0] + " = " + t[1];
+            fullHelp = t[0] + " - " + t[1];
             isShortHelp = true;
         } else {
-            // 2. اگر صفحه موتور نبود، بقیه صفحات رو چک کن
             for (const k in PAGE_FULL_HELP) {
                 if (HELP_KEY_PATTERN[k] ? HELP_KEY_PATTERN[k].test(currentPage.key) : currentPage.key.toUpperCase().startsWith(k.toUpperCase())) {
                     fullHelp = PAGE_FULL_HELP[k];
                     if (k === "Axes") {
                         const am = currentPage.key.match(/^Axes Page (\d+)$/i);
-                        if ((am ? +am[1] : 1) > 7) fullHelp = fullHelp.split("\n").filter(l => !/^ENABLE-DISABLE/.test(l)).join("\n");
+                        if ((am ? +am[1] : 1) > 7) fullHelp = fullHelp.split("\n").filter(l => !/^<b>ENABLE-DISABLE<\/b>/.test(l)).join("\n");
                     }
                     break;
                 }
             }
         }
 
-        // اگر توضیح کامل داشت، کاملش رو نشون میده. اگه نه، توضیح کوتاه قبلی
-        hmiTooltipText.textContent = fullHelp || pageDescription(currentPage.key);
+        hmiTooltipText.innerHTML = fullHelp || pageDescription(currentPage.key);
         hmiTooltip.classList.toggle("wide", (!!fullHelp && !isShortHelp) || isMotorPage);
     }
     hmiTooltip.style.display = "block";
@@ -1334,7 +1371,21 @@ function showHmiTooltip(event) {
 function hideHmiTooltip() { hmiTooltip.style.display = "none"; }
 
 hmiPanel.addEventListener("pointermove", showHmiTooltip);
-hmiPanel.addEventListener("pointerleave", hideHmiTooltip);
+hmiPanel.addEventListener("pointerdown", showHmiTooltip);
+hmiPanel.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") hideHmiTooltip(); });
+document.addEventListener("pointerdown", e => { if (!hmiPanel.contains(e.target)) hideHmiTooltip(); });
+
+/* تطبیق اندازه پنل با عرض صفحه (گوشی) */
+function fitPanel() {
+    const vw = Math.min(window.innerWidth, window.screen.width || window.innerWidth);
+    const s = Math.min(1, vw / 1000);
+    hmiPanel.style.transform = s < 1 ? "scale(" + s + ")" : "";
+    document.getElementById("fitWrap").style.height = s < 1 ? Math.ceil(panelImage.offsetHeight * s) + "px" : "";
+}
+window.addEventListener("resize", fitPanel);
+window.addEventListener("orientationchange", fitPanel);
+panelImage.addEventListener("load", fitPanel);
+fitPanel();
 window.addEventListener("resize", hideHmiTooltip);
 panelImage.addEventListener("load", hideHmiTooltip);
 
@@ -1353,25 +1404,6 @@ if (SHOW_BUTTONS) {
 hideSpecialButtons();
 showMainMenu();
 showLayoutButtons();
-/* ===== جا دادن پنل در صفحه (گوشی/تبلت) ===== */
-const fitBox = document.getElementById("fit");
-function fitPanel() {
-    const w = hmiPanel.offsetWidth || 1000;
-    const h = panelImage.offsetHeight || Math.round(w * 667 / 1067);
-    const s = Math.min(1, window.innerWidth / w, window.innerHeight / h);
-    hmiPanel.style.transform = "scale(" + s + ")";
-    fitBox.style.width = Math.round(w * s) + "px";
-    fitBox.style.height = Math.round(h * s) + "px";
-}
-window.addEventListener("resize", fitPanel);
-window.addEventListener("orientationchange", fitPanel);
-panelImage.addEventListener("load", fitPanel);
-fitPanel();
-
-/* ===== نصب به‌صورت اپ و کار کردن بدون اینترنت ===== */
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
-}
 </script>
 </body>
 </html>
