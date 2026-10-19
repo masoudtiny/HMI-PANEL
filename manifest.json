@@ -1,7 +1,6 @@
 {
   "name": "HMI Panel",
   "short_name": "HMI Panel",
-  "description": "Cellulose Converting Solutions HMI panel",
   "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",

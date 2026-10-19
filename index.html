@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#222222">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>HMI Panel</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
@@ -1401,6 +1406,10 @@ if (SHOW_BUTTONS) {
         const k = 1000 / r.width;
         coordBox.textContent = "x: " + Math.round((e.clientX - r.left) * k) + "   y: " + Math.round((e.clientY - r.top) * k);
     });
+}
+
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
 }
 
 hideSpecialButtons();
