@@ -13,7 +13,7 @@
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 body{margin:0;padding:0;background:#222;overflow-x:hidden;font-family:Vazirmatn,Tahoma,Arial,sans-serif}
-.panel{position:relative;display:inline-block;transform-origin:0 0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.panel{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;position:relative;display:inline-block;transform-origin:0 0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .panel img{width:1000px;display:block}
 button{position:absolute;padding:0;cursor:pointer;z-index:50;font-family:inherit;box-sizing:border-box;
   background:transparent!important;border:none!important;color:transparent!important;font-size:0!important;box-shadow:none!important;outline:none!important}
@@ -1384,12 +1384,12 @@ function positionHmiTooltip(event) {
     hmiTooltip.style.top = Math.max(5, Math.min(top, ph - th - 5)) + "px";
 }
 
-let touchHideTimer = null;
+let touchHideTimer = null, touchDown = false;
 function showHmiTooltip(event) {
     if (event.pointerType === "touch" || event.pointerType === "pen") {
         clearTimeout(touchHideTimer);
         const onBtn = event.target.closest && event.target.closest("button");
-        touchHideTimer = setTimeout(hideHmiTooltip, onBtn ? 2000 : 2000);
+        touchHideTimer = setTimeout(() => { if (!touchDown) hideHmiTooltip(); }, onBtn ? 2000 : 2000);
     }
     const button = event.target.closest("button");
     if (button && hmiPanel.contains(button)) {
@@ -1443,9 +1443,26 @@ document.addEventListener("pointerdown", e => { if (!hmiPanel.contains(e.target)
 /* زمان ورود خودکار به صفحه بعد از لمس (میلی‌ثانیه): 600 = یک ثانیه */
 const AUTO_ENTER_MS = 600;
 let lastPointerType = "mouse", armedButton = null, armedTimer = null, autoEnterTimer = null;
-hmiPanel.addEventListener("pointerdown", e => { lastPointerType = e.pointerType; }, true);
+/* نگه داشتن انگشت (بیشتر از این مدت) فقط توضیح را نشان می‌دهد و وارد صفحه نمی‌شود (میلی‌ثانیه) */
+const LONG_PRESS_MS = 400;
+let downTime = 0;
+hmiPanel.addEventListener("pointerdown", e => { lastPointerType = e.pointerType; downTime = performance.now(); touchDown = e.pointerType !== "mouse"; }, true);
+function endTouch(e){
+    if (e.pointerType === "mouse" || !touchDown) return;
+    touchDown = false;
+    clearTimeout(touchHideTimer);
+    touchHideTimer = setTimeout(hideHmiTooltip, 3000);   /* توضیح بعد از برداشتن انگشت ۳ ثانیه می‌ماند */
+}
+document.addEventListener("pointerup", endTouch, true);
+document.addEventListener("pointercancel", endTouch, true);
+hmiPanel.addEventListener("contextmenu", e => e.preventDefault());
 hmiPanel.addEventListener("click", e => {
     if (lastPointerType === "mouse") return;
+    if (e.isTrusted && performance.now() - downTime >= LONG_PRESS_MS) {      /* نگه داشتن = فقط توضیح */
+        e.stopImmediatePropagation(); e.preventDefault();
+        armedButton = null; clearTimeout(autoEnterTimer); clearTimeout(armedTimer);
+        return;
+    }
     const btn = e.target.closest("button");
     if (!btn || !hmiPanel.contains(btn) || btn.classList.contains("back-button")) return;
     clearTimeout(autoEnterTimer);
