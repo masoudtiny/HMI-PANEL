@@ -422,6 +422,8 @@ body.locked #fitWrap{display:none}
 #gate input{width:100%;box-sizing:border-box;padding:10px;font-size:18px;text-align:center;border-radius:8px;border:1px solid #65c8e8;background:#11161b;color:#fff;direction:ltr}
 #gate button{margin-top:12px;width:100%;padding:10px;font-size:16px;border:0;border-radius:8px;background:#65c8e8;color:#111;font-weight:700;cursor:pointer}
 #gate .err{color:#ff6b6b;font-size:14px;min-height:20px;margin-top:8px}
+/* ساعت و تاریخ زنده روی کادر بالای تصویر */
+#hmiClock{position:absolute;left:136px;top:3px;width:135px;height:53px;background:#fff;color:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:19px;line-height:1.25;z-index:60;pointer-events:none;direction:ltr;white-space:nowrap}
 </style>
 </head><body class="locked">
 <div id="gate"><form id="gateForm" autocomplete="off"><h2>رمز عبور</h2>
@@ -473,6 +475,7 @@ document.getElementById("gateForm").addEventListener("submit",function(e){
 <div class="panel">
 <img id="panelImage" src="images/Layout.png" alt="HMI Panel">
 <div id="coordBox"></div>
+<div id="hmiClock"><span id="hmiClockDate"></span><span id="hmiClockTime"></span></div>
 <div id="hmiTooltip" class="hmi-tooltip">
 <span id="hmiTooltipTitle" class="hmi-tooltip-title"></span>
 <span id="hmiTooltipText" class="hmi-tooltip-text"></span>
@@ -1489,6 +1492,19 @@ if (SHOW_BUTTONS) {
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
 }
+
+/* ساعت و تاریخ زنده (مثل HMI: M/D/YYYY و h:mm:ss AM/PM) */
+(function(){
+    const d1 = document.getElementById("hmiClockDate"), t1 = document.getElementById("hmiClockTime");
+    function tick(){
+        const n = new Date();
+        d1.textContent = (n.getMonth()+1) + "/" + n.getDate() + "/" + n.getFullYear();
+        let h = n.getHours(); const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+        const mm = String(n.getMinutes()).padStart(2,"0"), ss = String(n.getSeconds()).padStart(2,"0");
+        t1.textContent = h + ":" + mm + ":" + ss + " " + ap;
+    }
+    tick(); setInterval(tick, 1000);
+})();
 
 hideSpecialButtons();
 showMainMenu();
