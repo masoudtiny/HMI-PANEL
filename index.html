@@ -424,6 +424,7 @@ body.locked #fitWrap{display:none}
 #gate .err{color:#ff6b6b;font-size:14px;min-height:20px;margin-top:8px}
 /* ساعت و تاریخ زنده روی کادر بالای تصویر */
 #hmiClock{position:absolute;left:136px;top:3px;width:135px;height:53px;background:#fff;color:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:19px;line-height:1.25;z-index:60;pointer-events:none;direction:ltr;white-space:nowrap}
+.hmi-label{position:absolute;box-sizing:border-box;display:flex;align-items:center;justify-content:center;text-align:center;direction:rtl;overflow:hidden;padding:1px 3px;border-radius:5px;background:rgba(18,24,30,.9);border:1px solid #65c8e8;color:#fff;font-family:Vazirmatn,Tahoma,Arial,sans-serif;font-weight:700;line-height:1.2;z-index:300;pointer-events:none}
 </style>
 </head><body class="locked">
 <div id="gate"><form id="gateForm" autocomplete="off"><h2>رمز عبور</h2>
@@ -1217,6 +1218,7 @@ function navigateTo(key, image, state) {
     if (MODULE_PAGES.includes(key)) hmiPanel.classList.add("page-module");
 
     hideHmiTooltip();
+    if (typeof hideLabels === "function") hideLabels();
     restorePageState(state);
 }
 
@@ -1373,7 +1375,54 @@ function getTooltipDescription(button) {
     return [last.replace(/-/g, " ").toUpperCase() || "HMI BUTTON", ""];
 }
 document.body.appendChild(hmiTooltip);
+/* ===== توضیح روی هر قسمت صفحه (غیر از دکمه‌ها) =====
+   مختصات بر اساس عکس ۱۲۴۷ پیکسلی نوشته شده و خودکار به مقیاس صفحه تبدیل می‌شود.
+   Z(x1, y1, x2, y2, "عنوان", "توضیح") */
+const INFO_SCALE = 1000 / 1247;
+const INFO_ZONES = {};
+function Z(page, x1, y1, x2, y2, t, d){
+    (INFO_ZONES[page.toLowerCase()] = INFO_ZONES[page.toLowerCase()] || []).push(
+        {x1:x1*INFO_SCALE, y1:y1*INFO_SCALE, x2:x2*INFO_SCALE, y2:y2*INFO_SCALE, t, d});
+}
+Z("Layout",   6,   2, 165,  72, "LOGO", "لوگوی شرکت سازنده دستگاه");
+Z("Layout", 168,   2, 340,  72, "DATE / TIME", "تاریخ و ساعت دستگاه");
+Z("Layout", 343,   2, 905,  72, "MACHINE LAYOUT", "عنوان صفحه: نمای کلی خط تولید");
+Z("Layout", 910,   2, 1243, 28, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+Z("Layout", 910,  29, 1243, 50, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+Z("Layout", 910,  51, 1243, 72, "MACHINE SPEED", "سرعت فعلی دستگاه");
+Z("Layout", 290, 150,  410, 225, "M30", "نمای ماژول M30");
+Z("Layout",  10, 265, 1235, 372, "MACHINE LINE", "نمای کلی خط تولید و محل ماژول‌ها (M18 تا M14)");
+[["M20A","NW CUFF","لگکاف",20,408],["M21A","AQL","اکشن",203,408],["M22A","LOWER NW","لاور",383,408],
+ ["M23C","NW FOR TAPE","لمینه چسب بغل",567,408],["M23A/B","TAPE PRE-GLU","چسب بغل داخلی",750,408],
+ ["M24","FRONT EARS","فرونترز",934,408],["M26A","NW BACKSHEET","لمینه فویل",1116,408],
+ ["M20B","NW TOPSHEET","نانواون",20,560],["M21B","UPPER NW","آپر",203,560],["M22B","BACK EARS","بکرز",383,560],
+ ["M23B","HOOK","چسب بغل بیرونی",750,560],["M25","FRONTAL TAPE","عروسکی",934,560],["M26B","POLY BKSHEET","فویل",1116,560]
+].forEach(([m,en,fa,x,y]) => Z("Layout", x, y, x+105, y+80, "UNWINDER " + en + " (" + m + ")", "آنویندر " + fa));
+
+let tooltipAnchor = null;
+function findInfoZone(event){
+    const list = INFO_ZONES[(currentPage.key || "").toLowerCase()];
+    if (!list) return null;
+    const r = hmiPanel.getBoundingClientRect(), k = 1000 / r.width;
+    const x = (event.clientX - r.left) * k, y = (event.clientY - r.top) * k;
+    return list.find(z => x >= z.x1 && x <= z.x2 && y >= z.y1 && y <= z.y2) || null;
+}
+function zoneViewportRect(z){
+    const r = hmiPanel.getBoundingClientRect(), k = r.width / 1000;
+    return {left:r.left+z.x1*k, right:r.left+z.x2*k, top:r.top+z.y1*k, bottom:r.top+z.y2*k};
+}
 function positionHmiTooltip(event) {
+    if (tooltipAnchor) {
+        const a = tooltipAnchor, tw = hmiTooltip.offsetWidth, th = hmiTooltip.offsetHeight;
+        const pw = window.innerWidth, ph = window.innerHeight;
+        let left = (a.left + a.right) / 2 - tw / 2;
+        let top = a.top - th - 6;
+        if (top < 5) top = a.bottom + 6;
+        if (top + th > ph - 5) top = Math.max(5, ph - th - 5);
+        hmiTooltip.style.left = Math.max(5, Math.min(left, pw - tw - 5)) + "px";
+        hmiTooltip.style.top = Math.max(5, top) + "px";
+        return;
+    }
     const mx = event.clientX, my = event.clientY;
     const tw = hmiTooltip.offsetWidth, th = hmiTooltip.offsetHeight;
     const pw = window.innerWidth, ph = window.innerHeight;
@@ -1385,7 +1434,45 @@ function positionHmiTooltip(event) {
 }
 
 let touchHideTimer = null, touchDown = false;
+/* ===== نمایش معنی همهٔ قسمت‌ها با یک لمس (فقط صفحه‌هایی که INFO_ZONES دارند، مثل Layout) ===== */
+let labelsTimer = null;
+function hideLabels(){
+    clearTimeout(labelsTimer);
+    hmiPanel.querySelectorAll(".hmi-label").forEach(e => e.remove());
+}
+function addLabel(x, y, w, h, text){
+    if (!text || w < 6 || h < 6) return;
+    const d = document.createElement("div");
+    d.className = "hmi-label";
+    d.style.left = x + "px"; d.style.top = y + "px"; d.style.width = w + "px"; d.style.height = h + "px";
+    d.textContent = text;
+    hmiPanel.appendChild(d);
+    let fs = 13;
+    d.style.fontSize = fs + "px";
+    while (fs > 7 && (d.scrollHeight > d.clientHeight + 1 || d.scrollWidth > d.clientWidth + 1)) { fs--; d.style.fontSize = fs + "px"; }
+}
+function showAllLabels(){
+    hideLabels();
+    hideHmiTooltip();
+    hmiPanel.querySelectorAll("button").forEach(b => {
+        if (getComputedStyle(b).display === "none") return;
+        const d = getTooltipDescription(b);
+        if (d[1]) addLabel(b.offsetLeft, b.offsetTop, b.offsetWidth, b.offsetHeight, d[1]);
+    });
+    (INFO_ZONES[(currentPage.key || "").toLowerCase()] || []).forEach(z => addLabel(z.x1, z.y1, z.x2 - z.x1, z.y2 - z.y1, z.d));
+    labelsTimer = setTimeout(hideLabels, 6000);
+}
+function pageHasLabels(){ return !!INFO_ZONES[(currentPage.key || "").toLowerCase()]; }
+hmiPanel.addEventListener("pointerup", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (!pageHasLabels()) return;
+    if (e.target.closest("button")) return;
+    if (hmiPanel.querySelector(".hmi-label")) hideLabels(); else showAllLabels();
+});
+
 function showHmiTooltip(event) {
+    let zone = null;
+    if ((event.pointerType === "touch" || event.pointerType === "pen") && pageHasLabels() && !event.target.closest("button")) { hideHmiTooltip(); return; }
     if (event.pointerType === "touch" || event.pointerType === "pen") {
         clearTimeout(touchHideTimer);
         const onBtn = event.target.closest && event.target.closest("button");
@@ -1397,7 +1484,14 @@ function showHmiTooltip(event) {
         hmiTooltipTitle.textContent = d[0];
         hmiTooltipText.textContent = d[1];
         hmiTooltip.classList.remove("wide");
+        tooltipAnchor = button.getBoundingClientRect();
+    } else if ((zone = findInfoZone(event))) {
+        hmiTooltipTitle.textContent = zone.t;
+        hmiTooltipText.textContent = zone.d;
+        hmiTooltip.classList.remove("wide");
+        tooltipAnchor = zoneViewportRect(zone);
     } else {
+        tooltipAnchor = null;
         hmiTooltipTitle.textContent = currentPage.key || "HMI";
 
         let fullHelp = "";
