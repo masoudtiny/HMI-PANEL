@@ -717,7 +717,7 @@ const PAGE_DESCRIPTIONS = {
     "M08-M08.02":"فایف دوم بکرز","M01-CAM 02":"دوربین دو","M19-BP05":"بلوک دوخت ساید",
     "M01-AS01":"برس درام فرمینگ پالپ","M05-BP06":"بلوک برش پالپ (آنویل)",
     "M07-BV16":"کانوایر سوم لگکاف نانواون","M08-BP07":"ترنر یک",
-    "M08-BV17":"کانوایر چهارم زیر بلوک تیغه بکرز","M04-CAM 03":"دوربین سوم",
+    "M08-BV17":"کانوایر چهارم زیر بلوک تیغه بکرز","M04-CAM 03":"دوربین سوم (چسب آپر)",
     "M08-BP08":"ترنر دو","M08-BV18":"نیپ رول سوم لگکاف نانواون",
     "M08-BV19":"کانوایر اتصال بکرز و فرونترز","M10-BV20":"کانوایر زیر درام اتصال",
     "M11-BV21":"کانوایر خط اصلی","M10-BP09":"برش طولی فرونترز",
@@ -727,7 +727,7 @@ const PAGE_DESCRIPTIONS = {
     "M22-BU11":"رول گردان بکرز","M22-BU12":"رول گردان بکرز","M22-BL06":"بافر بکرز",
     "M22-BT25":"نیپ رول اول LOWER (آنویندر)","M22-BT26":"نیپ رول اول بکرز (آنویندر)",
     "M09-M09.01":"فایف بیرونی فرونترز","M08-BC07":"ریپیچ دو (1) بکرز",
-    "M08-BC08":"ریپیچ دو (2) فرونترز","M06-CAM 05":"دوربین پنجم",
+    "M08-BC08":"ریپیچ دو (2) فرونترز","M06-CAM 05":"دوربین پنجم (چسب بغل)",
     "M04-BP11":"بلوک دوخت کانال (سیلینگ)","M12-BV25":"کانوایر تاکن اول پوشک",
     "M12-BV26":"درام قبل از تاکن دوم پوشک","M12-BV27":"کانوایر تاکن دوم پوشک",
     "M05-BP12":"بلوک پرس فاز","M13-BV29":"کانوایر دوقلو",
@@ -1812,7 +1812,245 @@ Object.keys(AXES_ROWS).forEach(n => {
         [[408,"BC07","موقعیت واقعی BC07 (درجه)"],[443,"BC08","موقعیت واقعی BC08 (درجه)"]]);
 })();
 
-let tooltipAnchor = null;
+/* ===== صفحه‌های Vision System / Rejects / Refrigerator / Recipe / Temperature Control / Resistances Check / Lubrication =====
+   مختصات بر اساس عکس ۱۰۶۷×۶۶۷ پیکسلی (فقط RESISTANCES PAGE 2: عکس ۹۳۶×۵۸۷).
+   حالت آخر هر کادر: بدون مقدار = هم هاور هم «نمایش همه»؛ "h" = فقط هاور (برای ردیف‌های تکراری). */
+(function(){
+    const SC936 = 1000 / 936;
+    const HDR_EN = {vision:"VISION SYSTEM", rejects:"REJECTS", fridge:"REFRIGERATOR", recipe:"RECIPE", temp:"TEMPERATURE CONTROL",
+        res:"THERMOREGULATORS RESISTANCE CHECK", lub:"LUBRICATORS"};
+    const HDR_FA = {vision:"دوربین ها", rejects:"ریجکت", fridge:"یخچال", recipe:"تغییر سایز (RECIPE)", temp:"دمای دوخت ها",
+        res:"بررسی مقاومت المنت های دوخت (ترموریگولاتورها)", lub:"روغن زن ها"};
+    /* اسم قسمت: «نمایش همه» = انگلیسی چپ - فارسی راست، هاور = فقط توضیح فارسی */
+    const nm = (x1, y1, x2, y2, en, fa) => [[x1, y1, x2, y2, en, en + " - " + fa, "a"], [x1, y1, x2, y2, en, fa, "h"]];
+    const add = (page, sc, list) => list.forEach(([x1, y1, x2, y2, t, d, m]) => ZS(page, sc, x1, y1, x2, y2, t, d, m));
+    const header = k => [
+        [5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه"],
+        [145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه"],
+        [293, 3, 775, 65, HDR_EN[k], HDR_FA[k]],
+        [778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده"],
+        [778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه"],
+        [778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه"]];
+
+    /* ---------- VISION SYSTEM ---------- */
+    const CAMS = {1:["CAMERA 01","M19","دوربین یک (چسب کش ها و ساید)"], 2:["CAMERA 02","M01","دوربین دو (لایه جذب)"],
+        3:["CAMERA 03","M04","دوربین سوم (چسب آپر)"], 4:["CAMERA 04","M05","دوربین چهار (پالپ)"], 5:["CAMERA 05","M06","دوربین پنجم (چسب بغل)"],
+        6:["CAMERA 06","M10","دوربین شش (بکرز و فرونترز)"], 7:["CAMERA 07","M04","دوربین هفت (چسب LOWER)"],
+        8:["CAMERA 08","M10","دوربین هشت (چسب کش دورپا)"], 9:["CAMERA 09","M11","دوربین نه (دوربین کلی)"],
+        11:["CAMERA 11","M14","دوربین یازده (دوربین نهایی)"]};
+    function vision(rows){            /* rows: [ردیف روی صفحه (۰ تا ۵), شماره دوربین] */
+        const z = header("vision");
+        rows.forEach(([ri, cam], n) => {
+            const dy = 86.4 * ri, m = n ? "h" : undefined, [en, mod, fa] = CAMS[cam];
+            const r = (a, b, c, d) => [a, Math.round(b + dy), c, Math.round(d + dy)];
+            z.push(...nm(...r(17, 80, 252, 108), en + " (" + mod + ")", fa));
+            z.push([...r(17, 112, 122, 150), "CAMERA ON / OFF", "فعال و غیر فعال کردن دوربین", m]);
+            z.push([...r(140, 119, 233, 148), "TRIGGER", "ارسال دستی فرمان عکس برداری به دوربین", m]);
+            z.push([...r(258, 83, 404, 107), "CMD JOB", "عدد سایز (سایز فرمان داده شده به دوربین)", m]);
+            z.push([...r(258, 119, 404, 148), "ACTUAL JOB", "عدد سایز واقعی که دوربین روی آن کار می کند", m]);
+            z.push([...r(426, 83, 602, 107), "POSITION", "تنظیم موقعیت فاز دوربین (میلی متر)", m]);
+            z.push([...r(628, 83, 784, 107), "DROP IN", "زمان تاخیر عملکرد دوربین در زمان ورود پد به موقعیت دوربین (میلی ثانیه)", m]);
+            z.push([...r(628, 119, 784, 148), "DROP OUT", "زمان تاخیر عملکرد دوربین در زمان خروج پد از موقعیت دوربین (میلی ثانیه)", m]);
+            z.push([...r(801, 83, 986, 107), "WAIT FOR REJECT", "فاصله تعداد پد از لحظه ردیابی تا جک ریجکت", m]);
+            z.push([...r(801, 119, 986, 148), "PIECES TO REJECT", "تعداد پد جهت ریجکت", m]);
+        });
+        return z;
+    }
+    add("Vision System", AX, vision([[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]]));
+    add("Vision System PAGE 1", AX, vision([[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]]));
+    add("Vision System PAGE 2", AX, vision([[0,7],[1,8],[2,9],[4,11]]));
+
+    /* ---------- REJECTS ---------- */
+    add("REJECTS", AX, [...header("rejects"),
+        [20, 80, 138, 130, "REJECT CARRIAGE", "جک ریجکت (کالسکه ریجکت)"],
+        [26, 133, 133, 172, "ONESHOT MODE", "حالت OneShot جک ریجکت"],
+        [300, 85, 770, 108, "REJECTION CAUSES", "علت های ریجکت و توقف دستگاه"],
+        [198, 132, 862, 172, "NUMBER OF PIECES TO REJECT AT MACHINE START", "تعداد پوشک ریجکت شده در راه اندازی تا ورود به استکر"],
+        [198, 179, 862, 218, "REJECT AT MINIMUM MACHINE SPEED", "حداقل سرعت برای رد شدن پوشک به استکر"],
+        [192, 228, 488, 288, "SPEED REDUCTION FOR STACKER NOT READY", "پایین آمدن سرعت در صورت آماده نبودن استکر (فعال / غیر فعال)"],
+        [200, 290, 332, 328, "BAGGER A", "پایین آمدن سرعت در صورت آماده نبودن بسته بندی A (فعال / غیر فعال)"],
+        [353, 290, 488, 328, "BAGGER B", "پایین آمدن سرعت در صورت آماده نبودن بسته بندی B (فعال / غیر فعال)"],
+        [495, 234, 660, 271, "WAIT", "مدت زمان انتظار (ثانیه) قبل از کاهش سرعت"],
+        [665, 234, 860, 271, "RESTART", "مدت زمان (ثانیه) برای بازگشت به سرعت قبلی"],
+        [491, 280, 860, 319, "REDUCTION SPEED", "سرعت کاهش یافته دستگاه (ppm) در زمان آماده نبودن استکر / بسته بندی"],
+        [192, 337, 488, 407, "MACHINE STOP FOR MAX NUM REJECT CAMERAS", "توقف دستگاه در صورت رسیدن ریجکت دوربین ها به حد تعیین شده (فعال / غیر فعال)"],
+        [515, 343, 862, 400, "MAX REJECT (CAMERAS)", "حد تعیین شده ریجکت دوربین ها جهت توقف دستگاه"],
+        [192, 418, 488, 488, "MACHINE STOP FOR MAX NUM REJECT", "توقف دستگاه در صورت رسیدن ریجکت به حد تعیین شده (فعال / غیر فعال)"],
+        [515, 424, 862, 482, "MAX REJECT", "حد تعیین شده ریجکت جهت توقف دستگاه"],
+        [198, 512, 522, 550, "STACKER STATUS", "فعال یا غیر فعال بودن (آماده بودن) استکر نمایش داده می شود"],
+        [538, 512, 862, 550, "PACKAGING STATUS", "فعال یا غیر فعال بودن (آماده بودن) بسته بندی را نمایش می دهد"]]);
+
+    /* ---------- REFRIGERATOR ---------- */
+    (function(){
+        const z = [...header("fridge"),
+            [205, 336, 332, 353, "REFRIGERATOR 2", "یخچال شماره 2"],
+            [35, 352, 205, 396, "POWER", "روشن و خاموش کردن یخچال"],
+            [360, 352, 463, 396, "ENABLED", "فعال یا غیر فعال کردن یخچال"],
+            [503, 370, 603, 414, "ACTUAL VALUE", "نمایش دمای واقعی"],
+            [605, 370, 706, 414, "SET POINT AT RUN", "تنظیم دما در زمان کارکرد دستگاه"],
+            [708, 370, 808, 414, "SET POINT AT STOP", "تنظیم دما در زمان توقف دستگاه"],
+            [810, 370, 911, 414, "TOLERANCE", "قدرت تحمل دما"],
+            [913, 370, 982, 414, "OUTPUT VALVE", "خروجی (فرمان) شیر خنک کننده (سبز: فعال)"],
+            [984, 370, 1054, 414, "VALVE STATUS", "وضعیت شیر (سبز: فعال)"]];
+        [["M18. 1st Folding NW Cuffs", "M18 - فولدینگ اول لگکاف نانواون"],
+         ["M19. 2nd Folding NW Cuffs", "M19 - فولدینگ دوم لگکاف نانواون"],
+         ["M19. BV39 Roll NW Cuffs", "M19 - BV39 غلطک خنک کننده لگکاف نانواون"]].forEach(([en, fa], k) => {
+            const t = 421 + 46 * k;
+            z.push([35, t, 136, t + 42, "ENABLED / DISABLED", "فعال یا غیر فعال کردن این قسمت", k ? "h" : undefined],
+                ...nm(152, t, 500, t + 42, en, fa),
+                [503, t, 603, t + 42, "ACTUAL VALUE", "نمایش دمای واقعی", "h"],
+                [605, t, 706, t + 42, "SET POINT AT RUN", "تنظیم دما در زمان کارکرد دستگاه", "h"],
+                [708, t, 808, t + 42, "SET POINT AT STOP", "تنظیم دما در زمان توقف دستگاه", "h"],
+                [810, t, 911, t + 42, "TOLERANCE", "قدرت تحمل دما", "h"],
+                [913, t, 982, t + 42, "OUTPUT VALVE", "خروجی (فرمان) شیر خنک کننده (سبز: فعال)", "h"],
+                [984, t, 1054, t + 42, "VALVE STATUS", "وضعیت شیر (سبز: فعال)", "h"]);
+        });
+        add("REFRIGERATOR", AX, z);
+    })();
+
+    /* ---------- RECIPE ---------- */
+    (function(){
+        const z = header("recipe");
+        z[2] = [293, 3, 775, 65, "RECIPE", "RECIPE - تغییر سایز", "a"];      /* نمایش همه: انگلیسی چپ - فارسی راست */
+        z.push([293, 3, 775, 65, "RECIPE", "تغییر سایز\n\n" + PAGE_FULL_HELP["Recipe"], "h"]);   /* هاور / لمس: عنوان + توضیح کامل صفحه */
+        z.push(
+            [5, 68, 385, 90, "(1) SAVE ACTUAL RECIPE BEFORE CHANGE FORMAT", "مرحله 1: قبل از تغییر سایز، داده های سایز فعلی را ذخیره کنید"],
+            [410, 78, 610, 112, "A) SELECT RECIPE N°", "انتخاب شماره ردیف سایز جهت ذخیره"],
+            [18, 118, 527, 164, "DATA RECORD NAME", "لیست کشویی نام سایزهای ذخیره شده"],
+            [533, 118, 604, 164, "No.", "شماره ردیف سایز"],
+            [18, 176, 604, 442, "ENTRY NAME / VALUE", "جدول داده های سایز (نام پارامتر و مقدار آن)"],
+            [18, 446, 56, 474, "C) SAVE DATA ON ACTUAL RECIPE", "ذخیره داده های پنل روی سایز واقعی"],
+            [565, 446, 604, 474, "B) UPLOAD DATA FROM PLC", "بارگذاری داده ها از PLC"],
+            [8, 514, 130, 550, "C) SAVE DATA ON ACTUAL RECIPE", "ذخیره داده های پنل روی سایز واقعی"],
+            [490, 514, 604, 550, "B) UPLOAD DATA FROM PLC", "بارگذاری داده ها از PLC"],
+            [172, 548, 460, 574, "ACTUAL RECIPE", "نام سایز واقعی (می بایست همانند سایز انتخاب شده باشد)"],
+            [630, 68, 1062, 90, "LOAD NEW RECIPE", "بارگذاری سایز جدید"],
+            [632, 112, 1058, 176, "(2) SELECT RECIPE TO LOAD", "مرحله 2: از لیست کشویی DATA RECORD NAME، سایز جدید را از داده های ذخیره شده انتخاب کنید"],
+            [646, 180, 957, 234, "DATA RECORD NAME", "لیست کشویی نام سایزهای ذخیره شده"],
+            [963, 205, 1043, 234, "No.", "شماره ردیف سایز"],
+            [632, 303, 1058, 414, "(3) TRANSFER SELECTED RECIPE TO PLC", "مرحله 3: روی گزینه مشخص شده کلیک کنید تا گزینه CHARGE یا CARICA نمایش داده و سایز جدید در PLC بارگذاری شود"],
+            [632, 421, 1058, 490, "(4) VERIFY RECIPE NUMBER", "مرحله 4: شماره ردیف سایز واقعی (ACTUAL RECIPE NUMBER) و نام سایز واقعی (ACTUAL RECIPE) می بایست همانند سایز انتخاب شده باشد"],
+            [638, 451, 1054, 483, "ACTUAL RECIPE NUMBER", "شماره ردیف سایز واقعی"],
+            [787, 501, 918, 583, "ADVANCED SETTINGS", "تنظیمات پیشرفته"]);
+        add("RECIPE", AX, z);
+        INFO_ZONES["recipe"].forEach(zz => { if (zz.m === "h" && zz.t === "RECIPE") zz.long = true; });   /* توضیح بلند: کادر عریض + لمس */
+    })();
+
+    /* ---------- TEMPERATURE CONTROL ---------- */
+    const TN = {
+        "M18.BV05 - UPPER CUFFS FOLDING":"بلوک دوخت دو رول لگکاف (سیلینگ)", "M18.BV37 - LOWER CUFFS FOLDING":"بلوک دوخت دو رول لگکاف (زیر سیلینگ)",
+        "M19.BP05 - LEFT CUFFS":"بلوک دوخت ساید (سیلینگ)", "M19.BV40 - RIGHT CUFFS":"بلوک دوخت ساید (زیر سیلینگ)",
+        "M04.BP11 - UPPER CHANNEL SEALING":"بلوک دوخت کانال (سیلینگ)", "M04.BV46 - LOWER CHANNEL SEALING":"بلوک دوخت کانال (زیر سیلینگ)",
+        "M06.BP19 - UPPER TAPE SEALING":"بلوک دوخت چسب بغل (سیلینگ)", "M06.BV53 - LOWER TAPE SEALING":"بلوک دوخت چسب بغل (زیر سیلینگ)",
+        "M10.BV60 - UPPER EARS":"بلوک دوخت بکرز (زیر سیلینگ)", "M10.BP23 - LOWER EARS":"بلوک دوخت بکرز (سیلینگ)"};
+    const tempHead = () => [
+        [93, 75, 381, 120, "NAME & RELAY STATUS", "نام دوخت و وضعیت رله (زمینه سبز: رله فعال)"],
+        [384, 75, 463, 120, "ACTUAL VALUE", "نمایش دمای واقعی"],
+        [467, 75, 547, 120, "SET-POINT", "تنظیم دما"],
+        [550, 75, 980, 120, "TEMPERATURE GRAPH", "نمودار دما (خط آبی: دوخت بالایی، خط بنفش: دوخت پایینی)"]];
+    function tempRows(names){
+        const z = [];
+        names.forEach((n, k) => {
+            const t = 135 + 58 * k;
+            z.push([10, t, 90, t + 46, "ENABLED", "روشن و خاموش کردن دوخت", k ? "h" : undefined],
+                ...nm(93, t, 381, t + 46, n, TN[n]),
+                [384, t, 463, t + 46, "ACTUAL VALUE", "نمایش دمای واقعی", "h"],
+                [467, t, 547, t + 46, "SET-POINT", "تنظیم دما", "h"]);
+        });
+        return z;
+    }
+    const T1 = ["M18.BV05 - UPPER CUFFS FOLDING", "M18.BV37 - LOWER CUFFS FOLDING", "M19.BP05 - LEFT CUFFS", "M19.BV40 - RIGHT CUFFS",
+        "M04.BP11 - UPPER CHANNEL SEALING", "M04.BV46 - LOWER CHANNEL SEALING", "M06.BP19 - UPPER TAPE SEALING", "M06.BV53 - LOWER TAPE SEALING"];
+    const GRAPH_FA = "نمودار دمای دو دوخت بالایی (آبی) و پایینی (بنفش)";
+    function temp1(){
+        const z = [...header("temp"), ...tempHead(), ...tempRows(T1)];
+        for (let j = 0; j < 4; j++) z.push([584, 135 + 116 * j, 980, 235 + 116 * j, "TEMPERATURE GRAPH", GRAPH_FA, "h"]);
+        return z;
+    }
+    add("Temperature Control", AX, temp1());
+    add("Temperature Control PAGE 1", AX, temp1());
+    add("Temperature Control PAGE 2", AX, [...header("temp"), ...tempHead(), ...tempRows(["M10.BV60 - UPPER EARS", "M10.BP23 - LOWER EARS"]),
+        [584, 135, 980, 236, "TEMPERATURE GRAPH", GRAPH_FA, "h"],
+        [5, 366, 607, 396, "HOT GUN - TAPE", "هات گان (باد گرم) نوار چسب"],
+        [10, 400, 106, 592, "POWER", "روشن و خاموش کردن هات گان"],
+        [111, 400, 354, 429, "AIR FLOW CONTROL", "کنترل دبی هوای هات گان (l/min)"],
+        [359, 400, 603, 429, "TEMPERATURE CONTROL", "کنترل دمای هات گان (°C)"],
+        [111, 430, 354, 538, "RUN VALUE (AIR FLOW)", "مقدار دبی هوا در زمان کارکرد دستگاه: مقدار min و max بر حسب سرعت دستگاه (ppm)"],
+        [359, 430, 603, 538, "RUN VALUE (TEMPERATURE)", "مقدار دما در زمان کارکرد دستگاه: مقدار min و max بر حسب سرعت دستگاه (ppm)"],
+        [111, 539, 354, 566, "MIN / MAX (AIR FLOW)", "حداقل و حداکثر دبی هوا (l/min)"],
+        [359, 539, 603, 566, "MIN / MAX (TEMPERATURE)", "حداقل و حداکثر دما (°C)"],
+        [111, 567, 354, 593, "STOP VALUE (AIR FLOW)", "مقدار دبی هوا در زمان توقف دستگاه"],
+        [359, 567, 603, 593, "STOP VALUE (TEMPERATURE)", "مقدار دما در زمان توقف دستگاه"]]);
+
+    /* ---------- RESISTANCES CHECK ---------- */
+    const RN = {
+        "M18.BP04 - UPPER CUFFS FOLDING":"سیلینگ دوخت 2 رول لگکاف", "M18.BV37 - LOWER CUFFS FOLDING":"بلوک دوخت دو رول لگکاف (زیر سیلینگ)",
+        "M19.BP05 - CUFFS LEFT":"بلوک دوخت ساید (سیلینگ)", "M19.BV40 - CUFFS RIGHT":"بلوک دوخت ساید (زیر سیلینگ)",
+        "M04.BP11 - UPPER CHANNEL SEALING":"بلوک دوخت کانال (سیلینگ)", "M04.BV46 - LOWER CHANNEL SEALING":"بلوک دوخت کانال (زیر سیلینگ)",
+        "M06.BP19 - UPPER TAPE SEALING":"بلوک دوخت چسب بغل (سیلینگ)", "M06.BV53 - LOWER TAPE SEALING":"بلوک دوخت چسب بغل (زیر سیلینگ)",
+        "M10.BV60 - UPPER EARS":"بلوک دوخت بکرز (زیر سیلینگ)", "M10.BP23 - LOWER EARS":"بلوک دوخت بکرز (سیلینگ)"};
+    function resZones(names, cols, rowTop, rowStep, rowH, btn, nameX, hdrY, hdrH){
+        const z = [], heads = [
+            ["NUMBER OF RESISTANCES", "تعداد المنت ها (مقاومت ها)", cols[0]],
+            ["RESISTANCE POWER", "توان هر مقاومت (وات)", cols[1]],
+            ["CURRENT TOLERANCE", "حداکثر جریان مجاز (آمپر)", cols[2]],
+            ["CALCULATED CURRENT", "جریان محاسبه شده بر اساس تعداد و توان مقاومت ها (آمپر)", cols[3]],
+            ["ACTUAL CURRENT", "جریان واقعی عبوری از مقاومت ها (آمپر)", cols[4]]];
+        heads.forEach(([t, d, c]) => z.push([c[0], hdrY, c[1], hdrY + hdrH, t, d]));
+        names.forEach((n, k) => {
+            const top = rowTop + rowStep * k;
+            z.push([btn[0], top, btn[1], top + rowH, "ENABLED / DISABLED", "فعال یا غیر فعال کردن بررسی مقاومت این قسمت", k ? "h" : undefined],
+                ...nm(nameX[0], top, nameX[1], top + rowH, n, RN[n]));
+            heads.forEach(([t, d, c]) => z.push([c[0], top, c[1], top + rowH, t, d, "h"]));
+        });
+        return z;
+    }
+    const R1 = ["M18.BP04 - UPPER CUFFS FOLDING", "M18.BV37 - LOWER CUFFS FOLDING", "M19.BP05 - CUFFS LEFT", "M19.BV40 - CUFFS RIGHT",
+        "M04.BP11 - UPPER CHANNEL SEALING", "M04.BV46 - LOWER CHANNEL SEALING", "M06.BP19 - UPPER TAPE SEALING", "M06.BV53 - LOWER TAPE SEALING"];
+    const COLS1 = [[500, 589], [600, 689], [700, 787], [800, 887], [899, 987]];
+    const res1 = () => [...header("res"), ...resZones(R1, COLS1, 135, 58, 46, [15, 103], [115, 491], 75, 45)];
+    add("RESISTANCES CHECK", AX, res1());
+    add("RESISTANCES PAGE 1", AX, res1());
+    /* صفحهٔ ۲ مقاومت‌ها: عکس ۹۳۶×۵۸۷ است، مختصات به همان مقیاس نوشته شده */
+    add("RESISTANCES PAGE 2", SC936, [
+        [2, 2, 124, 57, "LOGO", "لوگوی شرکت سازنده دستگاه"],
+        [127, 2, 254, 57, "DATE / TIME", "تاریخ و ساعت دستگاه"],
+        [257, 2, 680, 57, HDR_EN.res, HDR_FA.res],
+        [683, 4, 934, 21, "TOTAL PRODUCT", "تعداد کل محصول تولید شده"],
+        [683, 22, 934, 37, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه"],
+        [683, 38, 934, 54, "MACHINE SPEED", "سرعت فعلی دستگاه"],
+        ...resZones(["M10.BV60 - UPPER EARS", "M10.BP23 - LOWER EARS"], [[438, 513], [527, 602], [614, 691], [703, 779], [790, 865]],
+            117, 51, 42, [13, 89], [101, 431], 66, 38)]);
+
+    /* ---------- LUBRICATION ---------- */
+    (function(){
+        const z = [...header("lub"),
+            [510, 80, 611, 99, "COUNTER", "شمارشگر پمپاژ (تعداد پد)"],
+            [686, 80, 786, 99, "DELAY", "تاخیر در هر پمپاژ (تعداد پد)"],
+            [789, 80, 890, 99, "ON FOR", "مدت زمان هر پمپاژ (میلی ثانیه)"],
+            [893, 80, 941, 99, "STATE", "نمایش عملکرد پمپاژ (سبز: در حال پمپاژ)"]];
+        [["M05.BC04 - 2609K1", "روغن زن بلوک برش پالپ (تیغه)"], ["M06.BC09 - 2613K1", "روغن زن بلوک برش چسب بغل (تیغه)"],
+         ["M08.BP21 - 2613K2", "روغن زن بلوک برش بکرز"], ["M09.BP22 - 2601K3", "روغن زن بلوک برش نهایی فرونترز"],
+         ["M11.BC03 - 2601K2", "روغن زن بلوک برش نوار جلو (تیغه)"], ["M13.BP15 - 2605K1", "روغن زن بلوک تیغه برش نهایی"],
+         ["M19.BC13 - 2609K2", "روغن زن بلوک تیغه لایه جذب (تیغه)"]].forEach(([n, fa], k) => {
+            const t = 108 + 50 * k, m = k ? "h" : undefined;
+            z.push([9, t, 109, t + 42, "ENABLED / DISABLED", "روشن و خاموش کردن پمپاژ روغن", m],
+                [112, t, 179, t + 42, "MANUAL", "حالت دستی", m],
+                ...nm(183, t, 506, t + 42, n, fa),
+                [510, t, 611, t + 42, "COUNTER", "شمارشگر پمپاژ", "h"],
+                [617, t, 683, t + 42, "RESET", "شروع مجدد شمارشگر", m],
+                [686, t, 786, t + 42, "DELAY", "تاخیر در هر پمپاژ", "h"],
+                [789, t, 890, t + 42, "ON FOR", "مدت زمان هر پمپاژ", "h"],
+                [893, t, 941, t + 42, "STATE", "نمایش عملکرد پمپاژ", "h"]);
+        });
+        z.push([9, 458, 109, 500, "ENABLED / DISABLED", "روشن و خاموش کردن پمپ گریس"],
+            ...nm(181, 458, 506, 500, "GREASE PUMP - 270U1", "پمپ گریس"));
+        add("LUBRICATION", AX, z);
+    })();
+})();
+
+let tooltipAnchor = null, tooltipLong = false;
+const isLongZone = z => !!(z && z.long);
 function findInfoZone(event){
     const list = INFO_ZONES[(currentPage.key || "").toLowerCase()];
     if (!list) return null;
@@ -1863,7 +2101,7 @@ function addLabel(x, y, w, h, text){
     d.className = "hmi-label";
     d.style.left = x + "px"; d.style.top = y + "px"; d.style.width = w + "px"; d.style.height = h + "px";
     d.textContent = text;
-    if (/^[A-Z]{2}\d{2} - /.test(text)) d.style.direction = "ltr";   /* کد موتور چپ، معنی راست */
+    if (/^[A-Z0-9][A-Za-z0-9 .()\/]* - /.test(text)) d.style.direction = "ltr";   /* انگلیسی (کد/نام) چپ، معنی فارسی راست */
     hmiPanel.appendChild(d);
     let fs = 14;
     d.style.fontSize = fs + "px";
@@ -1888,16 +2126,18 @@ hmiPanel.addEventListener("pointerup", e => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     if (!pageHasLabels()) return;
     if (e.target.closest("button")) return;
+    if (isLongZone(findInfoZone(e))) return;
     if (hmiPanel.querySelector(".hmi-label")) hideLabels(); else showAllLabels();
 });
 
 function showHmiTooltip(event) {
     let zone = null;
-    if ((event.pointerType === "touch" || event.pointerType === "pen") && pageHasLabels() && !event.target.closest("button")) { hideHmiTooltip(); return; }
+    tooltipLong = false;
+    if ((event.pointerType === "touch" || event.pointerType === "pen") && pageHasLabels() && !event.target.closest("button") && !isLongZone(findInfoZone(event))) { hideHmiTooltip(); return; }
     if (event.pointerType === "touch" || event.pointerType === "pen") {
         clearTimeout(touchHideTimer);
         const onBtn = event.target.closest && event.target.closest("button");
-        touchHideTimer = setTimeout(() => { if (!touchDown) hideHmiTooltip(); }, onBtn ? 2000 : 2000);
+        touchHideTimer = setTimeout(() => { if (!touchDown) hideHmiTooltip(); }, isLongZone(findInfoZone(event)) ? 15000 : 2000);
     }
     const button = event.target.closest("button");
     if (button && hmiPanel.contains(button) && !(currentPage.key !== "Layout" && allMainButtons.some(sel => button.matches(sel)))) {
@@ -1908,8 +2148,8 @@ function showHmiTooltip(event) {
         tooltipAnchor = button.getBoundingClientRect();
     } else if ((zone = findInfoZone(event))) {
         hmiTooltipTitle.textContent = zone.t;
-        hmiTooltipText.textContent = zone.d;
-        hmiTooltip.classList.remove("wide");
+        if (isLongZone(zone)) { hmiTooltipText.innerHTML = zone.d; tooltipLong = true; } else hmiTooltipText.textContent = zone.d;
+        hmiTooltip.classList.toggle("wide", isLongZone(zone));
         tooltipAnchor = zoneViewportRect(zone);
     } else {
         tooltipAnchor = null;
@@ -1966,7 +2206,7 @@ function endTouch(e){
     if (e.pointerType === "mouse" || !touchDown) return;
     touchDown = false;
     clearTimeout(touchHideTimer);
-    touchHideTimer = setTimeout(hideHmiTooltip, 3000);   /* توضیح بعد از برداشتن انگشت ۳ ثانیه می‌ماند */
+    touchHideTimer = setTimeout(hideHmiTooltip, tooltipLong ? 15000 : 3000);   /* توضیح بعد از برداشتن انگشت ۳ ثانیه می‌ماند (توضیح بلند ۱۵ ثانیه) */
 }
 document.addEventListener("pointerup", endTouch, true);
 document.addEventListener("pointercancel", endTouch, true);
