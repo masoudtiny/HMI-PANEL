@@ -1326,10 +1326,10 @@ function restorePageState(state) {
     else if (state === "proportional-valve-page2") showSelectors(proportionalValvePage2Buttons);
     else if (state === "temperature-control" || state === "temperature-page") showTemperatureButtons([".temp-page1",".temp-page2",".resistances-check-button"]);
     else if (state === "resistances-check") showTemperatureButtons([".resistance-page1",".resistance-page2",".temperature-control-return-button"]);
-    else if (state === "working-data-main") { showMainMenu(); showButtons([".current-shift-working-data",".knife-counters-working-data"]); }
-    else if (state === "current-shift") { showMainMenu(); showButtons([".shift1-current-shift",".shift2-current-shift",".main-counter-current-shift"]); }
-    else if (state === "shift1") { showMainMenu(); showButtons([".current-shift-shift1",".shift1-shift1",".shift2-shift1",".main-counter-shift1"]); }
-    else if (state === "shift2") { showMainMenu(); showButtons([".current-shift-shift2",".shift1-shift2",".shift2-shift2",".main-counter-shift2"]); }
+    else if (state === "working-data-main") { showButtons([".current-shift-working-data",".knife-counters-working-data"]); }
+    else if (state === "current-shift") { showButtons([".shift1-current-shift",".shift2-current-shift",".main-counter-current-shift"]); }
+    else if (state === "shift1") { showButtons([".current-shift-shift1",".shift1-shift1",".shift2-shift1",".main-counter-shift1"]); }
+    else if (state === "shift2") { showButtons([".current-shift-shift2",".shift1-shift2",".shift2-shift2",".main-counter-shift2"]); }
     else if (state === "active-alarm") showSelectors(activeAlarmButtons);
     else if (state === "alarm-list") showSelectors(alarmListButtons);
     else if (state === "alarm-history") showSelectors(alarmHistoryButtons);
@@ -1348,6 +1348,7 @@ function goBack() {
     hmiPanel.classList.remove("page-module");
     if (MODULE_PAGES.includes(prev.key)) hmiPanel.classList.add("page-module");
     hideHmiTooltip();
+    hideLabels();
     restorePageState(prev.state);
 }
 function goHome(addToHistory = true) {
@@ -1357,6 +1358,7 @@ function goHome(addToHistory = true) {
     panelImage.src = "images/Layout.png";
     hmiPanel.classList.remove("page-module");
     hideHmiTooltip();
+    hideLabels();
     restorePageState("layout");
 }
 
@@ -1605,6 +1607,211 @@ Object.keys(AXES_ROWS).forEach(n => {
     })();
 })();
 
+/* ===== Working Data / Current Shift / Shift 1-2 / Knife Counters / Knife Bearing Temperature / Bearing Temperature ===== */
+(function(){
+    const P = (page, sc) => (x1, y1, x2, y2, t, d, m) => ZS(page, sc, x1, y1, x2, y2, t, d, m);
+    function header(Zp, title, fa){
+        Zp(5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه");
+        Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
+        Zp(293, 3, 775, 65, title, fa);
+        Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
+    }
+
+    /* ---------- WORKING DATA (صفحه COUNTERS) ---------- */
+    (function(){
+        const Zp = P("Working Data", AX);
+        header(Zp, "COUNTERS", "کانترها (آمار تولید و ریجکت)");
+        Zp(5, 66, 1060, 160, "ALARM BANNER", "آخرین آلارم‌ها و هشدارها (شماره، زمان، تاریخ، متن)");
+        [[208,"MACHINE LIFE COUNTER","کانتر اصلی"],[247,"PADS","پد تولیدی"],[287,"TOTAL REJECT","ریجکت واقعی"],
+         [327,"GOOD","پد تولیدی سالم"],[367,"STACKER NOT READY","ریجکت در استاکر"],[410,"MINIMUM SPEED","تعداد ریجکت در سرعت پایین"],
+         [450,"INITIAL PIECES","تعداد ریجکت در استارت‌های اولیه"],[505,"MACHINE RUNNING","مدت زمان کارکرد دستگاه"],
+         [546,"MACHINE STOP","مدت زمان توقف دستگاه"]
+        ].forEach(([y,t,d]) => Zp(20, y-16, 517, y+16, t, d));
+        [[208,"TOTAL REJECT CAMERA","مجموع ریجکت دوربین‌ها"],[247,"TOTAL JOINTS","مجموع ریجکت اسپلایس"],
+         [288,"MATERIAL REJECT","مجموع ریجکت سنسور مارک و هوسباخ"]
+        ].forEach(([y,t,d]) => { Zp(545, y-16, 738, y+16, t, d); Zp(740, y-16, 821, y+16, "DETAILS", "جزئیات"); });
+        Zp(545, 312, 1041, 344, "MANUAL REJECT", "پدهایی که اپراتور دستی ریجکت کرده");
+        Zp(960, 351, 1041, 400, "RESET TOTAL", "صفر کردن شمارنده‌های ریجکت");
+        Zp(545, 416, 975, 448, "SERVICE COUNTER", "کانتر سرویس");
+        Zp(985, 420, 1037, 445, "RESET", "ریست کانتر سرویس");
+    })();
+
+    /* ---------- CURRENT SHIFT / SHIFT 1 / SHIFT 2 ---------- */
+    function shiftPage(page, title, fa, secW, secC, work, counters, extraRight){
+        const Zp = P(page, AX);
+        header(Zp, title, fa);
+        Zp(50, 85, 689, 107, "WORKING TIME", secW);
+        work.forEach(([y,t,d]) => Zp(64, y-14, 665, y+14, t, d));
+        Zp(50, 297, 689, 320, "COUNTERS", secC);
+        counters.forEach(([y,t,d]) => Zp(64, y-14, 665, y+14, t, d));
+        if (extraRight) extraRight(Zp);
+    }
+    const WORK_ROWS = [[129,"MACHINE WORKING TIME","مدت زمان کارکرد دستگاه"],[162,"MACHINE TOTAL RUN TIME","مجموع زمان روشن بودن دستگاه"],
+        [228,"MACHINE DELAY TIME","مدت زمان توقف دستگاه"],[261,"MACHINE DELAY %","درصد توقف دستگاه"]];
+    const CNT_ROWS = [[342,"REJECT FOR JOINT","ریجکت اسپلایس"],[375,"REJECT FOR CAMERAS","ریجکت دوربین‌ها"],
+        [408,"OTHER REJECTS","سایر ریجکت‌ها (سرعت پایین، توقف دستگاه و ...)"],[441,"REJECT FOR STACKER NOT READY","ریجکت به‌دلیل آماده نبودن استاکر"],
+        [474,"TOTAL MACHINE REJECT","مجموع ریجکت دستگاه"],[507,"GOOD PADS","پدهای سالم"],[540,"TOTAL PADS ON MAIN MACHINE","مجموع پدهای تولیدشده"]];
+    shiftPage("Current Shift", "WORKING DATA", "آمار تولید (شیفت جاری)", "زمان کارکرد - شیفت جاری", "کانترها - شیفت جاری",
+        WORK_ROWS.concat([[195,"ACTUAL RUN TIME","مدت زمان کارکرد واقعی"]]),
+        CNT_ROWS.concat([[573,"NON-RESETTABLE COUNTER","کانتر غیرقابل ریست"]]),
+        Zp => {
+            Zp(707, 85, 1008, 108, "SHIFT START TIME", "زمان شروع شیفت‌ها");
+            Zp(770, 116, 914, 162, "3-SHIFT MODE", "حالت سه شیفت (روشن / خاموش)");
+            Zp(729, 181, 989, 210, "SHIFT 1", "ساعت شروع شیفت اول");
+            Zp(729, 215, 989, 243, "SHIFT 2", "ساعت شروع شیفت دوم");
+            Zp(729, 249, 989, 276, "SHIFT 3", "ساعت شروع شیفت سوم (در حالت سه شیفت)");
+        });
+    [1, 2].forEach(n => shiftPage("Shift " + n, "SHIFT DATA - " + n + " -", "آمار تولید شیفت " + (n === 1 ? "اول" : "دوم"),
+        "زمان کارکرد - شیفت " + (n === 1 ? "اول" : "دوم"), "کانترها - شیفت " + (n === 1 ? "اول" : "دوم"),
+        WORK_ROWS.concat([[195,"EFFICIENCY","راندمان دستگاه"]]), CNT_ROWS));
+
+    /* ---------- KNIFE COUNTERS (عکس ۱۱۰۶ پیکسلی) ---------- */
+    (function(){
+        const Zp = P("Knife Counters", 1000 / 1106);
+        Zp(5, 5, 140, 65, "LOGO", "لوگوی شرکت سازنده دستگاه");
+        Zp(143, 5, 308, 70, "DATE / TIME", "تاریخ و ساعت دستگاه");
+        Zp(310, 5, 810, 80, "KNIFE COUNTERS", "کانتر تیغه‌های برش");
+        Zp(815, 22, 1100, 38, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+        Zp(815, 40, 1100, 58, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(815, 59, 1100, 80, "MACHINE SPEED", "سرعت فعلی دستگاه");
+        function box(title, fa, x1, x2, ty, rows, rx){
+            Zp(x1, ty, x2, ty + 26, title, fa);
+            rows.forEach(([y1, y2, t, d]) => { Zp(x1 + 5, y1, rx - 2, y2, t, d); Zp(rx, y1, rx + 55, y2, "RESET", "صفر کردن شمارنده"); });
+        }
+        box("BP09 - HYPERION", "تیغه برش هلالی فرونترز", 141, 560, 128, [[157,192,"SIZE 0/1/2/3/4/5/6","شمارنده کارکرد تیغه (همه سایزها)"]], 500);
+        box("BP22 - HYPERION", "برش فرونترز", 141, 560, 224, [[253,290,"SIZE 0/1/2/3/4/5/6","شمارنده کارکرد تیغه (همه سایزها)"]], 500);
+        box("BP21 - HYPERION", "برش بکرز", 144, 560, 322,
+            [[355,388,"SIZE 0/1","شمارنده تیغه سایز 0 و 1"],[390,423,"SIZE 2","شمارنده تیغه سایز 2"],[425,458,"SIZE 3","شمارنده تیغه سایز 3"],
+             [460,493,"SIZE 4","شمارنده تیغه سایز 4"],[495,528,"SIZE 5","شمارنده تیغه سایز 5"],[530,563,"SIZE 6","شمارنده تیغه سایز 6"]], 500);
+        box("BP15 - HYPERION", "برش دوسر (نهایی)", 565, 976, 133,
+            [[167,198,"SIZE 0/1","شمارنده تیغه سایز 0 و 1"],[202,235,"SIZE 2/3","شمارنده تیغه سایز 2 و 3"],
+             [238,270,"SIZE 4/5","شمارنده تیغه سایز 4 و 5"],[273,305,"SIZE 6","شمارنده تیغه سایز 6"]], 915);
+        box("APPLICATORS KNIFE", "تیغه‌های اپلیکاتور", 565, 976, 330,
+            [[360,392,"BC03 - FRONTAL TAPE","تیغه عروسکی (نوار جلو)"],[395,427,"BC09 - TAPE","تیغه چسب بغل"],
+             [430,462,"BC04 - PAD","تیغه برش پالپ"],[465,497,"BC13 - AQL","تیغه اکشن"]], 908);
+    })();
+
+    /* ---------- KNIFE BEARING TEMPERATURE (BEARING APPLICATION) ---------- */
+    (function(){
+        const Zp = P("KNIFE BEARING TEMPERATURE", AX);
+        header(Zp, "BEARING APPLICATION", "دمای بلبرینگ تیغه‌ها");
+        [[478,563,"UPPER VALUE 1","دمای بلبرینگ بالایی (سنسور ۱)"],[571,656,"LOWER VALUE 1","دمای بلبرینگ پایینی (سنسور ۱)"],
+         [664,749,"UPPER VALUE 2","دمای بلبرینگ بالایی (سنسور ۲)"],[757,842,"LOWER VALUE 2","دمای بلبرینگ پایینی (سنسور ۲)"],
+         [850,935,"WARNING THRESHOLD","حد دمای هشدار"],[943,1029,"ALARM THRESHOLD","حد دمای آلارم (توقف خط)"]
+        ].forEach(([a,b,t,d]) => { Zp(a, 76, b, 121, t, d); Zp(a, 135, b, 305, t, d, "h"); });
+        [[165,"BP21 - برش بکرز"],[205,"BP22 - برش فرونترز"],[285,"BP15 - برش دوسر (نهایی)"]]
+            .forEach(([y,d]) => Zp(28, y-16, 443, y+16, d.split(" - ")[0], d));
+    })();
+
+    /* ---------- BEARING TEMPERATURE (BEARING ASPIRATOR) ---------- */
+    (function(){
+        const Zp = P("BEARING TEMPERATURE", AX);
+        header(Zp, "BEARING ASPIRATOR", "دمای بلبرینگ موتورهای مکنده");
+        [[504,590,"ACTUAL VALUE 1","دمای واقعی بلبرینگ (سنسور ۱)"],[598,683,"ACTUAL VALUE 2","دمای واقعی بلبرینگ (سنسور ۲)"],
+         [691,777,"ACTUAL VALUE 3","دمای واقعی بلبرینگ (سنسور ۳)"],[786,871,"WARNING THRESHOLD","حد دمای هشدار"],
+         [885,971,"ALARM THRESHOLD","حد دمای آلارم (توقف خط)"]
+        ].forEach(([a,b,t,d]) => { Zp(a, 76, b, 121, t, d); Zp(a, 133, b, 467, t, d, "h"); });
+        [[154,"AA01","AA01 - موتور مکنده درام"],[212,"AA03","AA03 - موتور مکنده تسمه ۱"],[270,"AA04","AA04 - موتور مکنده تسمه ۲"],
+         [329,"AA05","AA05 - مکنده اپلیکاتور اول"],[387,"AA06","AA06 - مکنده اپلیکاتور دوم"],[445,"AA11","AA11 - فوت و جداکننده آسیاب پالپ"]
+        ].forEach(([y,t,d]) => Zp(56, y-21, 470, y+21, t, d));
+    })();
+})();
+
+/* ===== Mechanical Configuration (هومینگ): صفحه اصلی + همهٔ پاپ‌آپ‌ها (عکس ۱۰۶۷ پیکسلی) ===== */
+(function(){
+    const HDR = "HOMING & MECHANICAL CONFIGURATION", HDR_FA = "هومینگ و تنظیمات مکانیکی";
+    function header(Zp){
+        Zp(5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه");
+        Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
+        Zp(293, 3, 775, 65, HDR, HDR_FA);
+        Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
+    }
+
+    /* ---------- صفحهٔ اصلی ---------- */
+    (function(){
+        const Zp = (...a) => ZS("Mechanical Configuration", AX, ...a);
+        const H = (...a) => Zp(...a);
+        header(H);
+        [["M18",25],["M19",122],["M01",218],["M04",314],["M05",410],["M06",507],["M07",603],["M08",700],["M09",796],["M10",892]]
+            .forEach(([m,x]) => Zp(x, 115, x+82, 144, m, MODULES[m][1]));
+        [["M11",25],["M12",122],["M13",218],["M14",314]]
+            .forEach(([m,x]) => Zp(x, 362, x+82, 391, m, MODULES[m][1]));
+    })();
+
+    /* ---------- پاپ‌آپ‌های ساده (دکمه‌ها: Homing Mode / HOMED / ENABLED / EXECUTE HOME) ---------- */
+    function popup(key, hasPads){
+        const Zp = (...a) => ZS(key, AX, ...a);
+        const tip = TOOLTIP_TEXTS[key.toLowerCase()] || [key, ""];
+        header(Zp);
+        Zp(308, 153, 725, 185, tip[0], tip[1] || key);
+        Zp(310, 197, 757, 215, "WARNING", "دستگاه باید متوقف باشد تا تنظیمات مکانیکی تغییر کند");
+        Zp(412, 224, 522, 272, "STATIC / DYNAMIC HOMING MODE", "روش هومینگ: استاتیک (درجا، مکانیکی) یا داینامیک (با سنسور)");
+        Zp(545, 224, 655, 272, "HOMED", "وضعیت هومینگ (سبز: هوم شده)");
+        Zp(412, 283, 522, 330, "ENABLED / DISABLED", "فعال / غیرفعال بودن موتور");
+        Zp(545, 283, 655, 330, "EXECUTE HOME", "اجرای هومینگ");
+        Zp(370, 355, 700, 378, "ACTUAL POSITION", "موقعیت واقعی (درجه)");
+        if (hasPads) Zp(370, 392, 690, 424, "PADS NUMBER", "تعداد پد");
+    }
+    ["BP01","BP04","BP05","BP07","BP08","BP09","BP10","BP11","BP12","BP14","BP15","BP16","BP17","BP19","BP20","BP21","BP22","BP23","BP24"]
+        .forEach(k => popup(k, true));
+    ["BC10","BC11","BC14"].forEach(k => popup(k, false));
+
+    /* ---------- صفحه‌های تیغه + آنویل (BC13-BP13, BC03-BP03, BC04-BP06, BC09-BP18) ---------- */
+    function knifeAnvil(key, bc, bcFa, bp, bpFa){
+        const Zp = (...a) => ZS(key, AX, ...a);
+        header(Zp);
+        Zp(111, 108, 507, 135, bc, bcFa);
+        Zp(130, 153, 490, 175, "ACTUAL POSITION", "موقعیت واقعی تیغه (درجه)");
+        Zp(130, 226, 490, 260, "HOME POSITION OFFSET", "آفست موقعیت هوم (درجه)");
+        Zp(510, 102, 954, 287, "HOMING INFO", "هومینگ فعال با روشن بودن محورها و حرکت فعال انجام می‌شود. بعد از درخواست هومینگ، سیفتی را ببندید و دستگاه را استارت کنید. با تغییر تعداد سوراخ‌ها یا تیغه‌ها هومینگ باید تکرار شود. برای هومینگ هر دو محور باید فعال و آماده باشند.");
+        Zp(111, 298, 507, 322, bp, bpFa);
+        Zp(130, 352, 490, 374, "ACTUAL POSITION", "موقعیت واقعی آنویل (درجه)");
+        Zp(130, 377, 480, 428, "HOLES NUMBER PER PRODUCT", "تعداد سوراخ روی هر محصول (با توجه به طول مواد مصرفی)");
+        Zp(130, 431, 490, 452, "PRODUCT LENGTH", "طول محصول (میلی‌متر)");
+        Zp(130, 456, 480, 506, "OFFSET BETWEEN HOLES", "آفست بین سوراخ‌ها (فقط وقتی دستگاه کار نمی‌کند اعمال می‌شود)");
+        Zp(537, 315, 648, 362, "STATIC / DYNAMIC HOMING MODE", "روش هومینگ: استاتیک (درجا) یا داینامیک (با سنسور)");
+        Zp(660, 315, 771, 362, "HOMED", "وضعیت هومینگ (سبز: هوم شده)");
+        Zp(537, 375, 648, 422, "ENABLED BP", "فعال بودن موتور آنویل (BP)");
+        Zp(660, 375, 771, 422, "ENABLED BC", "فعال بودن موتور تیغه (BC)");
+        Zp(780, 375, 891, 422, "EXECUTE HOME", "اجرای هومینگ");
+    }
+    knifeAnvil("BC13-BP13", "BC13 - AQL KNIFE", "تیغه اکشن (AQL)", "BP13 - AQL ANVIL", "آنویل اکشن (AQL)");
+    knifeAnvil("BC03-BP03", "BC03 - FRONTAL TAPE KNIFE", "تیغه عروسکی (نوار جلو)", "BP03 - FRONTAL TAPE ANVIL", "آنویل عروسکی (نوار جلو)");
+    knifeAnvil("BC04-BP06", "BC04 - PAD KNIFE", "تیغه برش پالپ", "BP06 - PAD ANVIL", "آنویل برش پالپ");
+    knifeAnvil("BC09-BP18", "BC09 - TAPE KNIFE", "تیغه چسب بغل", "BP18 - TAPE ANVIL", "آنویل چسب بغل");
+
+    /* ---------- صفحه‌های ریپیچ ---------- */
+    function repitch(key, group, groupFa, axes){
+        const Zp = (...a) => ZS(key, AX, ...a);
+        header(Zp);
+        Zp(41, 90, 325, 132, group, groupFa);
+        Zp(331, 86, 478, 132, "ENABLED", "فعال بودن گروه ریپیچ");
+        Zp(41, 141, 500, 168, "CONFIG SET-UP", "تنظیمات ریپیچ");
+        Zp(66, 185, 480, 217, "TAKE / RELEASE ARC", "قوس گرفتن / رها کردن (میلی‌متر)");
+        Zp(66, 220, 480, 252, "TAKE SPEED", "سرعت گرفتن (میلی‌متر بر محصول)");
+        Zp(66, 255, 480, 287, "RELEASE SPEED", "سرعت رها کردن (میلی‌متر بر محصول)");
+        Zp(196, 293, 344, 340, "CONFIRM NEW DATA", "تایید و اعمال داده‌های جدید");
+        Zp(41, 352, 500, 380, "AXES POSITION", "موقعیت محورها");
+        axes.forEach(([y, c, fa]) => Zp(66, y-16, 480, y+16, c, fa));
+        Zp(66, 530, 480, 562, "VIRTUAL AXIS", "موقعیت محور مجازی (درجه)");
+        Zp(512, 88, 1025, 118, "HOME", "هومینگ ریپیچ");
+        Zp(522, 124, 1017, 280, "HOME PROCEDURE", "روش هومینگ: ۱) با دستگاه متوقف، کلید START HOME MODE را بزنید تا هومینگ شروع شود.");
+        Zp(530, 325, 860, 348, "REPITCH HOME STATUS", "وضعیت هومینگ ریپیچ");
+        Zp(862, 320, 1009, 352, "HOMED", "هوم شده (سبز)");
+        Zp(690, 355, 838, 388, "START HOME MODE", "شروع هومینگ ریپیچ");
+    }
+    repitch("BC15-BC16-BC17-BC18", "REPITCH 01 GROUP", "گروه ریپیچ یک (بکرز)",
+        [[408,"BC15","موقعیت واقعی BC15 (درجه)"],[443,"BC16","موقعیت واقعی BC16 (درجه)"],[478,"BC17","موقعیت واقعی BC17 (درجه)"],[513,"BC18","موقعیت واقعی BC18 (درجه)"]]);
+    repitch("BC19-BC20-BC21-BC22", "REPITCH 02 GROUP", "گروه ریپیچ دو (فرونترز)",
+        [[408,"BC19","موقعیت واقعی BC19 (درجه)"],[443,"BC20","موقعیت واقعی BC20 (درجه)"],[478,"BC21","موقعیت واقعی BC21 (درجه)"],[513,"BC22","موقعیت واقعی BC22 (درجه)"]]);
+    repitch("BC07-BC08", "REPITCH 03 GROUP", "گروه ریپیچ سه (ریپیچ دو بکرز / فرونترز)",
+        [[408,"BC07","موقعیت واقعی BC07 (درجه)"],[443,"BC08","موقعیت واقعی BC08 (درجه)"]]);
+})();
+
 let tooltipAnchor = null;
 function findInfoZone(event){
     const list = INFO_ZONES[(currentPage.key || "").toLowerCase()];
@@ -1649,21 +1856,26 @@ function hideLabels(){
 }
 function addLabel(x, y, w, h, text){
     if (!text || w < 6 || h < 6) return;
+    const MINW = 64, MINH = 22;   /* کادرهای کوچک را بزرگ‌تر می‌کند تا متن ریز نشود */
+    if (w < MINW) { x -= (MINW - w) / 2; w = MINW; }
+    if (h < MINH) { y -= (MINH - h) / 2; h = MINH; }
     const d = document.createElement("div");
     d.className = "hmi-label";
     d.style.left = x + "px"; d.style.top = y + "px"; d.style.width = w + "px"; d.style.height = h + "px";
     d.textContent = text;
     if (/^[A-Z]{2}\d{2} - /.test(text)) d.style.direction = "ltr";   /* کد موتور چپ، معنی راست */
     hmiPanel.appendChild(d);
-    let fs = 13;
+    let fs = 14;
     d.style.fontSize = fs + "px";
-    while (fs > 7 && (d.scrollHeight > d.clientHeight + 1 || d.scrollWidth > d.clientWidth + 1)) { fs--; d.style.fontSize = fs + "px"; }
+    while (fs > 10 && (d.scrollHeight > d.clientHeight + 1 || d.scrollWidth > d.clientWidth + 1)) { fs--; d.style.fontSize = fs + "px"; }
+    if (d.scrollHeight > d.clientHeight + 1 || d.scrollWidth > d.clientWidth + 1) d.style.overflow = "visible";
 }
 function showAllLabels(){
     hideLabels();
     hideHmiTooltip();
     hmiPanel.querySelectorAll("button").forEach(b => {
         if (getComputedStyle(b).display === "none") return;
+        if (currentPage.key !== "Layout" && allMainButtons.some(sel => b.matches(sel))) return;   /* منوی بالای Layout فقط در Layout */
         const d = getTooltipDescription(b);
         if (d[1]) addLabel(b.offsetLeft, b.offsetTop, b.offsetWidth, b.offsetHeight, d[1]);
     });
@@ -1688,7 +1900,7 @@ function showHmiTooltip(event) {
         touchHideTimer = setTimeout(() => { if (!touchDown) hideHmiTooltip(); }, onBtn ? 2000 : 2000);
     }
     const button = event.target.closest("button");
-    if (button && hmiPanel.contains(button)) {
+    if (button && hmiPanel.contains(button) && !(currentPage.key !== "Layout" && allMainButtons.some(sel => button.matches(sel)))) {
         const d = getTooltipDescription(button);
         hmiTooltipTitle.textContent = d[0];
         hmiTooltipText.textContent = d[1];
@@ -1759,6 +1971,7 @@ function endTouch(e){
 document.addEventListener("pointerup", endTouch, true);
 document.addEventListener("pointercancel", endTouch, true);
 hmiPanel.addEventListener("contextmenu", e => e.preventDefault());
+hmiPanel.addEventListener("click", e => { if (e.target.closest("button")) hideLabels(); }, true);
 hmiPanel.addEventListener("click", e => {
     if (lastPointerType === "mouse") return;
     if (e.isTrusted && performance.now() - downTime >= LONG_PRESS_MS) {      /* نگه داشتن = فقط توضیح */
