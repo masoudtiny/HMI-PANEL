@@ -424,9 +424,18 @@ body.locked #fitWrap{display:none}
 #gate .err{color:#ff6b6b;font-size:14px;min-height:20px;margin-top:8px}
 /* ساعت و تاریخ زنده روی کادر بالای تصویر */
 #hmiClock{position:absolute;left:136px;top:3px;width:135px;height:53px;background:#fff;color:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:19px;line-height:1.25;z-index:60;pointer-events:none;direction:ltr;white-space:nowrap}
-.panel.labels-on img{filter:blur(2.5px) brightness(1.25) opacity(.55);transition:filter .15s}
+.panel.labels-on img{filter:blur(2.5px) brightness(1.25) opacity(.3);transition:filter .15s}
 .panel.labels-on #hmiClock{opacity:0}
-.hmi-label{position:absolute;box-sizing:border-box;display:flex;align-items:center;justify-content:center;text-align:center;direction:rtl;overflow:hidden;padding:1px 3px;background:none;border:0;color:#fff;-webkit-text-stroke:3px #000;paint-order:stroke fill;text-shadow:0 0 3px #000,0 0 3px #000,1px 1px 2px #000,-1px -1px 2px #000;font-family:Vazirmatn,Tahoma,Arial,sans-serif;font-weight:700;line-height:1.2;z-index:300;pointer-events:none}
+.hmi-label{white-space:pre-line;position:absolute;box-sizing:border-box;display:flex;align-items:center;justify-content:center;text-align:center;direction:rtl;overflow:hidden;padding:1px 3px;background:none;border:0;color:#fff;-webkit-text-stroke:3px #000;paint-order:stroke fill;text-shadow:0 0 3px #000,0 0 3px #000,1px 1px 2px #000,-1px -1px 2px #000;font-family:Vazirmatn,Tahoma,Arial,sans-serif;font-weight:700;line-height:1.2;z-index:300;pointer-events:none}
+.hmi-tooltip{white-space:normal!important}
+.hmi-tooltip-text{white-space:pre-line!important}
+/* گوشی: کادر توضیحات کوچک‌تر */
+@media (max-width: 900px), (max-height: 520px) {
+  .hmi-tooltip{width:165px!important;max-width:165px!important;padding:5px 8px!important;font-size:11px!important;line-height:1.45!important;border-radius:9px!important}
+  .hmi-tooltip.wide{width:300px!important;max-width:calc(100vw - 10px)!important}
+  .hmi-tooltip-title{font-size:11.5px!important;margin-bottom:3px!important;padding-bottom:3px!important}
+  .hmi-tooltip-text{font-size:11px!important;line-height:1.5!important}
+}
 </style>
 </head><body class="locked">
 <div id="gate"><form id="gateForm" autocomplete="off"><h2>رمز عبور</h2>
@@ -1382,10 +1391,11 @@ document.body.appendChild(hmiTooltip);
    Z(x1, y1, x2, y2, "عنوان", "توضیح") */
 const INFO_SCALE = 1000 / 1247;
 const INFO_ZONES = {};
-function Z(page, x1, y1, x2, y2, t, d){
+function ZS(page, sc, x1, y1, x2, y2, t, d, m){
     (INFO_ZONES[page.toLowerCase()] = INFO_ZONES[page.toLowerCase()] || []).push(
-        {x1:x1*INFO_SCALE, y1:y1*INFO_SCALE, x2:x2*INFO_SCALE, y2:y2*INFO_SCALE, t, d});
+        {x1:x1*sc, y1:y1*sc, x2:x2*sc, y2:y2*sc, t, d, m});
 }
+function Z(page, x1, y1, x2, y2, t, d){ ZS(page, INFO_SCALE, x1, y1, x2, y2, t, d); }
 Z("Layout",   6,   2, 165,  72, "LOGO", "لوگوی شرکت سازنده دستگاه");
 Z("Layout", 168,   2, 340,  72, "DATE / TIME", "تاریخ و ساعت دستگاه");
 Z("Layout", 343,   2, 905,  72, "MACHINE LAYOUT", "عنوان صفحه: نمای کلی خط تولید");
@@ -1401,13 +1411,68 @@ Z("Layout",  10, 265, 1235, 372, "MACHINE LINE", "نمای کلی خط تولی�
  ["M23B","HOOK","چسب بغل بیرونی",750,560],["M25","FRONTAL TAPE","عروسکی",934,560],["M26B","POLY BKSHEET","فویل",1116,560]
 ].forEach(([m,en,fa,x,y]) => Z("Layout", x, y, x+105, y+80, "UNWINDER " + en + " (" + m + ")", "آنویندر " + fa));
 
+/* ===== صفحه‌های Axes (Page 1 تا 9): ردیف‌های موتور از روی عکس‌ها خوانده شده ===== */
+/* [ستون L/R, شماره ردیف (۰ تا ۱۴), کد موتور] */
+const AXES_ROWS = {1:[["L",0,"BV01"],["L",1,"BV02"],["L",4,"BV05"],["L",6,"BV07"],["L",7,"BV08"],["L",8,"BV09"],["L",9,"BV10"],["L",10,"BV11"],["L",11,"BV12"],["L",12,"BV13"],["L",13,"BV14"],["L",14,"BV15"],["R",0,"BV16"],["R",1,"BV17"],["R",2,"BV18"],["R",3,"BV19"],["R",4,"BV20"],["R",5,"BV21"],["R",6,"BV22"],["R",7,"BV23"],["R",9,"BV25"],["R",11,"BV27"],["R",13,"BV29"],["R",14,"BV30"]],2:[["L",0,"BV31"],["L",1,"BV32"],["L",2,"BV33"],["L",4,"BV35"],["L",5,"BV36"],["L",6,"BV37"],["L",7,"BV38"],["L",8,"BV39"],["L",9,"BV40"],["L",10,"BV41"],["L",11,"BV42"],["L",12,"BV43"],["L",13,"BV44"],["L",14,"BV45"],["R",0,"BV46"],["R",1,"BV47"],["R",2,"BV48"],["R",3,"BV49"],["R",4,"BV50"],["R",5,"BV51"],["R",6,"BV52"],["R",7,"BV53"],["R",8,"BV54"],["R",9,"BV55"],["R",10,"BV56"],["R",11,"BV57"],["R",12,"BV58"],["R",13,"BV59"],["R",14,"BV60"]],3:[["L",0,"BV61"],["L",1,"BV62"],["L",2,"BV63"],["L",3,"BV64"],["L",4,"BV65"],["L",5,"BV66"],["L",6,"BV67"],["L",7,"BV68"],["L",8,"BV69"],["L",10,"BV71"],["R",5,"BT01"],["R",6,"BT02"],["R",7,"BT03"],["R",8,"BT04"],["R",9,"BT05"],["R",10,"BT06"],["R",11,"BT07"],["R",12,"BT08"],["R",13,"BT09"]],4:[["L",1,"BT12"],["L",3,"BT14"],["L",4,"BT15"],["L",5,"BT16"],["L",7,"BT18"],["L",10,"BT21"],["L",11,"BT22"],["L",12,"BT23"],["L",13,"BT24"],["L",14,"BT25"],["R",0,"BT26"],["R",1,"BT27"],["R",2,"BT28"],["R",3,"BT29"],["R",6,"BT32"],["R",8,"BT34"],["R",9,"BT35"],["R",10,"BT36"]],5:[["L",0,"BT41"],["L",1,"BT42"],["L",2,"BT43"],["L",3,"BT44"],["L",4,"BT45"],["L",5,"BT55"],["L",6,"BT56"],["R",6,"BR14"],["R",8,"BR16"],["R",9,"BP01"],["R",11,"BP03"],["R",13,"BP05"],["R",14,"BP06"]],6:[["L",0,"BP07"],["L",1,"BP08"],["L",2,"BP09"],["L",3,"BP10"],["L",4,"BP11"],["L",5,"BP12"],["L",6,"BP13"],["L",7,"BP14"],["L",8,"BP15"],["L",9,"BP16"],["L",11,"BP18"],["L",12,"BP19"],["L",13,"BP20"],["L",14,"BP21"],["R",0,"BP22"],["R",1,"BP23"],["R",2,"BP24"],["R",13,"BC03"],["R",14,"BC04"]],7:[["L",2,"BC07"],["L",3,"BC08"],["L",4,"BC09"],["L",5,"BC10"],["L",6,"BC11"],["L",8,"BC13"],["L",9,"BC14"],["L",10,"BC15"],["L",11,"BC16"],["L",12,"BC17"],["L",13,"BC18"],["L",14,"BC19"],["R",0,"BC20"],["R",1,"BC21"],["R",2,"BC22"],["R",13,"BU01"],["R",14,"BU02"]],8:[["L",0,"BU03"],["L",1,"BU04"],["L",2,"BU05"],["L",3,"BU06"],["L",4,"BU07"],["L",5,"BU08"],["L",6,"BU09"],["L",7,"BU10"],["L",8,"BU11"],["L",9,"BU12"],["L",10,"BU13"],["L",11,"BU14"],["R",5,"BU23"],["R",6,"BU24"],["R",9,"BU27"],["R",10,"BU28"],["R",11,"BU29"],["R",12,"BU30"],["R",13,"BU31"],["R",14,"BU32"]],9:[["L",0,"BL01"],["L",1,"BL02"],["L",2,"BL03"],["L",3,"BL04"],["L",4,"BL05"],["L",5,"BL06"],["L",14,"BL15"],["R",0,"BL16"]]};
+const AX = 1000 / 1067;
+const AXIS_NAME_EXTRA = {
+    BU29:"رول گردان لمینه بکشیت", BU30:"رول گردان لمینه بکشیت", BL15:"بافر لمینه بکشیت",
+    BU13:"رول گردان لمینه چسب بغل", BU14:"رول گردان لمینه چسب بغل"
+};
+const AXIS_NO_LABEL = ["BT18"];      /* این موتورها هیچ برچسبی نمی‌گیرند */
+function axisName(code){
+    if (AXIS_NAME_EXTRA[code]) return AXIS_NAME_EXTRA[code];
+    const t = TOOLTIP_TEXTS[code.toLowerCase()];
+    if (t && t[1]) return t[1];
+    const k = Object.keys(PAGE_DESCRIPTIONS).find(x => x.toUpperCase().endsWith("-" + code));
+    return k ? PAGE_DESCRIPTIONS[k] : "";
+}
+Object.keys(AXES_ROWS).forEach(n => {
+    const page = n === "1" ? "Axes" : "Axes Page " + n;
+    const hasEnable = n !== "8" && n !== "9";            /* در این دو صفحه ستون ENABLED/Sync نیست */
+    const Zp = (x1, y1, x2, y2, t, d, m) => ZS(page, AX, x1, y1, x2, y2, t, d, m);
+    /* بالای صفحه */
+    Zp(5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه");
+    Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
+    Zp(293, 3, 775, 65, "AXES ENABLE AND DIAGNOSTIC", "فعال سازی و عیب یابی موتورها");
+    Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+    Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+    Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
+    Zp(978, 525, 1065, 582, "SIMOTION MANUAL POWER OFF", "کنترل دستی سیموشن (برق خاموش)");
+    /* ردیف‌ها */
+    AXES_ROWS[n].forEach(([side, k, code]) => {
+        if (AXIS_NO_LABEL.includes(code)) return;
+        const top = Math.round(124 + 30.82 * k), bot = top + 26;
+        const nm = axisName(code), txt = nm ? code + " - " + nm : code;
+        const dx = side === "L" ? 0 : 490;
+        Zp(114 + dx, top, 390 + dx, bot, code, txt, "a");                 /* نمایش همه: از ستون نام تا ستون خطای درایور */
+        Zp(114 + dx, top, 204 + dx, bot, code, nm || code, "h");          /* هاور روی نام موتور */
+        if (hasEnable) Zp(5 + dx, top, 83 + dx, bot, "ENABLE / DISABLE", "فعال / غیر فعال", "a");
+    });
+    /* سرستون‌ها و ستون‌ها */
+    [0, 490].forEach(dx => {
+        if (hasEnable) Zp(64 + dx, 80, 112 + dx, 115, "SYNC", "همگام\nسازی");
+        Zp(114 + dx, 80, 204 + dx, 115, "AXIS NAME", "نام موتور");
+        Zp(207 + dx, 80, 297 + dx, 115, "TECH. OBJECT FAULT CODE", "کد خطای موتور");
+        Zp(300 + dx, 80, 390 + dx, 115, "DRIVE OBJECT FAULT CODE", "کد خطای درایور");
+        Zp(393 + dx, 80, 483 + dx, 115, "DRIVE TEMPERATURE", "دمای درایور");
+        Zp(207 + dx, 121, 297 + dx, 583, "TECH. OBJECT FAULT CODE", "کد خطای موتور", "h");
+        Zp(300 + dx, 121, 390 + dx, 583, "DRIVE OBJECT FAULT CODE", "کد خطای درایور", "h");
+        Zp(393 + dx, 121, 483 + dx, 583, "DRIVE TEMPERATURE", "دمای درایور", "h");
+        if (hasEnable) {
+            Zp(5 + dx, 121, 83 + dx, 583, "ENABLE / DISABLE", "حالت فعال / غیر فعال کردن موتور", "h");
+            Zp(86 + dx, 121, 110 + dx, 583, "SYNC", "همگام‌سازی", "h");
+        }
+    });
+});
+
 let tooltipAnchor = null;
 function findInfoZone(event){
     const list = INFO_ZONES[(currentPage.key || "").toLowerCase()];
     if (!list) return null;
     const r = hmiPanel.getBoundingClientRect(), k = 1000 / r.width;
     const x = (event.clientX - r.left) * k, y = (event.clientY - r.top) * k;
-    return list.find(z => x >= z.x1 && x <= z.x2 && y >= z.y1 && y <= z.y2) || null;
+    return list.find(z => z.m !== "a" && x >= z.x1 && x <= z.x2 && y >= z.y1 && y <= z.y2) || null;
 }
 function zoneViewportRect(z){
     const r = hmiPanel.getBoundingClientRect(), k = r.width / 1000;
@@ -1449,6 +1514,7 @@ function addLabel(x, y, w, h, text){
     d.className = "hmi-label";
     d.style.left = x + "px"; d.style.top = y + "px"; d.style.width = w + "px"; d.style.height = h + "px";
     d.textContent = text;
+    if (/^[A-Z]{2}\d{2} - /.test(text)) d.style.direction = "ltr";   /* کد موتور چپ، معنی راست */
     hmiPanel.appendChild(d);
     let fs = 13;
     d.style.fontSize = fs + "px";
@@ -1462,7 +1528,7 @@ function showAllLabels(){
         const d = getTooltipDescription(b);
         if (d[1]) addLabel(b.offsetLeft, b.offsetTop, b.offsetWidth, b.offsetHeight, d[1]);
     });
-    (INFO_ZONES[(currentPage.key || "").toLowerCase()] || []).forEach(z => addLabel(z.x1, z.y1, z.x2 - z.x1, z.y2 - z.y1, z.d));
+    (INFO_ZONES[(currentPage.key || "").toLowerCase()] || []).forEach(z => { if (z.m !== "h") addLabel(z.x1, z.y1, z.x2 - z.x1, z.y2 - z.y1, z.d); });
     hmiPanel.classList.add("labels-on");
     labelsTimer = setTimeout(hideLabels, 6000);
 }
