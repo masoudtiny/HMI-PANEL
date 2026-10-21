@@ -2346,6 +2346,47 @@ Object.keys(AXES_ROWS).forEach(n => {
     })();
 })();
 
+/* ===== صفحه‌های موتور ماژول‌ها (قالب مشترک): فعلاً M18 و M19 و M01 و M04 تا M14 (عکس ۱۰۶۷ پیکسلی) ===== */
+(function () {
+    const MODS_DONE = ["M18", "M19", "M01", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12", "M13", "M14"];
+    MODS_DONE.forEach(mod => {
+        const modFa = (MODULES[mod] || ["", ""])[1];
+        (MODULE_MOTORS[mod] || []).forEach(code => {
+            const Zp = (x1, y1, x2, y2, t, d, m) => ZS(mod + "-" + code, AX, x1, y1, x2, y2, t, d, m);
+            const kind = code.slice(0, 2) === "BT" ? "bt" : (/^B[VR]/.test(code) ? "bv" : "bp");
+            const nm = pageDescription(mod + "-" + code);
+            /* بالای صفحه */
+            Zp(5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه");
+            Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
+            Zp(293, 3, 775, 65, "AXES CONFIGURATION - MODULE " + mod.slice(1), "تنظیمات موتورهای " + modFa + " (" + mod + ")");
+            Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+            Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+            Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
+            /* پنل سمت راست */
+            Zp(852, 102, 1058, 141, "SELECTED AXIS", nm ? code + " - " + nm : code);
+            Zp(906, 147, 1007, 179, "ENABLED", "فعال / غیر فعال کردن موتور");
+            Zp(852, 187, 1058, 204, "SAFETY READY", "آماده بودن سیستم ایمنی (Safety)");
+            Zp(860, 219, 944, 250, "JOG MODE", "فعال یا غیر فعال کردن حالت حرکت آهسته");
+            Zp(965, 219, 1049, 250, "JOG START", "شروع حرکت آهسته");
+            if (kind === "bp") Zp(942, 255, 1055, 292, "JOG SPEED", "تنظیم سرعت حرکت آهسته");
+            else Zp(858, 255, 1055, 292, "JOG SPEED", "تنظیم سرعت حرکت آهسته");
+            if (kind === "bt" || kind === "bv") Zp(858, 306, 1055, 342, "PITCH LENGTH", "طول مواد مصرفی");
+            if (kind === "bt") {
+                Zp(858, 345, 1055, 380, "SET-POINT POSITION", "درصد کشش");
+                Zp(858, 383, 1055, 417, "ACTUAL POSITION", "نمایش واقعی درصد کشش");
+                Zp(858, 422, 1055, 457, "GAIN (K)", "ضریب تأثیر دنسر بر سرعت موتور", "a");
+                Zp(858, 422, 1055, 457, "GAIN (K)", "تنظیم مقدار تاثیر گرفتن سرعت موتور از PITCH LENGTH و دنسر", "h");
+            }
+            Zp(858, 474, 1055, 508, "TEMPERATURE", "دمای موتور");
+            Zp(858, 510, 1055, 544, "TORQUE", "گشتاور موتور");
+            if (kind === "bp") Zp(858, 556, 1055, 594, "POSITION", "موقعیت فعلی موتور (برحسب درجه)");
+            else Zp(858, 556, 1055, 594, "SPEED", "سرعت موتور");
+            /* خود تصویر ماژول (فقط با هاور / لمس) */
+            Zp(140, 138, 850, 592, mod, "نمای " + modFa + " (" + mod + ") و محل موتورها", "h");
+        });
+    });
+})();
+
 let tooltipAnchor = null, tooltipLong = false;
 const isLongZone = z => !!(z && z.long);
 function findInfoZone(event){
