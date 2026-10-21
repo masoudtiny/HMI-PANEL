@@ -1533,6 +1533,194 @@ Object.keys(AXES_ROWS).forEach(n => {
     });
 });
 
+/* ===== صفحه‌های Asynchronous Motors (Page 1 / Page 2) — عکس ۱۰۶۷ پیکسلی ===== */
+(function(){
+    const PAGES = {
+        "Asynchronous Motors": {
+            speedRed: true,
+            rows: [
+                [0, "3710FLT",      "FILTER",                      "فیلتر", false],
+                [1, "AA01.110M1",   "DRUM ASPIRATOR",              "مکنده درام", true],
+                [2, "AA03.128M1",   "ASPIRATOR BELT 1",            "مکنده تسمه ۱", true],
+                [3, "AA04.131M1",   "ASPIRATOR BELT 2",            "مکنده تسمه ۲", true],
+                [4, "AA05.122M1",   "1st APPLICATORS ASPIRATOR",   "مکنده اپلیکاتور اول", true],
+                [5, "AA06.125M1",   "2nd APPLICATORS ASPIRATOR",   "مکنده اپلیکاتور دوم", true],
+                [6, "AA11.143M1",   "MILL BLOW + DRUM DETACH",     "دمنده آسیاب + جداکننده درام", true],
+                [7, "AM01.90M1",    "MILL MOTOR",                  "موتور آسیاب پالپ", true]
+            ]
+        },
+        "Asynchronous Motors PAGE 2": {
+            speedRed: false,
+            rows: [
+                [0, "AV01.146M1",   "SAP VACUUM PUMP",             "پمپ خلأ پودر جاذب", true],
+                [1, "AS01.176M1",   "DRUM FORMING BRUSH",          "برس درام فرمینگ", true],
+                [2, "AS04.201M18",  "LONGITUDINAL CUT",            "برش طولی", false],
+                [3, "AS06.201M3",   "LONGITUDINAL CUT",            "برش طولی", false],
+                [5, "200Q1",        "Cabin Ventilation FAN",       "فن تهویه کابین", false]
+            ]
+        }
+    };
+    Object.keys(PAGES).forEach(page => {
+        const cfg = PAGES[page];
+        const Zp = (x1, y1, x2, y2, t, d, m) => ZS(page, AX, x1, y1, x2, y2, t, d, m);
+        const rowTop = k => 101 + 40 * k, ROW_H = 38;
+        const lastBottom = rowTop(cfg.rows[cfg.rows.length - 1][0]) + ROW_H;
+        /* بالای صفحه */
+        Zp(5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه");
+        Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
+        Zp(293, 3, 775, 65, "ASYNCHRONOUS MOTORS", "موتورهای آسنکرون (فن و مکنده‌ها)");
+        Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
+        /* سرستون‌ها */
+        Zp(541, 80, 620, 98, "MODE", "حالت کار موتور (AUTO RUN = اتوماتیک)");
+        Zp(628, 80, 706, 98, "STATUS", "وضعیت موتور (در حال کار / متوقف)");
+        Zp(714, 80, 792, 98, "FAULT", "وضعیت خطای موتور و درایو");
+        Zp(800, 80, 879, 98, "SET-POINT", "فرکانس تنظیم شده برای موتور (Hz)");
+        Zp(893, 80, 965, 98, "ACTUAL", "دور واقعی موتور (rpm)");
+        /* ستون‌ها (فقط هاور) */
+        Zp(15, 101, 115, lastBottom, "ENABLED", "فعال / غیر فعال کردن موتور", "h");
+        Zp(541, 101, 620, lastBottom, "MODE", "حالت کار موتور: AUTO RUN = اتوماتیک", "h");
+        Zp(628, 101, 706, lastBottom, "STATUS", "MOTOR IN RUN = موتور در حال کار\nMOTOR IN STOP = موتور متوقف", "h");
+        Zp(714, 101, 792, lastBottom, "FAULT", "TM/DRIVE OK = موتور و درایو بدون خطا", "h");
+        Zp(800, 101, 879, lastBottom, "SET-POINT", "فرکانس تنظیم شده برای دور موتور (Hz)", "h");
+        Zp(893, 101, 965, lastBottom, "ACTUAL", "دور واقعی موتور (rpm)", "h");
+        /* ردیف‌های موتور */
+        cfg.rows.forEach(([k, code, en, fa]) => {
+            const top = rowTop(k), bot = top + ROW_H;
+            Zp(122, top, 537, bot, code, code + " - " + fa, "a");     /* نمایش همه (لمس روی صفحه) */
+            Zp(122, top, 537, bot, code + " - " + en, fa, "h");       /* هاور روی نام موتور */
+        });
+        if (cfg.speedRed) Zp(970, 541, 1065, 593, "SPEED REDUCTION", "کاهش سرعت کلیه موتورها");
+    });
+})();
+
+/* ===== صفحه‌های Module Phasing (Page 1 / Page 2 / Group) — عکس ۱۰۶۷ پیکسلی ===== */
+(function(){
+    const nm = k => (TOOLTIP_TEXTS[k] && TOOLTIP_TEXTS[k][1]) || "";
+    const ROW_TOP = 107, ROW_STEP = 41.5, ROW_H = 34;
+    const COLS = {L:0, R:460};                         /* ستون راست = ستون چپ + ۴۶۰ پیکسل */
+    const PAGE1 = {
+        L:[["BP05","bp05"],["BC13/BP13","bc13-bp13"],["BP01","bp01"],["BP14","bp14"],["BP10","bp10"],["BC04/BP06","bc04-bp06"],["BP17","bp17"],["BC09/BP18","bc09-bp18"],["BC10","bc10"],["BC11","bc11"],["BP19","bp19"]],
+        R:[["BP20","bp20"],["BP21","bp21"],["BC15-BC18","bc15-bc16-bc17-bc18"],["BP07","bp07"],["BP08","bp08"],["BC07-BC08","bc07-bc08"],["BP22","bp22"],["BC19-BC22","bc19-bc20-bc21-bc22"],["BP09","bp09"],["BP23","bp23"],["BP24","bp24"]]
+    };
+    const PAGE2 = {
+        L:[["BC03/BP03","bc03-bp03"],["BP15","bp15"],["BP16","bp16"],["BC14","bc14"],["BP11","bp11"],["BP12","bp12"]], R:[]
+    };
+    const GROUP = {                                    /* g = ردیف سرگروه (عنوان + توضیح فارسی) */
+        L:[{g:"BACK EARS GROUP",fa:"گروه بکرز"},["BP21","bp21"],["BC15-BC18","bc15-bc16-bc17-bc18"],["BP07","bp07"],["BP08","bp08"],["BC07-BC08","bc07-bc08"],
+           {g:"TAPE GROUP",fa:"گروه چسب بغل"},["BC09/BP18","bc09-bp18"],["BC10","bc10"],["BC11","bc11"],["BP19","bp19"],["BP20","bp20"]],
+        R:[{g:"PAD GROUP",fa:"گروه پالپ"},["BP01","bp01"],["BC04/BP06","bc04-bp06"],["BP10","bp10"],["BP11","bp11"],["BP12","bp12"],["BP17","bp17"],
+           {g:"FRONT EARS GROUP",fa:"گروه فرونترز"},["BP09","bp09"],["BP22","bp22"],["BC19-BC22","bc19-bc20-bc21-bc22"]]
+    };
+    function build(keys, data, title, fa, opt){
+        opt = opt || {};
+        const Zp = (x1, y1, x2, y2, t, d, m) => keys.forEach(k => ZS(k, AX, x1, y1, x2, y2, t, d, m));
+        /* بالای صفحه */
+        Zp(5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه");
+        Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
+        Zp(293, 3, 775, 65, title, fa);
+        Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
+        Zp(23, 67, 144, 104, "PRODUCT DIRECTION", "جهت حرکت محصول در دستگاه");
+        const cols = (data.R && data.R.length) ? ["L","R"] : ["L"];
+        cols.forEach(c => {
+            const dx = COLS[c], rows = data[c];
+            Zp(268 + dx, 78, 320 + dx, 97, "FORWARD", "جابجایی فاز به جلو (دکمه فلش چپ)");
+            Zp(408 + dx, 78, 466 + dx, 97, "BACKWARD", "جابجایی فاز به عقب (دکمه فلش راست)");
+            const last = ROW_TOP + ROW_STEP * (rows.length - 1) + ROW_H;
+            Zp(266 + dx, ROW_TOP, 322 + dx, last, "FORWARD", "جابجایی فاز به جلو", "h");
+            Zp(325 + dx, ROW_TOP, 406 + dx, last, "PHASE VALUE", "مقدار فاز فعلی (میلی‌متر)", "h");
+            Zp(409 + dx, ROW_TOP, 465 + dx, last, "BACKWARD", "جابجایی فاز به عقب", "h");
+            rows.forEach((r, i) => {
+                const top = Math.round(ROW_TOP + ROW_STEP * i), bot = top + ROW_H;
+                if (r.g) {
+                    Zp(23 + dx, top, 264 + dx, bot, r.g, r.fa + " — جابجایی همزمان فاز تمام ردیف‌های این گروه (مقدار روبه‌رو)");
+                } else {
+                    const n = nm(r[1]), txt = n ? r[0] + " - " + n : r[0];
+                    Zp(23 + dx, top, 264 + dx, bot, r[0], txt, "a");              /* نمایش همه */
+                    Zp(23 + dx, top, 264 + dx, bot, r[0], n || r[0], "h");        /* هاور روی نام */
+                }
+            });
+        });
+        if (opt.strobo) {
+            Zp(23, 372, 264, 406, "STROBO", "استروبو", "a");
+            Zp(23, 372, 264, 406, "STROBO", "فاز استروبو", "h");
+            Zp(266, 372, 322, 406, "FORWARD", "جابجایی فاز به جلو", "h");
+            Zp(325, 372, 406, 406, "PHASE VALUE", "مقدار فاز فعلی (میلی‌متر)", "h");
+            Zp(409, 372, 465, 406, "BACKWARD", "جابجایی فاز به عقب", "h");
+        }
+    }
+    build(["Module Phasing", "Module Phasing PAGE 1"], PAGE1, "MODULE PHASING", "فاز ماژول‌ها (صفحه ۱) — تنظیم فاز به جلو و عقب");
+    build(["Module Phasing PAGE 2"], PAGE2, "MODULE PHASING", "فاز ماژول‌ها (صفحه ۲) — تنظیم فاز به جلو و عقب", {strobo:true});
+    build(["Module Phasing GROUP"], GROUP, "MODULE PHASING", "فاز ماژول‌ها (گروهی) — جابجایی همزمان چند ماژول");
+})();
+
+/* ===== صفحه‌های آلارم: Active Alarm / Alarm List / Warning List / Alarm History / Warning History (عکس ۱۰۶۷ پیکسلی) ===== */
+(function(){
+    const P = page => (x1, y1, x2, y2, t, d, m) => ZS(page, AX, x1, y1, x2, y2, t, d, m);
+    function header(Zp, title, fa){
+        Zp(5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه");
+        Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
+        Zp(293, 3, 775, 65, title, fa);
+        Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
+    }
+
+    /* ---------- ACTIVE ALARM ---------- */
+    (function(){
+        const Zp = P("ACTIVE ALARM");
+        header(Zp, "ACTIVE ALARMS", "آلارم‌ها و هشدارهای فعال");
+        Zp(4, 68, 194, 104, "STOP CAUSE", "علت توقف دستگاه");
+        Zp(197, 67, 1063, 104, "STOP CAUSE", "علت توقف دستگاه (آخرین آلارمی که باعث توقف خط شده)");
+        Zp(4, 108, 72, 128, "TYPE", "نوع پیام: Warning (هشدار) یا Alarm (آلارم)");
+        Zp(74, 108, 117, 128, "No.", "شماره آلارم");
+        Zp(120, 108, 182, 128, "TIME", "زمان وقوع");
+        Zp(185, 108, 263, 128, "DATE", "تاریخ وقوع");
+        Zp(266, 108, 1060, 128, "TEXT", "متن آلارم یا هشدار");
+        Zp(4, 130, 1062, 510, "ACTIVE ALARMS LIST", "فهرست آلارم‌ها و هشدارهای فعال؛ هر ردیف یک پیام است", "h");
+        /* وضعیت‌های پایین صفحه: برچسب + کادر سبز */
+        Zp(6, 523, 305, 556, "AIR ON MACHINE", "در صورت وصل بودن باد ماشین ON می‌شود، در غیر این صورت OFF");
+        Zp(312, 523, 608, 556, "MACHINE STATE", "وضعیت آماده بودن خط (Running / Stopped)");
+        Zp(615, 523, 915, 556, "FILTER STATUS", "وضعیت فیلتر متصل به ماشین (Ready / Not ready)");
+        Zp(6, 562, 305, 595, "SAFETY STATUS", "وضعیت Safety (Ready / Not ready)");
+        Zp(312, 562, 608, 595, "RAMP MODE", "حالت استارت ماشین (Automatic / Manual)");
+        Zp(615, 562, 915, 595, "STACKER STATUS", "وضعیت بسته‌بندی (Ready / Not ready)");
+    })();
+
+    /* ---------- ALARM LIST (تاریخچه آلارم‌ها) و WARNING LIST (تاریخچه هشدارها) ---------- */
+    function listPage(key, title, fa, kind, delX){
+        const Zp = P(key);
+        header(Zp, title, fa);
+        Zp(4, 68, 60, 82, "No.", "شماره " + kind);
+        Zp(62, 68, 148, 82, "TIME", "زمان وقوع");
+        Zp(150, 68, 227, 82, "DATE", "تاریخ وقوع");
+        Zp(229, 68, 1060, 82, "TEXT", "متن " + kind);
+        Zp(4, 85, 1062, 503, "HISTORY LIST", "فهرست " + kind + "‌های ثبت‌شده؛ جدیدترین‌ها بالاتر نمایش داده می‌شوند", "h");
+        Zp(delX, 538, delX + 132, 590, "DELETE HISTORY", "پاک کردن تاریخچه");
+    }
+    listPage("ALARM LIST", "ALARMS HISTORY", "تاریخچه آلارم‌ها", "آلارم", 601);
+    listPage("WARNING LIST", "WARNINGS HISTORY", "تاریخچه هشدارها", "هشدار", 537);
+
+    /* ---------- پنجره بازشو: ALARM HISTORY / WARNING HISTORY ---------- */
+    function popupPage(key, fa, kind){
+        const Zp = P(key);
+        header(Zp, "ALARMS HISTORY", fa);
+        Zp(78, 70, 970, 86, "ALARM WINDOW", "پنجره نمایش " + kind + "‌ها (برای بستن روی ضربدر بالا سمت راست بزنید)");
+        Zp(80, 90, 134, 104, "No.", "شماره " + kind);
+        Zp(136, 90, 222, 104, "TIME", "زمان وقوع");
+        Zp(224, 90, 301, 104, "DATE", "تاریخ وقوع");
+        Zp(303, 90, 985, 104, "TEXT", "متن " + kind);
+        Zp(80, 106, 985, 612, "ALARM WINDOW LIST", "فهرست " + kind + "‌ها از جدیدترین به قدیمی‌ترین؛ ردیف انتخاب‌شده آبی رنگ است", "h");
+        Zp(80, 625, 116, 651, "INFO TEXT", "نمایش توضیحات " + kind + " انتخاب‌شده");
+        Zp(952, 625, 989, 651, "ALARM ACTION", "دکمه عملیات روی " + kind + " (آیکون مثلث و فلش)");
+    }
+    popupPage("ALARM HISTORY", "تاریخچه آلارم‌ها", "آلارم");
+    popupPage("WARNING HISTORY", "تاریخچه هشدارها", "هشدار");
+})();
+
 /* ===== صفحه‌های Speed Ramp / Manual Controls / Panel Settings / Profinet / Advanced Diagnostic (عکس ۱۰۶۷ پیکسلی) ===== */
 (function(){
     const P = page => (x1, y1, x2, y2, t, d, m) => ZS(page, AX, x1, y1, x2, y2, t, d, m);
