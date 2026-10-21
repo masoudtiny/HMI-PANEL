@@ -259,6 +259,8 @@ button{position:absolute;padding:0;cursor:pointer;z-index:50;font-family:inherit
 .alarm-list-sub-button{z-index:150;width:120px;height:48px}
 .alarm-list-history{left:317px;top:505px}
 .alarm-list-warning{left:440px;top:505px}
+.warning-list-history{left:378px;top:504px;width:124px;height:49px}
+.panel.hide-nav .sensors,.panel.hide-nav .unwinders,.panel.hide-nav .module-phasing,.panel.hide-nav .layout-button,.panel.hide-nav .melter,.panel.hide-nav .valves{display:none!important}
 
 .valves-button,.valves-page2-button,.micro-reed-button,.micro-reed-page2-button,.proportional-valve-button,.proportional-valve-page2-button{z-index:200}
 .valves-micro-reed{left:925px;top:450px;width:69px;height:41px}
@@ -424,7 +426,7 @@ body.locked #fitWrap{display:none}
 #gate .err{color:#ff6b6b;font-size:14px;min-height:20px;margin-top:8px}
 /* ساعت و تاریخ زنده روی کادر بالای تصویر */
 #hmiClock{position:absolute;left:136px;top:3px;width:135px;height:53px;background:#fff;color:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:19px;line-height:1.25;z-index:60;pointer-events:none;direction:ltr;white-space:nowrap}
-.panel.labels-on img{filter:blur(2.5px) brightness(1.25) opacity(.3);transition:filter .15s}
+.panel.labels-on img{filter:blur(2.5px) brightness(1.2) opacity(.2);transition:filter .15s}
 .panel.labels-on #hmiClock{opacity:0}
 .hmi-label{white-space:pre-line;position:absolute;box-sizing:border-box;display:flex;align-items:center;justify-content:center;text-align:center;direction:rtl;overflow:hidden;padding:1px 3px;background:none;border:0;color:#fff;-webkit-text-stroke:3px #000;paint-order:stroke fill;text-shadow:0 0 3px #000,0 0 3px #000,1px 1px 2px #000,-1px -1px 2px #000;font-family:Vazirmatn,Tahoma,Arial,sans-serif;font-weight:700;line-height:1.2;z-index:300;pointer-events:none}
 .hmi-tooltip{white-space:normal!important}
@@ -542,7 +544,8 @@ const TOOLTIP_TEXTS = {
     "alarm-list-sub":["ALARM LIST","لیست آلارم ها"],
     "alarm-list-history":["ALARM HISTORY","تاریخچه آلارم ها"],
     "alarm-list-warning":["WARNING HISTORY","تاریخچه هشدارها"],
-    "warning-history":["WARNING HISTORY","تاریخچه هشدارها"],
+    "warning-history":["WARNING LIST","لیست هشدارها"],
+    "warning-list-history":["WARNING HISTORY","تاریخچه هشدارها"],
     "vision-page1":["PAGE 1","دوربین ها صفحه اول"],
     "vision-page2":["PAGE 2","دوربین ها صفحه دوم"],
     "ifm-pressure-sensors":["PRESSURE SENSORS","سنسور فشار"],
@@ -897,6 +900,7 @@ const MODULE_MOTORS = {
     "M14": ["BT16","BT55","BT56","BC14","BV33","BV30","BV31","BP16","BV32"],
     "M30": ["BV01","BV02"]
 };
+const BR_POPUP_PAGES = ["M11-BR14", "M13-BR16"];
 const motorClass = (mod, m) => mod.toLowerCase() + "-" + m.toLowerCase();
 
 /* توضیح صفحه: اول اسم دقیق (مثل M19-BT43)، اگر نبود فقط با اسم موتور (مثل BT44) */
@@ -912,6 +916,7 @@ Object.entries(MODULE_MOTORS).forEach(([mod, list]) => list.forEach(m => {
     TOOLTIP_TEXTS[motorClass(mod, m)] = [m, pageDescription(key)];
 }));
 function motorSelectorsForPage(key) {
+    if (key === "M11-BR14" || key === "M13-BR16") return [];   /* تصویر این دو صفحه مارک‌خوان است؛ کلید موتورهای دیگر نباید زیرش بیاید */
     const mod = (key.match(/^M\d+/) || [""])[0];
     return (MODULE_MOTORS[mod] || []).map(m => ".motor-button." + motorClass(mod, m));
 }
@@ -1057,9 +1062,10 @@ mk("valves", () => openValves());
 mk("asynchronous-motors", () => openAsynchronousMotors());
 mk("alarm-list", () => openActiveAlarm());
 mk("active-alarm-sub-button alarm-list-sub", () => openAlarmList());
-mk("active-alarm-sub-button warning-history", () => openNormalPage("WARNING HISTORY","images/ALARM LIST/WARNING HISTORY.png"));
+mk("active-alarm-sub-button warning-history", () => openWarningList());
 mk("alarm-list-sub-button alarm-list-history", () => openAlarmHistory());
-mk("alarm-list-sub-button alarm-list-warning", () => openNormalPage("WARNING HISTORY","images/ALARM LIST/WARNING HISTORY.png"));
+mk("alarm-list-sub-button alarm-list-warning", () => openWarningHistory());
+mk("alarm-list-sub-button warning-list-history", () => openWarningHistory());
 
 for (let i = 1; i <= 9; i++) mk("page-button page" + i, () => showPage(i));
 [1,2].forEach(n => mk("vision-page-button vision-page" + n, () => openVisionPage(n)));
@@ -1208,6 +1214,7 @@ const workingButtons = [".working-data-sub",".current-shift-working-data",".knif
 const profinetButtons = [".advanced-diagnostic"];
 const activeAlarmButtons = [".alarm-list-sub",".warning-history"];
 const alarmListButtons = [".alarm-list-history",".alarm-list-warning"];
+const warningListButtons = [".warning-list-history"];
 const alarmHistoryButtons = [];
 const modulePhasingButtons = [".module-phasing-page1",".module-phasing-page2",".module-phasing-group"];
 const melterButtons = [1,2,3,4,5,6].map(n => ".melter-page" + n);
@@ -1235,7 +1242,7 @@ function showSelectors(selectors) {
 }
 function hideSpecialButtons() {
     hideSelectors([
-        ...axesButtons, ...workingButtons, ...profinetButtons, ...activeAlarmButtons, ...alarmListButtons, ...alarmHistoryButtons, ...mechanicalButtons, ...visionButtons,
+        ...axesButtons, ...workingButtons, ...profinetButtons, ...activeAlarmButtons, ...alarmListButtons, ...warningListButtons, ...alarmHistoryButtons, ...mechanicalButtons, ...visionButtons,
         ...pressureSensorButtons, ...vacuumSensorButtons, ...glueSensorButtons, ...printRegistrationButtons,
         ...temperatureButtons, ...ifmButtons, ...asynchronousMotorsButtons,
         ...moduleButtons,
@@ -1275,11 +1282,21 @@ function navigateTo(key, image, state) {
 
 function restorePageState(state) {
     hideAllSpecial();
+    hmiPanel.classList.remove("hide-nav");
+    const cb0 = document.querySelector(".close-popup-button");
+    if (cb0) { cb0.style.left = ""; cb0.style.top = ""; cb0.style.width = ""; cb0.style.height = ""; }
     if (state === "layout") { showMainMenu(); showLayoutButtons(); }
     else if (state === "normal") {
         if (MODULE_PAGES.includes(currentPage.key)) { 
-            showSelectors(moduleButtons); 
-            showSelectors(motorSelectorsForPage(currentPage.key)); 
+            const cb = document.querySelector(".close-popup-button");
+            if (cb) { cb.style.left = ""; cb.style.top = ""; cb.style.width = ""; cb.style.height = ""; }
+            if (BR_POPUP_PAGES.includes(currentPage.key)) {   /* پاپ‌آپ مارک‌خوان: فقط ضربدر (برگشت به صفحه ماژول) */
+                showSelectors([".close-popup-button"]);
+                if (cb) { cb.style.left = "709px"; cb.style.top = "77px"; cb.style.width = "29px"; cb.style.height = "29px"; }
+            } else {
+                showSelectors(moduleButtons); 
+                showSelectors(motorSelectorsForPage(currentPage.key)); 
+            }
         } else if (/^BUFFER /.test(currentPage.key)) {
             showSelectors([".close-popup-button"]);
         } else if (/^B[PC]\d\d(?:-.+)?$/.test(currentPage.key)) {
@@ -1332,7 +1349,13 @@ function restorePageState(state) {
     else if (state === "shift2") { showButtons([".current-shift-shift2",".shift1-shift2",".shift2-shift2",".main-counter-shift2"]); }
     else if (state === "active-alarm") showSelectors(activeAlarmButtons);
     else if (state === "alarm-list") showSelectors(alarmListButtons);
-    else if (state === "alarm-history") showSelectors(alarmHistoryButtons);
+    else if (state === "warning-list") showSelectors(warningListButtons);
+    else if (state === "alarm-popup") {   /* پاپ‌آپ تاریخچه: فقط ضربدر (برگشت) و بدون کلیدهای سنسور تا شیر */
+        hmiPanel.classList.add("hide-nav");
+        const cb = document.querySelector(".close-popup-button");
+        showSelectors([".close-popup-button"]);
+        if (cb) { cb.style.left = "908px"; cb.style.top = "61px"; cb.style.width = "24px"; cb.style.height = "22px"; }
+    }
     else if (state === "profinet") { showButtons([".advanced-diagnostic"]); }
     else if (state === "mechanical") { 
         /* ✅ فقط دکمه‌های هومینگ نمایش داده می‌شوند — هیچ دکمه‌ای از Layout بالای صفحه نمی‌آید */
@@ -1377,7 +1400,9 @@ function showShiftPage(n) { navigateTo("Shift " + n,"images/WORKING DATA/SHIFT "
 function showWorkingDataPage() { navigateTo("Working Data","images/WORKING DATA/WORKING DATA.png","working-data-main"); }
 function openActiveAlarm() { navigateTo("ACTIVE ALARM","images/ALARM LIST/ACTIVE ALARM.png","active-alarm"); }
 function openAlarmList() { navigateTo("ALARM LIST","images/ALARM LIST/ALARM LIST.png","alarm-list"); }
-function openAlarmHistory() { navigateTo("ALARM HISTORY","images/ALARM LIST/ALARM HISTORY.png","alarm-history"); }
+function openAlarmHistory() { navigateTo("ALARM HISTORY","images/ALARM LIST/ALARM HISTORY.png","alarm-popup"); }
+function openWarningList() { navigateTo("WARNING LIST","images/ALARM LIST/WARNING LIST.png","warning-list"); }
+function openWarningHistory() { navigateTo("WARNING HISTORY","images/ALARM LIST/WARNING HISTORY.png","alarm-popup"); }
 function openKnifeCounters() { navigateTo("Knife Counters","images/WORKING DATA/KNIFE COUNTERS.png","normal"); }
 
 function openVisionSystem() { navigateTo("Vision System","images/VISION SYSTEM/VISION SYSTEM.png","vision-system"); }
@@ -1451,7 +1476,7 @@ Z("Layout",  10, 265, 1235, 372, "MACHINE LINE", "نمای کلی خط تولی�
  ["M24","FRONT EARS","فرونترز",934,408],["M26A","NW BACKSHEET","لمینه فویل",1116,408],
  ["M20B","NW TOPSHEET","نانواون",20,560],["M21B","UPPER NW","آپر",203,560],["M22B","BACK EARS","بکرز",383,560],
  ["M23B","HOOK","چسب بغل بیرونی",750,560],["M25","FRONTAL TAPE","عروسکی",934,560],["M26B","POLY BKSHEET","فویل",1116,560]
-].forEach(([m,en,fa,x,y]) => Z("Layout", x, y, x+105, y+80, "UNWINDER " + en + " (" + m + ")", "آنویندر " + fa));
+].forEach(([m,en,fa,x,y]) => ZS("Layout", INFO_SCALE, x, y, x+105, y+80, "UNWINDER " + en + " (" + m + ")", "آنویندر " + fa, "h"));   /* فقط با هاور/نگه داشتن؛ در نمایش همزمان با لیبل کلید ماژول تکراری می‌شد */
 
 /* ===== صفحه‌های Axes (Page 1 تا 9): ردیف‌های موتور از روی عکس‌ها خوانده شده ===== */
 /* [ستون L/R, شماره ردیف (۰ تا ۱۴), کد موتور] */
@@ -2387,6 +2412,229 @@ Object.keys(AXES_ROWS).forEach(n => {
     });
 })();
 
+/* ===== صفحه‌های ماژول‌های آنویندر (M20A تا M26B) و M30 — همان قالب ماژول‌ها ===== */
+(function () {
+    /* [کلید صفحه، شماره در عنوان، کلاس ماژول، [[x1,y1,x2,y2,کد موتور]...] برچسب آبی روی تصویر] */
+    const PAGES = [
+        ["M20-A-BT21", "20A", "m20a", [[27, 216, 101, 241, "BT21"]]],
+        ["M20-B-BT22", "20B", "m20b", [[753, 210, 828, 235, "BT22"]]],
+        ["M21-A-BT23", "21A", "m21a", [[21, 232, 95, 256, "BT23"]]],
+        ["M21-B-BT24", "21B", "m21b", [[746, 205, 820, 230, "BT24"]]],
+        ["M22-A-BT25", "22A", "m22a", [[19, 226, 93, 250, "BT25"]]],
+        ["M22-B-BT26", "22B", "m22b", [[749, 204, 823, 229, "BT26"]]],
+        ["M23-A-BT28", "23A/B", "m23a", [[152, 196, 226, 221, "BT28"], [737, 196, 811, 221, "BT29"]]],
+        ["M23-B-BT29", "23A/B", "m23b", [[152, 196, 226, 221, "BT28"], [737, 196, 811, 221, "BT29"]]],
+        ["M23-C-BT27", "23C", "m23c", [[21, 265, 95, 288, "BT27"]]],
+        ["M24-BT32", "24", "m24", [[600, 367, 674, 391, "BT32"]]],
+        ["M25-BT34", "25", "m25", [[714, 163, 788, 187, "BT34"]]],
+        ["M26-A-BT35", "26A", "m26a", [[34, 244, 108, 267, "BT35"]]],
+        ["M26-B-BT36", "26B", "m26b", [[773, 189, 847, 212, "BT36"]]],
+        ["M30-BV01", "30", "m30", []],
+        ["M30-BV02", "30", "m30", []]
+    ];
+    const AXIS_FA = { BT28: "نیپ رول اول چپ (آنویندر)", BT29: "نیپ رول اول راست (آنویندر)" };
+    PAGES.forEach(([key, num, cls, tags]) => {
+        const Zp = (x1, y1, x2, y2, t, d, m) => ZS(key, AX, x1, y1, x2, y2, t, d, m);
+        const code = key.split("-").pop();
+        const isBV = code.slice(0, 2) === "BV";
+        const nm = pageDescription(key);
+        const modFa = TOOLTIP_TEXTS[cls][1];
+        Zp(5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه");
+        Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
+        Zp(293, 3, 775, 65, "AXES CONFIGURATION - MODULE " + num, "تنظیمات موتورهای " + modFa);
+        Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
+        Zp(852, 102, 1058, 141, "SELECTED AXIS", nm ? code + " - " + nm : code);
+        Zp(906, 147, 1007, 179, "ENABLED", "فعال / غیر فعال کردن موتور");
+        Zp(852, 187, 1058, 204, "SAFETY READY", "آماده بودن سیستم ایمنی (Safety)");
+        Zp(860, 219, 944, 250, "JOG MODE", "فعال یا غیر فعال کردن حالت حرکت آهسته");
+        Zp(965, 219, 1049, 250, "JOG START", "شروع حرکت آهسته");
+        Zp(858, 255, 1055, 292, "JOG SPEED", "تنظیم سرعت حرکت آهسته");
+        if (!isBV) {
+            Zp(858, 306, 1055, 342, "PITCH LENGTH", "طول مواد مصرفی");
+            Zp(858, 345, 1055, 380, "SET-POINT POSITION", "درصد کشش");
+            Zp(858, 383, 1055, 417, "ACTUAL POSITION", "نمایش واقعی درصد کشش");
+            Zp(858, 422, 1055, 457, "GAIN (K)", "ضریب تأثیر دنسر بر سرعت موتور", "a");
+            Zp(858, 422, 1055, 457, "GAIN (K)", "تنظیم مقدار تاثیر گرفتن سرعت موتور از PITCH LENGTH و دنسر", "h");
+        }
+        Zp(858, 474, 1055, 508, "TEMPERATURE", "دمای موتور");
+        Zp(858, 510, 1055, 544, "TORQUE", "گشتاور موتور");
+        if (!isBV) Zp(858, 556, 1055, 594, "SPEED", "سرعت موتور");
+        /* برچسب آبی موتور روی تصویر */
+        tags.forEach(([x1, y1, x2, y2, c]) => {
+            const fa = AXIS_FA[c] || pageDescription(key.replace(/-[^-]+$/, "-" + c)) || "";
+            const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
+            Zp(Math.max(2, cx - 78), cy - 20, cx + 78, cy + 20, c + " - " + fa, c + (fa ? " - " + fa : ""), "a");
+        });
+        Zp(140, 138, 850, 592, "M" + num, "نمای " + modFa + " و محل موتورها", "h");
+    });
+})();
+
+/* ===== Unwinders: صفحهٔ اصلی + Set-Up + Sensors + Buffer (عکس ۱۰۶۷ پیکسلی) ===== */
+(function(){
+    /* [شماره, اسم فارسی, نوع صفحهٔ Set-Up]  A = بافر (لوئر/آپر...) ، B = دنسر ، C = دنسر با Teach (هوک و چسب بغل داخلی) */
+    const UW = {
+        "NW CUFF":[1,"لگکاف","A"], "NW TOPSHEET":[2,"نانواون","A"], "AQL":[3,"اکشن","A"], "UPPER NW":[4,"آپر","A"],
+        "LOWER NW":[5,"لاور","A"], "BACK EARS":[6,"بکرز","A"], "NW FOR TAPE":[7,"لمینه چسب بغل","B"],
+        "TAPE PRE-GLU":[8,"چسب بغل داخلی","C"], "HOOK":[9,"چسب بغل بیرونی","C"], "FRONT EARS":[12,"فرونترز","B"],
+        "FRONTAL TAPE":[14,"عروسکی","B"], "NW BACKSHEET":[15,"لمینه فویل","A"], "POLY BKSHEET":[16,"فویل","A"]
+    };
+    const pad2 = n => String(n).padStart(2, "0");
+    function header(Zp, title, fa, skipLogo){
+        if (!skipLogo) Zp(5, 3, 142, 62, "LOGO", "لوگوی شرکت سازنده دستگاه");
+        Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
+        Zp(293, 3, 775, 65, title, fa);
+        Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
+    }
+
+    /* ---------- صفحهٔ اصلی Unwinders ---------- */
+    (function(){
+        const Zp = (...a) => ZS("Unwinders", AX, ...a);
+        header(Zp, "UNWINDERS", "آنویندرها (رول‌گردان‌ها)");
+        const L = [["NW CUFF",154],["NW TOPSHEET",220],["AQL",287],["UPPER NW",353],["LOWER NW",416],["BACK EARS",482],["NW FOR TAPE",548]];
+        const R = [["TAPE PRE-GLU",153],["HOOK",219],["FRONT EARS",286],["FRONTAL TAPE",348],["NW BACKSHEET",416],["POLY BKSHEET",481]];
+        L.forEach(([en,y]) => { const u = UW[en];
+            Zp(45, y-22, 98, y+22, "ON / OFF " + pad2(u[0]), "وضعیت آنویندر " + pad2(u[0]) + " (سبز: روشن، قرمز: خاموش)");
+            Zp(100, y-22, 416, y+22, en, pad2(u[0]) + " - آنویندر " + u[1]); });
+        R.forEach(([en,y]) => { const u = UW[en];
+            Zp(578, y-22, 631, y+22, "ON / OFF " + pad2(u[0]), "وضعیت آنویندر " + pad2(u[0]) + " (سبز: روشن، قرمز: خاموش)");
+            Zp(632, y-22, 947, y+22, en, pad2(u[0]) + " - آنویندر " + u[1]); });
+    })();
+
+    /* ---------- صفحه‌های Set-Up ---------- */
+    Object.keys(UW).forEach(en => {
+        const [num, fa, type] = UW[en];
+        const Zp = (...a) => ZS(en + " SETUP", AX, ...a);
+        header(Zp, "UNWINDER " + num + " SET-UP - " + en, "تنظیمات آنویندر " + fa, type === "A");
+        /* Reel set-up */
+        Zp(88, 80, 561, 100, "REEL SET-UP", "تنظیمات رول");
+        Zp(386, 97, 553, 113, "LEFT / RIGHT", "رول چپ / رول راست");
+        if (type === "C") Zp(96, 120, 553, 152, "TEACH SPINDLE (75 MM) TO SENSOR", "آموزش (Teach) فاصله سنسور تا رول‌گردان برای رول چپ و راست");
+        else Zp(96, 120, 553, 152, "SPINDLE (75 MM) TO SENSOR DISTANCE", "فاصله سنسور قطرخوان تا رول‌گردان (چپ و راست)");
+        Zp(96, 163, 553, 200, "SPINDLE DIAMETER", "قطر رول‌گردان");
+        Zp(96, 208, 553, 250, "MINIMUM DIAMETER ALARM IN MANUAL", "حداقل قطر رول برای آلارم در حالت دستی");
+        if (type === "A") {
+            /* Automatic reel splice */
+            Zp(88, 266, 561, 286, "AUTOMATIC REEL SPLICE", "تعویض خودکار رول");
+            Zp(96, 298, 507, 342, "SPLICE DIAMETER", "قطر انتهای رول (شروع اسپلایس)");
+            Zp(96, 345, 507, 385, "START OPENING DIAMETER", "قطر شروع باز شدن بافر");
+            /* Reject */
+            Zp(88, 406, 561, 428, "REJECT", "ریجکت");
+            Zp(386, 436, 466, 452, "FIRST", "اولین");
+            Zp(96, 466, 466, 508, "PIECES TO WAIT BEFORE REJECT", "موقعیت مواد از لحظه ردیابی سنسور (تعداد پد تا ریجکت)");
+            Zp(96, 512, 466, 553, "PIECES TO REJECT", "تعداد پد ریجکت");
+            /* Zero-Speed */
+            Zp(572, 80, 980, 100, "ZERO-SPEED", "موقعیت دنسر و بافر در سرعت صفر");
+            Zp(581, 112, 960, 132, "DANCER ACTUAL POSITION", "موقعیت واقعی دنسر (درصد)");
+            Zp(581, 139, 960, 159, "BUFFER ACTUAL POSITION", "موقعیت واقعی بافر (درصد)");
+            Zp(581, 209, 671, 249, "UNWINDER RESET", "ریست آنویندر");
+            Zp(679, 209, 790, 249, "HOMED", "وضعیت هومینگ (سبز: هوم شده)");
+            Zp(799, 209, 911, 249, "EXECUTE HOME", "اجرای هومینگ");
+            Zp(606, 312, 690, 330, "BUFFER POS.", "موقعیت بافر (درصد)");
+            Zp(685, 328, 935, 456, "REELS", "نمای رول‌ها: قطر هر رول (میلی‌متر) و جهت چرخش");
+            Zp(685, 458, 935, 495, "UNWINDING DIRECTION", "قرمز: برای تغییر جهت باز شدن رول باید خاموش شود. سبز: تغییر جهت آزاد است");
+        } else {
+            /* Automatic reel splice */
+            Zp(88, 266, 561, 286, "AUTOMATIC REEL SPLICE", "تعویض خودکار رول");
+            Zp(386, 268, 553, 284, "LEFT / RIGHT", "رول چپ / رول راست", "h");
+            Zp(96, 285, 553, 315, "SPLICE DIAMETER", "قطر انتهای رول (چپ و راست)");
+            Zp(96, 325, 507, 352, "WAITING FOR CHANGE", "تعداد پد انتظار تا تعویض رول");
+            Zp(96, 360, 507, 387, "CURRENT COUNT", "شمارنده فعلی");
+            /* Reject */
+            Zp(88, 443, 561, 465, "REJECT", "ریجکت");
+            Zp(386, 468, 466, 482, "FIRST", "اولین", "h");
+            Zp(96, 468, 466, 505, "PIECES TO WAIT BEFORE REJECT", "موقعیت مواد از لحظه ردیابی سنسور (تعداد پد تا ریجکت)");
+            Zp(96, 512, 466, 550, "PIECES TO REJECT", "تعداد پد ریجکت");
+            /* Zero-Speed */
+            Zp(572, 80, 980, 100, "ZERO-SPEED", "موقعیت دنسر در سرعت صفر");
+            Zp(581, 115, 960, 157, "WORKING POSITION", "موقعیت کاری دنسر (درصد)");
+            Zp(581, 162, 960, 203, "POSITION AT MINIMUM DIAMETER", "موقعیت دنسر در حداقل قطر (درصد)");
+            Zp(581, 210, 970, 250, "ACTUAL POSITION", "موقعیت واقعی دنسر (درصد)");
+            Zp(600, 371, 690, 387, "DANCER POS.", "موقعیت دنسر (درصد)");
+            if (type === "B") {
+                Zp(685, 383, 935, 510, "REELS", "نمای رول‌ها: قطر هر رول (میلی‌متر) و جهت چرخش");
+                Zp(685, 512, 935, 548, "UNWINDING DIRECTION", "قرمز: برای تغییر جهت باز شدن رول باید خاموش شود. سبز: تغییر جهت آزاد است");
+            } else {
+                Zp(750, 370, 935, 520, "REELS", "نمای رول‌ها: قطر هر رول (میلی‌متر) و جهت چرخش");
+                Zp(750, 524, 935, 555, "UNWINDING DIRECTION", "قرمز: برای تغییر جهت باز شدن رول باید خاموش شود. سبز: تغییر جهت آزاد است");
+            }
+        }
+    });
+
+    /* ---------- پاپ‌آپ Buffer ---------- */
+    ["NW CUFF","NW TOPSHEET","AQL","UPPER NW","LOWER NW","BACK EARS","NW BACKSHEET","POLY BKSHEET"].forEach(en => {
+        const [num, fa] = UW[en];
+        const Zp = (...a) => ZS("BUFFER " + en, AX, ...a);
+        header(Zp, "UNWINDER " + num + " SET-UP - " + en, "تنظیمات آنویندر " + fa);
+        Zp(308, 153, 725, 185, "UNWINDER " + pad2(num), "بافر آنویندر " + fa);
+        Zp(382, 200, 687, 232, "SPEED RESET BUFFER", "سرعت ریست بافر (پالس بر ثانیه)");
+        Zp(382, 238, 687, 270, "WORK POSITION", "موقعیت کاری بافر (میلی‌متر)");
+        Zp(382, 277, 687, 309, "SPLICE POSITION", "موقعیت اسپلایس (میلی‌متر)");
+        Zp(382, 316, 687, 348, "LENGTH MATERIAL ON DANCER", "طول مواد روی دنسر (متر)");
+        Zp(380, 358, 687, 384, "STATUS", "وضعیت بافر (Running: در حال کار، Disabled: غیرفعال)");
+    });
+
+    /* ---------- صفحه‌های Sensors ---------- */
+    const S = {
+        "NW CUFF":[
+            ["3002B1 (M20)","وجود ماده بعد از اسپلایس"],["3003B1 (M18)","وجود ماده اول بعد از کشش"],
+            ["3003B4\\B5 (M18)","هم‌ترازی قبل از S3P1 سمت OS - کش لگ‌کاف"],["3003B6\\B7 (M18)","هم‌ترازی قبل از S3P1 سمت DS - کش لگ‌کاف"],
+            ["3003B8\\B9 (M19)","هم‌ترازی قبل از S8P3 - انتهای لگ‌کاف"],["3004B1\\B2 (M18)","وجود ماده اول بعد از امبوس"],
+            ["3004B3\\B4 (M19)","وجود ماده اول قبل از اتصال"]],
+        "NW TOPSHEET":[
+            ["3022B1 (M20)","وجود ماده بعد از اسپلایس"],["3023B1 (M18)","وجود ماده دوم بعد از کشش"],
+            ["3023B3\\B4 (M19)","هم‌ترازی قبل از S8P1 - سمت لگ‌کاف"],["3023B5 (M19)","وجود ماده دوم بعد از کشش"],
+            ["3024B1\\B2 (M05)","هم‌ترازی قبل از S5P3 - تاپ‌شیت"],["3024B3\\B4 (M08)","هم‌ترازی قبل از S9P4 - گوشی‌ها روی لگ‌کاف"]],
+        "AQL":[
+            ["3042B1 (M21)","وجود ماده بعد از اسپلایس"],["3043B1 (M19)","وجود ماده سوم بعد از کشش"],
+            ["3043B3\\B4 (M19)","هم‌ترازی ماده S8P2 - اکشن"]],
+        "UPPER NW":[
+            ["3062B1 (M21)","وجود ماده بعد از اسپلایس"],["3063B1 (M01)","وجود ماده چهارم بعد از کشش"],
+            ["3063B3\\B4 (M01)","هم‌ترازی قبل از S1P1 - آپر"],["3063B5\\B6 (M01)","هم‌ترازی قبل از اتصال"]],
+        "LOWER NW":[
+            ["3082B1 (M22)","وجود ماده بعد از اسپلایس"],["3083B1 (M05)","وجود ماده پنجم بعد از کشش"],
+            ["3083B3\\B4 (M04)","هم‌ترازی قبل از S11P2 - لاور"],["3083B5\\B6 (M04)","هم‌ترازی قبل از S5P1 - بسته شدن روی تاکن"]],
+        "BACK EARS":[
+            ["3102B1 (M22)","وجود ماده بعد از اسپلایس"],["3103B1 (M06)","وجود ماده ششم روی کشش"],
+            ["3103B3 (M06)","وجود ماده ششم"],["3103B4/B5 (M07)","هم‌ترازی بعد از کشش"],
+            ["3103B6/B7 (M08)","هم‌ترازی قبل از برش و قرارگیری (Cut&Place)"],["3104B1\\B2 (M06)","وجود ماده ششم قبل از چسب حرارتی (هات‌ملت)"]],
+        "NW FOR TAPE":[
+            ["3122B1 (M23)","وجود ماده بعد از اسپلایس"],["3123B1 (M07)","وجود ماده هفتم روی کشش"]],
+        "TAPE PRE-GLU":[
+            ["3142B1 (M23)","وجود ماده بعد از اسپلایس"],["3143B1 (M08)","وجود ماده هشتم بعد از کشش"]],
+        "HOOK":[
+            ["3162B1 (M23)","وجود ماده بعد از اسپلایس"],["3163B1 (M08)","وجود ماده نهم بعد از کشش"],
+            ["3163B3\\B4 (M07)","وجود هوک قبل از اتصال"],["3163B7 (M06)","وجود ماده قبل از کشش"]],
+        "FRONT EARS":[
+            ["3222B1 (M24)","وجود ماده بعد از اسپلایس"],["3223B1 (M10)","وجود ماده دوازدهم بعد از کشش"],
+            ["3223B3/B4 (M09)","وجود ماده دوازدهم قبل از برش و قرارگیری (Cut&Place)"]],
+        "FRONTAL TAPE":[
+            ["3262B1 (M25)","وجود ماده بعد از اسپلایس"],["3263B1 (M11)","وجود ماده چهاردهم بعد از کشش"],
+            ["3263B3\\B4 (M11)","هم‌ترازی قبل از چسب حرارتی (هات‌ملت)"]],
+        "NW BACKSHEET":[
+            ["3282B1 (M26)","وجود ماده بعد از اسپلایس"],["3283B1 (M13)","وجود ماده پانزدهم بعد از کشش"],
+            ["3283B3\\B4 (M12)","هم‌ترازی قبل از S10P2 - لمینه فویل"]],
+        "POLY BKSHEET":[
+            ["3302B1 (M26)","وجود ماده بعد از اسپلایس"],["3303B1 (M14)","وجود ماده شانزدهم بعد از کشش"],
+            ["3303B3\\B4 (M12)","هم‌ترازی قبل از اتصال"],["3303B5\\B6 (M10)","هم‌ترازی قبل از S9P2 - تقویت گوشی‌ها"]]
+    };
+    Object.keys(S).forEach(en => {
+        const [num, fa] = UW[en];
+        const Zp = (...a) => ZS(en + " SENSOR", AX, ...a);
+        header(Zp, "UNWINDER " + pad2(num) + " SENSORS SET-UP", "تنظیمات سنسورهای آنویندر " + fa);
+        Zp(185, 75, 297, 115, "ENABLE", "فعال / غیرفعال کردن سنسور");
+        Zp(327, 75, 741, 115, "NAME", "کد و محل سنسور");
+        Zp(771, 75, 882, 115, "THRESHOLD", "آستانه تشخیص سنسور (ppm)");
+        const n = S[en].length;
+        S[en].forEach(([code, d], i) => { const y = 142 + 47.5 * i; Zp(327, y-20, 741, y+20, code, d + "\n" + code); });
+        Zp(185, 121, 297, 121 + 47.5 * n, "ENABLE", "فعال / غیرفعال کردن سنسور", "h");
+        Zp(771, 121, 882, 121 + 47.5 * n, "THRESHOLD", "آستانه تشخیص سنسور (ppm)", "h");
+    });
+})();
+
 let tooltipAnchor = null, tooltipLong = false;
 const isLongZone = z => !!(z && z.long);
 function findInfoZone(event){
@@ -2430,9 +2678,9 @@ function hideLabels(){
     hmiPanel.querySelectorAll(".hmi-label").forEach(e => e.remove());
     hmiPanel.classList.remove("labels-on");
 }
-function addLabel(x, y, w, h, text){
+function addLabel(x, y, w, h, text, minW, minH){
     if (!text || w < 6 || h < 6) return;
-    const MINW = 64, MINH = 22;   /* کادرهای کوچک را بزرگ‌تر می‌کند تا متن ریز نشود */
+    const MINW = minW || 64, MINH = minH || 22;   /* کادرهای کوچک را بزرگ‌تر می‌کند تا متن ریز نشود */
     if (w < MINW) { x -= (MINW - w) / 2; w = MINW; }
     if (h < MINH) { y -= (MINH - h) / 2; h = MINH; }
     const d = document.createElement("div");
@@ -2453,7 +2701,15 @@ function showAllLabels(){
         if (getComputedStyle(b).display === "none") return;
         if (currentPage.key !== "Layout" && allMainButtons.some(sel => b.matches(sel))) return;   /* منوی بالای Layout فقط در Layout */
         const d = getTooltipDescription(b);
-        if (d[1]) addLabel(b.offsetLeft, b.offsetTop, b.offsetWidth, b.offsetHeight, d[1]);
+        if (!d[1]) return;
+        /* Layout: کلید ماژول آنویندر را بالاتر (روی عکس کارت) و کلید تنظیمات را پایین‌تر می‌گذارد تا روی هم نیفتند */
+        if (currentPage.key === "Layout" && [...b.classList].some(c => /^m2[0-6][abc]?$/.test(c))) {
+            const cx = b.offsetLeft + b.offsetWidth / 2;
+            addLabel(cx - 54, b.offsetTop - 46, 108, 40, d[1], 108, 40);
+        } else if (currentPage.key === "Layout" && [...b.classList].some(c => /^m2[0-6][abc]?-setup$/.test(c))) {
+            const cx = b.offsetLeft + b.offsetWidth / 2;
+            addLabel(cx - 54, b.offsetTop - 1, 108, 26, d[1], 108, 26);
+        } else addLabel(b.offsetLeft, b.offsetTop, b.offsetWidth, b.offsetHeight, d[1]);
     });
     (INFO_ZONES[(currentPage.key || "").toLowerCase()] || []).forEach(z => { if (z.m !== "h") addLabel(z.x1, z.y1, z.x2 - z.x1, z.y2 - z.y1, z.d); });
     hmiPanel.classList.add("labels-on");
