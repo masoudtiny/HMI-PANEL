@@ -3585,13 +3585,21 @@ function addLabel(x, y, w, h, text, minW, minH){
     if (d.scrollHeight > d.clientHeight + 1) { const nh = d.scrollHeight + 2; d.style.top = (y - (nh - h) / 2) + "px"; d.style.height = nh + "px"; h = nh; }
 }
 /* جلوگیری از روی هم افتادن برچسب‌ها: هر دو کادر متداخل کمی از هم دور می‌شوند (کادرها داخل صفحه می‌مانند) */
+function fitLabelFont(e){
+    e.style.overflow = "hidden";
+    let fs = parseFloat(e.style.fontSize) || 14;
+    while (fs > 8 && (e.scrollHeight > e.clientHeight + 1 || e.scrollWidth > e.clientWidth + 1)) {
+        fs -= 0.5; e.style.fontSize = fs + "px";
+    }
+    if (e.scrollHeight > e.clientHeight + 1 || e.scrollWidth > e.clientWidth + 1) e.style.overflow = "visible";
+}
 function resolveLabelOverlaps(){
     const els = [...hmiPanel.querySelectorAll(".hmi-label")];
     if (els.length < 2) return;
     const W = hmiPanel.offsetWidth, H = hmiPanel.offsetHeight;
     const R = els.map(e => ({ e, x: e.offsetLeft, y: e.offsetTop, w: e.offsetWidth, h: e.offsetHeight }));
     const ovl = (a, b) => [Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y)];
-    /* کادر بزرگی که چند کادر کوچک (کلیدها/عنوان‌ها) را در خودش دارد (مثل نمودار): کوچک و وسط‌چین می‌شود */
+    /* کادر بزرگ که چند کادر کوچک را در خود دارد (نمودار): کوچک و وسط‌چین */
     R.forEach(a => {
         if (a.w < 260 || a.h < 60) return;
         const inside = R.filter(b => { if (b === a) return false; const [ox, oy] = ovl(a, b); return ox > 0 && oy > 0 && ox * oy >= 0.1 * b.w * b.h && a.w * a.h > 4 * b.w * b.h; }).length;
@@ -3600,6 +3608,7 @@ function resolveLabelOverlaps(){
         a.e.style.width = nw + "px"; a.e.style.height = "auto";
         a.w = a.e.offsetWidth; a.h = a.e.offsetHeight; a.x = cx - a.w / 2; a.y = cy - a.h / 2;
     });
+    /* فقط جابه‌جایی (بدون کوچک کردن کادر) تا متن بریده نشود */
     for (let it = 0; it < 400; it++) {
         let moved = false;
         for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) {
@@ -3608,20 +3617,29 @@ function resolveLabelOverlaps(){
             moved = true;
             if (oy <= ox) {
                 const s = oy / 2 + 0.6, up = a.y + a.h / 2 <= b.y + b.h / 2;
-                if (oy <= 7) {   /* هم‌پوشانی کم: کادرها کمی کوچک می‌شوند */
-                    if (up) { a.h -= s; b.y += s; b.h -= s; } else { b.h -= s; a.y += s; a.h -= s; }
-                } else if (up) { a.y -= s; b.y += s; } else { a.y += s; b.y -= s; }
+                if (up) { a.y -= s; b.y += s; } else { a.y += s; b.y -= s; }
             } else {
                 const s = ox / 2 + 0.6, left = a.x + a.w / 2 <= b.x + b.w / 2;
-                if (ox <= 11) {
-                    if (left) { a.w -= s; b.x += s; b.w -= s; } else { b.w -= s; a.x += s; a.w -= s; }
-                } else if (left) { a.x -= s; b.x += s; } else { a.x += s; b.x -= s; }
+                if (left) { a.x -= s; b.x += s; } else { a.x += s; b.x -= s; }
             }
         }
         if (W && H) R.forEach(r => { r.x = Math.max(0, Math.min(r.x, W - r.w)); r.y = Math.max(0, Math.min(r.y, H - r.h)); });
         if (!moved) break;
     }
-    R.forEach(r => { r.e.style.left = r.x + "px"; r.e.style.top = r.y + "px"; r.e.style.width = r.w + "px"; r.e.style.height = r.h + "px"; if (r.e.scrollHeight > r.e.clientHeight + 1 || r.e.scrollWidth > r.e.clientWidth + 1) r.e.style.overflow = "visible"; });
+    /* اگر هنوز هم‌پوشانی کم مانده، فقط همان کادرها حداکثر ۴ پیکسل کوچک می‌شوند */
+    for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) {
+        const a = R[i], b = R[j], [ox, oy] = ovl(a, b);
+        if (ox <= 0.5 || oy <= 0.5) continue;
+        if (oy <= ox && oy <= 4) { const s = oy / 2 + 0.5, up = a.y <= b.y;
+            if (up) { a.h -= s; b.y += s; b.h -= s; } else { b.h -= s; a.y += s; a.h -= s; } }
+        else if (ox <= 4) { const s = ox / 2 + 0.5, left = a.x <= b.x;
+            if (left) { a.w -= s; b.x += s; b.w -= s; } else { b.w -= s; a.x += s; a.w -= s; } }
+    }
+    R.forEach(r => {
+        r.e.style.left = r.x + "px"; r.e.style.top = r.y + "px";
+        r.e.style.width = r.w + "px"; r.e.style.height = r.h + "px";
+        fitLabelFont(r.e);   /* فونت متناسب با کادر نهایی */
+    });
 }
 function showAllLabels(){
     hideLabels();
