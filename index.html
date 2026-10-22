@@ -786,7 +786,7 @@ const PAGE_DESCRIPTIONS = {
     "M10-BP23":"بلوک دوخت بکرز (سیلینگ)","M11-BV67":"نیپ رول هشتم بکشیت",
     "M14-CAM11":"دوربین یازده","M12-BV68":"نیپ رول ششم بکشیت",
     "M13-BV69":"نیپ رول پنجم بکشیت","M10-BP24":"بلوک پرس کانال نهایی",
-    "M07-BV70":"تیغه برش هلالی چسب بغل لمینت شده",
+    "M07-BV70":"تیغه برش طولی لمینه چسب بغل",
     "M30-BV01":"کشنده پالپ","M30-BV02":"کشنده پالپ","M05-BP17":"پرس پالپ",
     "M26-A-BT35":"نیپ رول اول لمینه فویل","M14-BT55":"نیپ رول دوم لمینه فویل","M13-BT15":"نیپ رول سوم لمینه فویل",
     "M23-C-BT27":"نیپ رول اول لمینه چسب بغل","M07-BT07":"نیپ رول دوم لمینه چسب بغل","M07-BV57":"نیپ رول اتصال لمینه چسب بغل و هوک","M08-BV71":"نیپ رول چهارم بکرز قبل از فایف"
@@ -827,7 +827,7 @@ Object.assign(PAGE_DESCRIPTIONS, {
     "M05-CAM 04":"دوربین چهار (پالپ)",
     "M04-CAM 07":"دوربین هفت (چسب LOWER)",
     "M10-CAM 06":"دوربین شش (بکرز و فرونترز)",
-    "M10-CAM 08":"دوربین هشت (چسب کش دورپا)",
+    "M10-CAM 08":"دوربین هشت (عروسکی - چسب کش دورپا)",
     "M11-CAM 09":"دوربین نه (دوربین کلی)",
     "M14-CAM11":"دوربین یازده (دوربین نهایی)"
 });
@@ -1467,7 +1467,7 @@ Z("Layout",   6,   2, 165,  72, "LOGO", "لوگوی شرکت سازنده دست
 Z("Layout", 168,   2, 340,  72, "DATE / TIME", "تاریخ و ساعت دستگاه");
 Z("Layout", 343,   2, 905,  72, "MACHINE LAYOUT", "عنوان صفحه: نمای کلی خط تولید");
 Z("Layout", 910,   2, 1243, 28, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-Z("Layout", 910,  29, 1243, 50, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+Z("Layout", 910,  29, 1243, 50, "ACTUAL RECIPE", "سایز فعال دستگاه");
 Z("Layout", 910,  51, 1243, 72, "MACHINE SPEED", "سرعت فعلی دستگاه");
 Z("Layout", 290, 150,  410, 225, "M30", "نمای ماژول M30");
 Z("Layout",  10, 265, 1235, 372, "MACHINE LINE", "نمای کلی خط تولید و محل ماژول‌ها (M18 تا M14)");
@@ -1503,7 +1503,7 @@ Object.keys(AXES_ROWS).forEach(n => {
     Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
     Zp(293, 3, 775, 65, "AXES ENABLE AND DIAGNOSTIC", "فعال سازی و عیب یابی موتورها");
     Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-    Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+    Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
     Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     Zp(978, 525, 1065, 582, "SIMOTION MANUAL POWER OFF", "کنترل دستی سیموشن (برق خاموش)");
     /* ردیف‌ها */
@@ -1514,7 +1514,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         const dx = side === "L" ? 0 : 490;
         Zp(114 + dx, top, 390 + dx, bot, code, txt, "a");                 /* نمایش همه: از ستون نام تا ستون خطای درایور */
         Zp(114 + dx, top, 204 + dx, bot, code, nm || code, "h");          /* هاور روی نام موتور */
-        if (hasEnable) Zp(5 + dx, top, 83 + dx, bot, "ENABLE / DISABLE", "فعال / غیر فعال", "a");
+        if (hasEnable) Zp(5 + dx, top, 83 + dx, bot, "ENABLE / DISABLE", "فعال / غیر فعال", k === 0 ? "a" : "h");
     });
     /* سرستون‌ها و ستون‌ها */
     [0, 490].forEach(dx => {
@@ -1541,21 +1541,21 @@ Object.keys(AXES_ROWS).forEach(n => {
             rows: [
                 [0, "3710FLT",      "FILTER",                      "فیلتر", false],
                 [1, "AA01.110M1",   "DRUM ASPIRATOR",              "مکنده درام", true],
-                [2, "AA03.128M1",   "ASPIRATOR BELT 1",            "مکنده تسمه ۱", true],
-                [3, "AA04.131M1",   "ASPIRATOR BELT 2",            "مکنده تسمه ۲", true],
-                [4, "AA05.122M1",   "1st APPLICATORS ASPIRATOR",   "مکنده اپلیکاتور اول", true],
-                [5, "AA06.125M1",   "2nd APPLICATORS ASPIRATOR",   "مکنده اپلیکاتور دوم", true],
-                [6, "AA11.143M1",   "MILL BLOW + DRUM DETACH",     "دمنده آسیاب + جداکننده درام", true],
-                [7, "AM01.90M1",    "MILL MOTOR",                  "موتور آسیاب پالپ", true]
+                [2, "AA03.128M1",   "ASPIRATOR BELT 1",            "مکنده تسمه ها شماره 1", true],
+                [3, "AA04.131M1",   "ASPIRATOR BELT 2",            "مکنده تسمه ها شماره 2", true],
+                [4, "AA05.122M1",   "1st APPLICATORS ASPIRATOR",   "مکنده بلوک ها شماره 1", true],
+                [5, "AA06.125M1",   "2nd APPLICATORS ASPIRATOR",   "مکنده بلوک ها شماره 2", true],
+                [6, "AA11.143M1",   "MILL BLOW + DRUM DETACH",     "تمیز کننده و جداکننده روتور و درام", true],
+                [7, "AM01.90M1",    "MILL MOTOR",                  "روتور (آسیاب)", true]
             ]
         },
         "Asynchronous Motors PAGE 2": {
             speedRed: false,
             rows: [
-                [0, "AV01.146M1",   "SAP VACUUM PUMP",             "پمپ خلأ پودر جاذب", true],
+                [0, "AV01.146M1",   "SAP VACUUM PUMP",             "فوت پودر جاذب", true],
                 [1, "AS01.176M1",   "DRUM FORMING BRUSH",          "برس درام فرمینگ", true],
-                [2, "AS04.201M18",  "LONGITUDINAL CUT",            "برش طولی", false],
-                [3, "AS06.201M3",   "LONGITUDINAL CUT",            "برش طولی", false],
+                [2, "AS04.201M18",  "LONGITUDINAL CUT",            "تیغه برش طولی لگکاف", false],
+                [3, "AS06.201M3",   "LONGITUDINAL CUT",            "تیغه برش هلالی چسب بغل", false],
                 [5, "200Q1",        "Cabin Ventilation FAN",       "فن تهویه کابین", false]
             ]
         }
@@ -1570,7 +1570,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, "ASYNCHRONOUS MOTORS", "موتورهای آسنکرون (فن و مکنده‌ها)");
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
         /* سرستون‌ها */
         Zp(541, 80, 620, 98, "MODE", "حالت کار موتور (AUTO RUN = اتوماتیک)");
@@ -1621,7 +1621,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, title, fa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
         Zp(23, 67, 144, 104, "PRODUCT DIRECTION", "جهت حرکت محصول در دستگاه");
         const cols = (data.R && data.R.length) ? ["L","R"] : ["L"];
@@ -1665,7 +1665,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, title, fa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     }
 
@@ -1729,7 +1729,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, title, fa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     }
 
@@ -1828,7 +1828,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, title, fa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     }
 
@@ -1887,7 +1887,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(143, 5, 308, 70, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(310, 5, 810, 80, "KNIFE COUNTERS", "کانتر تیغه‌های برش");
         Zp(815, 22, 1100, 38, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(815, 40, 1100, 58, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(815, 40, 1100, 58, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(815, 59, 1100, 80, "MACHINE SPEED", "سرعت فعلی دستگاه");
         function box(title, fa, x1, x2, ty, rows, rx){
             Zp(x1, ty, x2, ty + 26, title, fa);
@@ -1926,8 +1926,8 @@ Object.keys(AXES_ROWS).forEach(n => {
          [691,777,"ACTUAL VALUE 3","دمای واقعی بلبرینگ (سنسور ۳)"],[786,871,"WARNING THRESHOLD","حد دمای هشدار"],
          [885,971,"ALARM THRESHOLD","حد دمای آلارم (توقف خط)"]
         ].forEach(([a,b,t,d]) => { Zp(a, 76, b, 121, t, d); Zp(a, 133, b, 467, t, d, "h"); });
-        [[154,"AA01","AA01 - موتور مکنده درام"],[212,"AA03","AA03 - موتور مکنده تسمه ۱"],[270,"AA04","AA04 - موتور مکنده تسمه ۲"],
-         [329,"AA05","AA05 - مکنده اپلیکاتور اول"],[387,"AA06","AA06 - مکنده اپلیکاتور دوم"],[445,"AA11","AA11 - فوت و جداکننده آسیاب پالپ"]
+        [[154,"AA01","AA01 - موتور مکنده درام"],[212,"AA03","AA03 - موتور مکنده تسمه ها شماره 1"],[270,"AA04","AA04 - موتور مکنده تسمه ها شماره 2"],
+         [329,"AA05","AA05 - موتور مکنده بلوک ها شماره 1"],[387,"AA06","AA06 - موتور مکنده بلوک ها شماره 2"],[445,"AA11","AA11 - فوت تمیز کننده و جداکننده روتور و درام"]
         ].forEach(([y,t,d]) => Zp(56, y-21, 470, y+21, t, d));
     })();
 })();
@@ -1940,7 +1940,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, HDR, HDR_FA);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     }
 
@@ -2042,14 +2042,14 @@ Object.keys(AXES_ROWS).forEach(n => {
         [145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه"],
         [293, 3, 775, 65, HDR_EN[k], HDR_FA[k]],
         [778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده"],
-        [778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه"],
+        [778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه"],
         [778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه"]];
 
     /* ---------- VISION SYSTEM ---------- */
     const CAMS = {1:["CAMERA 01","M19","دوربین یک (چسب کش ها و ساید)"], 2:["CAMERA 02","M01","دوربین دو (لایه جذب)"],
         3:["CAMERA 03","M04","دوربین سوم (چسب آپر)"], 4:["CAMERA 04","M05","دوربین چهار (پالپ)"], 5:["CAMERA 05","M06","دوربین پنجم (چسب بغل)"],
         6:["CAMERA 06","M10","دوربین شش (بکرز و فرونترز)"], 7:["CAMERA 07","M04","دوربین هفت (چسب LOWER)"],
-        8:["CAMERA 08","M10","دوربین هشت (چسب کش دورپا)"], 9:["CAMERA 09","M11","دوربین نه (دوربین کلی)"],
+        8:["CAMERA 08","M10","دوربین هشت (عروسکی - چسب کش دورپا)"], 9:["CAMERA 09","M11","دوربین نه (دوربین کلی)"],
         11:["CAMERA 11","M14","دوربین یازده (دوربین نهایی)"]};
     function vision(rows){            /* rows: [ردیف روی صفحه (۰ تا ۵), شماره دوربین] */
         const z = header("vision");
@@ -2088,7 +2088,7 @@ Object.keys(AXES_ROWS).forEach(n => {
     /* قطعاتی که فقط با کد (بدون ماژول) داده شده‌اند؛ بر جدول بالا اولویت دارند */
     const PART_NAMES_NOMOD = {BT35:"نیپ رول اول لمینه فویل", BT55:"نیپ رول دوم لمینه فویل", BT15:"نیپ رول سوم لمینه فویل",
         BT27:"نیپ رول اول لمینه چسب بغل", BT07:"نیپ رول دوم لمینه چسب بغل", BV57:"نیپ رول اتصال لمینه چسب بغل و هوک",
-        BV70:"تیغه برش هلالی چسب بغل لمینت شده", BV01:"کشنده پالپ", BV02:"کشنده پالپ", BP17:"پرس پالپ"};
+        BV70:"تیغه برش طولی لمینه چسب بغل", BV01:"کشنده پالپ", BV02:"کشنده پالپ", BP17:"پرس پالپ"};
     function knownDesc(code){
         code = String(code);
         const m = code.match(/^(M\d+)\.([A-Z]+)\.?(\d+)(-\d+)?/);
@@ -2100,6 +2100,34 @@ Object.keys(AXES_ROWS).forEach(n => {
         const d = knownDesc(code);
         return d && fa.indexOf(d) < 0 && d.indexOf(fa) < 0 ? fa + " (" + d + ")" : fa;
     }
+    /* برچسب سنسورهای فشار و مکش: بدون «کنترل کشش» و «چمبر»، معنی فقط یک بار، کد به شکل M05-BV13 */
+    const NUMW = {1:"یک", 2:"دو", 3:"سه"};
+    function fmtCode(hk, code){
+        code = String(code);
+        if (hk !== "pres" && hk !== "vac") return code;
+        code = code.replace("BV.67", "BV67");
+        code = code.replace(/^(M\d+)\.([A-Z]+)(\d+)-(\d+)$/, "$1-$2$3-$2$4");
+        return code.replace(".", "-");
+    }
+    function stripParen(s){ return String(s || "").replace(/\s*\([^)]*\)\s*$/, "").trim(); }
+    function labelFor(hk, code, fa){
+        if (hk === "pres"){
+            const kd = knownDesc(code);
+            const unit = /\(واحد[^)]*\)/.exec(fa);
+            let t = kd || fa.replace(/^کنترل کشش\s*\d*\s*/, "").trim() || fa;
+            return t + (unit && t.indexOf("واحد") < 0 ? " " + unit[0] : "");
+        }
+        if (hk === "vac"){
+            const side = fa.indexOf(O_) >= 0 ? " سمت اپراتور" : fa.indexOf(D_) >= 0 ? " سمت درایو" : "";
+            let base = fa.replace(" - " + O_, "").replace(" - " + D_, "").trim();
+            let num = "";
+            const m = base.match(/^چمبر\s*(\d+)?\s*(.*)$/);
+            if (m){ num = m[1] ? (NUMW[m[1]] || m[1]) + " " : ""; base = m[2].replace(/^-\s*/, "").trim(); }
+            if (!base || base === "برش") base = stripParen(knownDesc(code)) || base;
+            return "مکش " + num + base + side;
+        }
+        return withDesc(code, fa);
+    }
     /* cols: سه ستون، هر ستون لیست [کد سنسور، توضیح فارسی] از بالا به پایین */
     function sensCards(hk, cols, t0, step){
         const D = SDESC[hk], z = [...header(hk)];
@@ -2108,12 +2136,12 @@ Object.keys(AXES_ROWS).forEach(n => {
             z.push([x0 + 8, 74, x0 + 68, 92, "ENABLE", D[0]], [x0 + 72, 74, x0 + 134, 92, "MIN", D[1]],
                 [x0 + 138, 74, x0 + 206, 92, "ACTUAL", D[2]], [x0 + 210, 74, x0 + 276, 92, "MAX", D[3]]);
             col.forEach(([code, fa], k) => {
-                const T = Math.round(t0 + step * k);
-                z.push(...nm(x0 + 4, T + 3, x0 + 316, T + 29, code, withDesc(code, fa)),
-                    [x0 + 4, T + 33, x0 + 62, T + 62, "ENABLE - " + code, D[0], "h"],
-                    [x0 + 64, T + 33, x0 + 134, T + 62, "MIN - " + code, D[1], "h"],
-                    [x0 + 136, T + 33, x0 + 206, T + 62, "ACTUAL - " + code, D[2], "h"],
-                    [x0 + 208, T + 33, x0 + 278, T + 62, "MAX - " + code, D[3], "h"]);
+                const T = Math.round(t0 + step * k), dc = fmtCode(hk, code);
+                z.push(...nm(x0 + 4, T + 3, x0 + 316, T + 29, dc, labelFor(hk, code, fa)),
+                    [x0 + 4, T + 33, x0 + 62, T + 62, "ENABLE - " + dc, D[0], "h"],
+                    [x0 + 64, T + 33, x0 + 134, T + 62, "MIN - " + dc, D[1], "h"],
+                    [x0 + 136, T + 33, x0 + 206, T + 62, "ACTUAL - " + dc, D[2], "h"],
+                    [x0 + 208, T + 33, x0 + 278, T + 62, "MAX - " + dc, D[3], "h"]);
             });
         });
         return z;
@@ -2143,7 +2171,7 @@ Object.keys(AXES_ROWS).forEach(n => {
 
     /* --- VACUUM SENSORS --- */
     const VAC = {
-        1: [[["M10.BP01", "چمبر 1 درام فرمینگ - " + O_], ["M01.BP01", "چمبر 1 درام فرمینگ - " + D_], ["M01.BP01", "چمبر 2 درام فرمینگ - " + O_],
+        1: [[["M01.BP01", "چمبر 1 درام فرمینگ - " + O_], ["M01.BP01", "چمبر 1 درام فرمینگ - " + D_], ["M01.BP01", "چمبر 2 درام فرمینگ - " + O_],
               ["M01.BP01", "چمبر 2 درام فرمینگ - " + D_], ["M01.BP01", "چمبر 3 ترانسفر درام فرمینگ"], ["M01.BV09", "چمبر 1 کانوایر"], ["M01.BV09", "چمبر 2 کانوایر"]],
              [["M04.BV09", "چمبر 3 کانوایر"], ["M04.BV11", "کانوایر اول (1°)"], ["M05.BP06", "چمبر - " + O_], ["M05.BP06", "چمبر - " + D_],
               ["M05.BV12", "کانوایر اول (1°)"], ["M05.BV13", "چمبر 1 درام ترانسفر"], ["M05.BV13", "چمبر 2 درام ترانسفر"]],
@@ -2258,7 +2286,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         [145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه"],
         [300, 3, 770, 62, "MACHINE SPEED", "نوار سرعت دستگاه"],
         [778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده"],
-        [778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه"],
+        [778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه"],
         [778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه"],
         [10, 72, 725, 405, "ALARMS DISPLAY", "نمایش آلارم ها"],
         [747, 72, 1054, 420, "STOP", "توقف دستگاه"],
@@ -2372,8 +2400,8 @@ Object.keys(AXES_ROWS).forEach(n => {
 
     /* ---------- REJECTS ---------- */
     add("REJECTS", AX, [...header("rejects"),
-        [20, 80, 138, 130, "REJECT CARRIAGE", "جک ریجکت (کالسکه ریجکت)"],
-        [26, 133, 133, 172, "ONESHOT MODE", "حالت OneShot جک ریجکت"],
+        [20, 80, 138, 130, "REJECT CARRIAGE", "باد زیر جک ریجکت"],
+        [26, 133, 133, 172, "ONESHOT MODE", "فعال کردن باد به صورت یکسره"],
         [300, 85, 770, 108, "REJECTION CAUSES", "علت های ریجکت و توقف دستگاه"],
         [198, 132, 862, 172, "NUMBER OF PIECES TO REJECT AT MACHINE START", "تعداد پوشک ریجکت شده در راه اندازی تا ورود به استکر"],
         [198, 179, 862, 218, "REJECT AT MINIMUM MACHINE SPEED", "حداقل سرعت برای رد شدن پوشک به استکر"],
@@ -2402,9 +2430,9 @@ Object.keys(AXES_ROWS).forEach(n => {
             [810, 370, 911, 414, "TOLERANCE", "قدرت تحمل دما"],
             [913, 370, 982, 414, "OUTPUT VALVE", "خروجی (فرمان) شیر خنک کننده (سبز: فعال)"],
             [984, 370, 1054, 414, "VALVE STATUS", "وضعیت شیر (سبز: فعال)"]];
-        [["M18. 1st Folding NW Cuffs", "M18 - فولدینگ اول لگکاف نانواون"],
-         ["M19. 2nd Folding NW Cuffs", "M19 - فولدینگ دوم لگکاف نانواون"],
-         ["M19. BV39 Roll NW Cuffs", "M19 - BV39 غلطک خنک کننده لگکاف نانواون"]].forEach(([en, fa], k) => {
+        [["M18. 1st Folding NW Cuffs", "M18 - تاکن اول لگکاف"],
+         ["M19. 2nd Folding NW Cuffs", "M19 - تاکن دوم لگکاف"],
+         ["M19. BV39 Roll NW Cuffs", "M19 - BV39 غلطک خنک کننده لگکاف و نانواون"]].forEach(([en, fa], k) => {
             const t = 421 + 46 * k;
             z.push([35, t, 136, t + 42, "ENABLED / DISABLED", "فعال یا غیر فعال کردن این قسمت", k ? "h" : undefined],
                 ...nm(152, t, 500, t + 42, en, fa),
@@ -2527,7 +2555,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         [127, 2, 254, 57, "DATE / TIME", "تاریخ و ساعت دستگاه"],
         [257, 2, 680, 57, HDR_EN.res, HDR_FA.res],
         [683, 4, 934, 21, "TOTAL PRODUCT", "تعداد کل محصول تولید شده"],
-        [683, 22, 934, 37, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه"],
+        [683, 22, 934, 37, "ACTUAL RECIPE", "سایز فعال دستگاه"],
         [683, 38, 934, 54, "MACHINE SPEED", "سرعت فعلی دستگاه"],
         ...resZones(["M10.BV60 - UPPER EARS", "M10.BP23 - LOWER EARS"], [[438, 513], [527, 602], [614, 691], [703, 779], [790, 865]],
             117, 51, 42, [13, 89], [101, 431], 66, 38)]);
@@ -2542,7 +2570,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         [["M05.BC04 - 2609K1", "روغن زن بلوک برش پالپ (تیغه)"], ["M06.BC09 - 2613K1", "روغن زن بلوک برش چسب بغل (تیغه)"],
          ["M08.BP21 - 2613K2", "روغن زن بلوک برش بکرز"], ["M09.BP22 - 2601K3", "روغن زن بلوک برش نهایی فرونترز"],
          ["M11.BC03 - 2601K2", "روغن زن بلوک برش نوار جلو (تیغه)"], ["M13.BP15 - 2605K1", "روغن زن بلوک تیغه برش نهایی"],
-         ["M19.BC13 - 2609K2", "روغن زن بلوک تیغه لایه جذب (تیغه)"]].forEach(([n, fa], k) => {
+         ["M19.BC13 - 2609K2", "روغن زن بلوک تیغه لایه جذب و غلطک اسفنجی روی درام"]].forEach(([n, fa], k) => {
             const t = 108 + 50 * k, m = k ? "h" : undefined;
             z.push([9, t, 109, t + 42, "ENABLED / DISABLED", "روشن و خاموش کردن پمپاژ روغن", m],
                 [112, t, 179, t + 42, "MANUAL", "حالت دستی", m],
@@ -2554,7 +2582,7 @@ Object.keys(AXES_ROWS).forEach(n => {
                 [893, t, 941, t + 42, "STATE", "نمایش عملکرد پمپاژ", "h"]);
         });
         z.push([9, 458, 109, 500, "ENABLED / DISABLED", "روشن و خاموش کردن پمپ گریس"],
-            ...nm(181, 458, 506, 500, "GREASE PUMP - 270U1", "پمپ گریس"));
+            ...nm(181, 458, 506, 500, "GREASE PUMP - 270U1", "پمپ گریس درام"));
         add("LUBRICATION", AX, z);
     })();
 })();
@@ -2573,7 +2601,7 @@ Object.keys(AXES_ROWS).forEach(n => {
             Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
             Zp(293, 3, 775, 65, "AXES CONFIGURATION - MODULE " + mod.slice(1), "تنظیمات موتورهای " + modFa + " (" + mod + ")");
             Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-            Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+            Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
             Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
             /* پنل سمت راست */
             Zp(852, 102, 1058, 141, "SELECTED AXIS", nm ? code + " - " + nm : code);
@@ -2631,7 +2659,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, "AXES CONFIGURATION - MODULE " + num, "تنظیمات موتورهای " + modFa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
         Zp(852, 102, 1058, 141, "SELECTED AXIS", nm ? code + " - " + nm : code);
         Zp(906, 147, 1007, 179, "ENABLED", "فعال / غیر فعال کردن موتور");
@@ -2674,7 +2702,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, title, fa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     }
 
@@ -2684,11 +2712,11 @@ Object.keys(AXES_ROWS).forEach(n => {
         header(Zp, "UNWINDERS", "آنویندرها (رول‌گردان‌ها)");
         const L = [["NW CUFF",154],["NW TOPSHEET",220],["AQL",287],["UPPER NW",353],["LOWER NW",416],["BACK EARS",482],["NW FOR TAPE",548]];
         const R = [["TAPE PRE-GLU",153],["HOOK",219],["FRONT EARS",286],["FRONTAL TAPE",348],["NW BACKSHEET",416],["POLY BKSHEET",481]];
-        L.forEach(([en,y]) => { const u = UW[en];
-            Zp(45, y-22, 98, y+22, "ON / OFF " + pad2(u[0]), "وضعیت آنویندر " + pad2(u[0]) + " (سبز: روشن، قرمز: خاموش)");
+        L.forEach(([en,y], i) => { const u = UW[en];
+            Zp(45, y-22, 98, y+22, "ON / OFF " + pad2(u[0]), "وضعیت آنویندر " + pad2(u[0]) + " (سبز: روشن، قرمز: خاموش)", i ? "h" : undefined);
             Zp(100, y-22, 416, y+22, en, pad2(u[0]) + " - آنویندر " + u[1]); });
-        R.forEach(([en,y]) => { const u = UW[en];
-            Zp(578, y-22, 631, y+22, "ON / OFF " + pad2(u[0]), "وضعیت آنویندر " + pad2(u[0]) + " (سبز: روشن، قرمز: خاموش)");
+        R.forEach(([en,y], i) => { const u = UW[en];
+            Zp(578, y-22, 631, y+22, "ON / OFF " + pad2(u[0]), "وضعیت آنویندر " + pad2(u[0]) + " (سبز: روشن، قرمز: خاموش)", i ? "h" : undefined);
             Zp(632, y-22, 947, y+22, en, pad2(u[0]) + " - آنویندر " + u[1]); });
     })();
 
@@ -2718,7 +2746,7 @@ Object.keys(AXES_ROWS).forEach(n => {
             Zp(572, 80, 980, 100, "ZERO-SPEED", "موقعیت دنسر و بافر در سرعت صفر");
             Zp(581, 112, 960, 132, "DANCER ACTUAL POSITION", "موقعیت واقعی دنسر (درصد)");
             Zp(581, 139, 960, 159, "BUFFER ACTUAL POSITION", "موقعیت واقعی بافر (درصد)");
-            Zp(581, 209, 671, 249, "UNWINDER RESET", "ریست آنویندر");
+            Zp(581, 209, 671, 249, "UNWINDER RESET", "ریست آنویندر (بافر)");
             Zp(679, 209, 790, 249, "HOMED", "وضعیت هومینگ (سبز: هوم شده)");
             Zp(799, 209, 911, 249, "EXECUTE HOME", "اجرای هومینگ");
             Zp(606, 312, 690, 330, "BUFFER POS.", "موقعیت بافر (درصد)");
@@ -2830,23 +2858,23 @@ Object.keys(AXES_ROWS).forEach(n => {
     Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
     Zp(293, 3, 775, 65, "SENSORS", "سنسورهای جام (حضور پد، بکرز، فرونترز و تیپ)");
     Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-    Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+    Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
     Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     Zp(990, 66, 1065, 112, "PAGE 1", "صفحهٔ ۱ سنسورها");
     Zp(173, 76, 283, 116, "ENABLE", "فعال / غیرفعال");
     Zp(326, 76, 741, 116, "NAME", "کد، محل و نام سنسور");
     Zp(783, 76, 894, 116, "THRESHOLD", "حد آستانهٔ تشخیص سنسور");
     const ROWS = [
-        ["2970B1 - M05 - BP06", "وجود پد بعد از برش", 49],
-        ["2970B3 - M08 - BP21", "گیر کردن (جم) در برش بکرز", 49],
-        ["2970B4/B5 - M06", "وجود تیپ قبل از هات ملت", 49],
-        ["2992B6/B7 - M08 - BP08", "وجود بکرز روی ترنر دوم", 99],
-        ["2992B8/B9 - M08 - BC07-BC08", "وجود بکرز روی ریپیچ ۳", 99],
-        ["2993B6/B7 - M09 - BC19-BC22", "وجود فرونترز روی ریپیچ ۲", 99],
-        ["2993B8/B9 - M09 - BC19-BC22", "منتقل نشدن فرونترز در ریپیچ ۲", 99],
-        ["2998B1 - M08 - BC15-BC18", "منتقل نشدن بکرز در ریپیچ ۱", 50],
-        ["2998B2 - M08 - BP07", "وجود بکرز روی ترنر اول", 20],
-        ["2998B3/B4 - M08 - BC07-BC08", "منتقل نشدن بکرز در ریپیچ ۳", 20]
+        ["2970B1 - M05 - BP06", "سنسور بعد از تیغه برش پالپ (وجود پالپ)", 49],
+        ["2970B3 - M08 - BP21", "سنسور روی بلوک تیغه بکرز (گیر کردن)", 49],
+        ["2970B4/B5 - M06", "سنسور چسب بغل قبل از هد (وجود چسب بغل)", 49],
+        ["2992B6/B7 - M08 - BP08", "سنسور روی ترنر دو بکرز (وجود بکرز)", 99],
+        ["2992B8/B9 - M08 - BC07-BC08", "سنسور روی ریپیچ دو بکرز (وجود بکرز)", 99],
+        ["2993B6/B7 - M09 - BC19-BC22", "سنسور روی ریپیچ فرونترز (وجود فرونترز)", 99],
+        ["2993B8/B9 - M09 - BC19-BC22", "سنسور روی ریپیچ فرونترز (عدم انتقال فرونترز)", 99],
+        ["2998B1 - M08 - BC15-BC18", "سنسور روی ریپیچ یک بکرز (عدم انتقال بکرز)", 50],
+        ["2998B2 - M08 - BP07", "سنسور روی ترنر یک بکرز (وجود بکرز)", 20],
+        ["2998B3/B4 - M08 - BC07-BC08", "سنسور روی ریپیچ 2 بکرز (عدم انتقال بکرز)", 20]
     ];
     ROWS.forEach(([code, fa], k) => {
         const c = 142 + 46.2 * k, y1 = c - 21, y2 = c + 21;
@@ -2858,7 +2886,7 @@ Object.keys(AXES_ROWS).forEach(n => {
 
 /* ===== صفحه‌های VALVES / MICRO REED / PROPORTIONAL VALVE ===== */
 (function () {
-    const EXTRA = { "M18.AS04": "تیغه برش طولی لگکاف", "M07.AS06": "تیغه برش طولی", "M07.BV70": "تیغه برش طولی" };
+    const EXTRA = { "M18.AS04": "تیغه برش طولی لگکاف", "M07.AS06": "تیغه برش هلالی چسب بغل", "M07.BV70": "تیغه برش طولی لمینه چسب بغل" };
     const desc = c => {
         const m = c.match(/^(M\d+)\.Detach\s*(.*)$/i);
         if (m) return "سنسور جک (Detach) " + m[1] + (m[2] ? " - " + m[2] : "");
@@ -2870,7 +2898,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, titleEn, titleFa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     };
     /* نشانگر صفحهٔ فعلی (آبی) و گروه فعلی (خاکستری) سمت راست */
@@ -2881,7 +2909,7 @@ Object.keys(AXES_ROWS).forEach(n => {
     };
     const toggles = (Zp, cols, nameFn) => cols.forEach(([tx1, tx2, nx1, nx2, list, extraBand]) => list.forEach((c, k) => {
         const y1 = ROW(k) - 20, y2 = ROW(k) + 20, fa = desc(c);
-        Zp(tx1, y1, tx2, y2, "ON / OFF", "روشن / خاموش");
+        Zp(tx1, y1, tx2, y2, "ON / OFF", "روشن / خاموش", k ? "h" : undefined);
         Zp(nx1, y1, nx2, y2, c + (fa ? " - " + fa : ""), /Detach/i.test(c) ? c.replace(/\.Detach\s*/i, "\nسنسور جک - ") : c + (fa ? "\n" + fa : ""));
     }));
 
@@ -2899,7 +2927,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         toggles(Zp, [[10, 75, 80, 252, ["M18.BV05","M18.BT01","M18.BT02","M18.BV35","M18.AS04","M19.BP05","M19.BT03","M19.BV39","M19.BV41","M01.BT04","M01.BP14"]],
                      [335, 400, 405, 578, ["M04.BP10","M04.BP11","M04.BV11","M04.BV47","M05.BP12","M05.BT05","M05.BV14","M05.BV48","M06.BP19","M06.BP20","M06.BT06"]],
                      [660, 725, 730, 903, ["M06.BV50","M06.BV54","M07.BT07","M07.BV56","M07.BV57","M07.BV70","M07.AS06","M08.BV71","M09.BT12","M10.BP23","M10.BP24"]]]);
-        const AM = "اتوماتیک / دستی", PPM = "حد سرعت حالت اتوماتیک (ppm)";
+        const AM = "اتوماتیک / دستی", PPM = "حد سرعت اتوماتیک";
         Zp(255, 76, 322, 94, "AUTO", AM); Zp(255, 96, 322, 116, "PPM", PPM);
         Zp(255, 308, 322, 327, "MANUAL", AM); Zp(255, 329, 322, 348, "PPM", PPM);
         Zp(580, 123, 648, 141, "AUTO", AM);
@@ -2934,9 +2962,9 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(22, 82, 121, 112, "ENABLE", "فعال / غیرفعال");
         rows.forEach((r, k) => {
             const c = 135 + 54 * k, y1 = c - 20, y2 = c + 20, code = r.split(" - ")[0], fa = desc(code);
-            Zp(22, y1, 121, y2, "ENABLED / DISABLED", "فعال / غیرفعال");
+            Zp(22, y1, 121, y2, "ENABLED / DISABLED", "فعال / غیرفعال", k ? "h" : undefined);
             Zp(130, y1, 461, y2, r + (fa ? " - " + fa : ""), r + (fa ? "\n" + fa : ""));
-            COLS.forEach(([x1, x2, t, d, sh]) => Zp(x1, y1, x2, y2, t, sh));
+            COLS.forEach(([x1, x2, t, d, sh]) => Zp(x1, y1, x2, y2, t, sh, k ? "h" : undefined));
         });
     };
     prop("PROPORTIONAL VALVE PAGE 2", 1, ["M08.BP21 - 1842U1","M09.BP22 - 1862U1","M10.BP23 - 1882U1","M10.BP24 - 1882U2","M10.BP09 - 1882U3","M13.BP15 - 1942U1"]);
@@ -2950,7 +2978,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, en, fa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     };
     /* ---------- TEMP ---------- */
@@ -3022,8 +3050,8 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(68, 510, 184, 560, "IMAGE GLUE APPLICATIONS", "رفتن به صفحهٔ تصویر الگوی چسب‌زنی");
     })();
     /* ---------- PUMP 1..4 ---------- */
-    [["1", "Upper NW Side", "نانواون آپر - کنار"], ["2", "Upper NW End", "نانواون آپر - انتها"],
-     ["3", "Core Channel 1 Internal", "کانال هستهٔ ۱ (داخلی)"], ["4", "Core Channel 2 External", "کانال هستهٔ ۲ (خارجی)"]].forEach(([n, en, fa]) => {
+    [["1", "Upper NW Side", "نانواون آپر ساید"], ["2", "Upper NW End", "نانواون آپر"],
+     ["3", "Core Channel 1 Internal", "کانال 1"], ["4", "Core Channel 2 External", "کانال 2"]].forEach(([n, en, fa]) => {
         const Zp = (...a) => ZS("MELTER 1 PUMP " + n, AX, ...a);
         head(Zp, "GLUE PUMP CONFIGURATION", "تنظیمات پمپ چسب");
         Zp(92, 69, 974, 102, "HOT MELTER 01 - PUMP " + n + " - " + en, "چسب زن ۱ - پمپ " + n + " (" + fa + ")");
@@ -3058,7 +3086,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, en, fa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     };
     (function () {
@@ -3109,7 +3137,7 @@ Object.keys(AXES_ROWS).forEach(n => {
     (function () {
         const Zp = (...a) => ZS("MELTER 2 PUMP 1", AX, ...a);
         head(Zp, "GLUE PUMP CONFIGURATION", "تنظیمات پمپ چسب");
-        Zp(92, 69, 974, 102, "HOT MELTER 02 - PUMP 1 - Leg Elastics", "چسب زن ۲ - پمپ ۱ (کش دورپا)");
+        Zp(92, 69, 974, 102, "HOT MELTER 02 - PUMP 1 - Leg Elastics", "چسب زن ۲ - پمپ ۱ (کش دور پا)");
         Zp(92, 116, 522, 222, "MONITORING DATA", "اطلاعات لحظه‌ای پمپ", "h"); Zp(200, 116, 420, 134, "MONITORING DATA", "اطلاعات لحظه‌ای پمپ", "a");
         Zp(404, 136, 504, 170, "ACTUAL SPEED", "سرعت واقعی پمپ (دور در دقیقه)");
         Zp(544, 156, 974, 262, "GLUE PRESSURE CONTROL", "کنترل فشار چسب", "h"); Zp(640, 156, 880, 176, "GLUE PRESSURE CONTROL", "کنترل فشار چسب", "a");
@@ -3144,21 +3172,21 @@ Object.keys(AXES_ROWS).forEach(n => {
     const MODE = { c: "پیوسته (Continuous)", i: "متناوب (Intermittent)", ci: "پیوسته / متناوب" };
     /* هر چسب زن: [ردیف‌ها] — هر ردیف: [شمارهٔ پمپ، شمارهٔ Application، نام انگلیسی، معنی فارسی، نوع چسب‌زنی] (ردیف عمودی = شمارهٔ پمپ) */
     const MELTERS = {
-        1:  [[1, "20", "Upper Nw Side", "نانواون آپر - کنار", "ci"], [2, "21", "Upper Nw End", "نانواون آپر - انتها", "ci"],
-             [3, "34.01", "Core Channel 1 Internal", "کانال هستهٔ ۱ (داخلی)", "i"], [4, "34.02", "Core Channel 2 External", "کانال هستهٔ ۲ (خارجی)", "i"]],
-        2:  [[1, "25", "Leg Elastics", "الاستیک پا (لگ)", "i"]],
-        3:  [[1, "24", "Cuff Elastics", "الاستیک کاف", "i"]],
-        4:  [[3, "32", "Tape", "چسب بغل (تیپ)", "c"], [4, "36", "Hook", "هوک", "c"]],
-        5:  [[1, "31", "Close on Folding O.S.", "بستن لبهٔ تاشده - سمت اپراتور", "c"], [2, "32", "Close on Folding D.S.", "بستن لبهٔ تاشده - سمت درایو", "c"],
+        1:  [[1, "20", "Upper Nw Side", "نانواون آپر ساید", "ci"], [2, "21", "Upper Nw End", "نانواون آپر", "ci"],
+             [3, "34.01", "Core Channel 1 Internal", "کانال 1", "i"], [4, "34.02", "Core Channel 2 External", "کانال 2", "i"]],
+        2:  [[1, "25", "Leg Elastics", "کش دور پا", "i"]],
+        3:  [[1, "24", "Cuff Elastics", "کش لگکاف", "i"]],
+        4:  [[3, "32", "Tape", "چسب بغل", "c"], [4, "36", "Hook", "هوک", "c"]],
+        5:  [[1, "31", "Close on Folding O.S.", "بستن لبه کورپ OS", "c"], [2, "32", "Close on Folding D.S.", "بستن لبه کورپ DS", "c"],
              [5, "23.01", "Topsheet Side", "تاپ‌شیت - کنار", "i"], [6, "23.02", "Topsheet Center", "تاپ‌شیت - وسط", "i"],
              [7, "19", "Lower NW Side&Center", "نانواون لاور - کنار و وسط", "i"], [8, "19", "Lower NW Ends", "نانواون لاور - انتها", "i"]],
         6:  [[1, "47", "Wetness", "نشانگر رطوبت (Wetness)", "i"]],
         7:  [[1, "46", "Lotion", "لوسیون", "i"]],
-        8:  [[1, "35", "Cuff Side", "کاف - کنار", "i"], [2, "29", "AQL", "اکشن (AQL)", "c"], [3, "38", "Cuffs End", "کاف - انتها", "i"]],
-        9:  [[1, "22", "Poly Backsheet", "پلی بک‌شیت (فویل)", "ci"], [2, "26", "Ears Reinforcement O.S.", "تقویت گوشی - سمت اپراتور", "i"],
-             [3, "26", "Ears Reinforcement D.S.", "تقویت گوشی - سمت درایو", "i"], [4, "37", "Ears on Cuff", "گوشی روی کاف", "i"]],
-        10: [[1, "27", "Frontal Tape", "فرونتال تیپ (عروسکی)", "c"], [2, "28", "NW Backsheet", "نانواون بک‌شیت (لمینه فویل)", "c"]],
-        11: [[1, "30", "Core Integrity", "یکپارچگی هسته (Core Integrity)", "c"]]
+        8:  [[1, "35", "Cuff Side", "لگکاف - کنار", "i"], [2, "29", "AQL", "اکشن لگکاف", "c"], [3, "38", "Cuffs End", "لگکاف - انتها", "i"]],
+        9:  [[1, "22", "Poly Backsheet", "فویل بکشیت", "ci"], [2, "26", "Ears Reinforcement O.S.", "بکرز و فرونترز روی فویل OS", "i"],
+             [3, "26", "Ears Reinforcement D.S.", "بکرز و فرونترز روی فویل DS", "i"], [4, "37", "Ears on Cuff", "بکرز و فرونترز روی لگکاف OS/DS", "i"]],
+        10: [[1, "27", "Frontal Tape", "عروسکی", "c"], [2, "28", "NW Backsheet", "لمینه بکشیت", "c"]],
+        11: [[1, "30", "Core Integrity", "پالپ روی درام", "c"]]
     };
     const ROW_TOP = [122, 168, 215, 261, 308, 354, 400, 447];   /* بالای هر ردیف پمپ (پمپ n = ردیف n) در عکس ۱۰۶۷ پیکسلی */
     const SIDE = {
@@ -3177,7 +3205,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         INFO_ZONES[key][INFO_ZONES[key].length - 1].long = true;   /* هاور روی عنوان: راهنمای کامل صفحه */
         Zp(293, 3, 775, 65, "HOT MELTERS", "عنوان صفحه: چسب زن های حرارتی (راهنمای کامل: هاور روی عنوان)", "a");
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
         Zp(339, 68, 732, 98, "LINE SPEED FOR MAX PUMP SPEED", "سرعت خطی که در آن پمپ‌ها به حداکثر سرعت می‌رسند (ppm)");
         /* --- ستون سمت راست --- */
@@ -3218,7 +3246,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(145, 3, 290, 65, "DATE / TIME", "تاریخ و ساعت دستگاه");
         Zp(293, 3, 775, 65, en, fa);
         Zp(778, 5, 1063, 25, "TOTAL PRODUCT", "تعداد کل محصول تولید شده");
-        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز (رسپی) فعال دستگاه");
+        Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
     };
 
@@ -3378,11 +3406,11 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(92, 256, 522, 586, "DELIVERY CURVE", "منحنی تحویل چسب (رابطهٔ سرعت خط با سرعت پمپ)", "h");
         Zp(544, 414, 974, 584, "ACTIVATION SPEEDS", "سرعت خطی که پمپ، شیرها و جداکننده‌ها فعال یا غیرفعال می‌شوند", "h");
     }
-    pumpPage(3, 1, "Cuff Elastics", "الاستیک کاف", [["VALVE OS", " (سمت اپراتور)", 338], ["VALVE DS", " (سمت درایو)", 378]], true);
-    pumpPage(4, 3, "Tape", "چسب بغل (تیپ)", [], true);
+    pumpPage(3, 1, "Cuff Elastics", "کش لگکاف", [["VALVE OS", " (سمت اپراتور)", 338], ["VALVE DS", " (سمت درایو)", 378]], true);
+    pumpPage(4, 3, "Tape", "چسب بغل", [], true);
     pumpPage(4, 4, "Hook", "هوک", [], true);
-    pumpPage(5, 1, "Close Folding O.S.", "بستن لبهٔ تاشده - سمت اپراتور", [["VALVE 1", " ۱", 338]], false);
-    pumpPage(5, 2, "Close Folding D.S.", "بستن لبهٔ تاشده - سمت درایو", [["VALVE 1", " ۱", 338]], false);
+    pumpPage(5, 1, "Close Folding O.S.", "بستن لبه کورپ OS", [["VALVE 1", " ۱", 338]], false);
+    pumpPage(5, 2, "Close Folding D.S.", "بستن لبه کورپ DS", [["VALVE 1", " ۱", 338]], false);
     pumpPage(5, 5, "Topsheet Side", "تاپ‌شیت - کنار", [["VALVE 1", " ۱", 338]], false);
     pumpPage(5, 6, "Topsheet Center", "تاپ‌شیت - وسط", [["VALVE 1", " ۱", 338]], false);
     pumpPage(5, 7, "Lower Nonwoven Side + Central", "نانواون لاور - کنار و وسط", [], true);
@@ -3442,9 +3470,9 @@ Object.keys(AXES_ROWS).forEach(n => {
 
     pumpPage(6, 1, "Wetness", "نشانگر رطوبت (Wetness)", [], true);
     pumpPage(7, 1, "Lotion", "لوسیون", [["VALVE 1", " ۱", 338]], true);
-    pumpPage(8, 1, "Cuffs Side", "کاف - کنار", [], true);
-    pumpPage(8, 2, "AQL", "اکشن (AQL)", [["VALVE 1", " ۱", 338]], true);
-    pumpPage(8, 3, "Cuffs End", "کاف - انتها", [["VALVE 1", " ۱", 338], ["VALVE 2", " ۲", 378]], false);
+    pumpPage(8, 1, "Cuffs Side", "لگکاف - کنار", [], true);
+    pumpPage(8, 2, "AQL", "اکشن لگکاف", [["VALVE 1", " ۱", 338]], true);
+    pumpPage(8, 3, "Cuffs End", "لگکاف - انتها", [["VALVE 1", " ۱", 338], ["VALVE 2", " ۲", 378]], false);
 
     /* ===== MELTER 9 / 10 / 11 ===== */
     tempPage("MELTER 9 TEMP", 9, [
@@ -3486,13 +3514,13 @@ Object.keys(AXES_ROWS).forEach(n => {
         ["Sys 9.2 - Ears Reinf. Poly OS 2780K1", "تقویت گوشی پلی - سمت اپراتور", 326, "INT"], ["Sys 9.3 - Ears Reinf. Poly DS 2780K6", "تقویت گوشی پلی - سمت درایو", 357, "INT"],
         ["Sys 9.4 - Ears on Cuffs OS 2781K1", "گوشی روی کاف - سمت اپراتور", 432, "INT"], ["Sys 9.4 - Ears on Cuffs DS 2781K2", "گوشی روی کاف - سمت درایو", 463, "INT"]]);
 
-    pumpPage(9, 1, "Poly Backsheet", "پلی بک‌شیت (فویل)", [], true);
-    pumpPage(9, 2, "Ears Reinforcement Poly O.S.", "تقویت گوشی پلی - سمت اپراتور", [], true);
-    pumpPage(9, 3, "Ears Reinforcement Poly D.S.", "تقویت گوشی پلی - سمت درایو", [], true);
-    pumpPage(9, 4, "Ears on Cuffs", "گوشی روی کاف", [], true);
-    pumpPage(10, 1, "Frontal Tape", "فرونتال تیپ (عروسکی)", [], true);
-    pumpPage(10, 2, "Nonwoven Backsheet", "نانواون بک‌شیت (لمینه فویل)", [], true);
-    pumpPage(11, 1, "Core Integrity", "یکپارچگی هسته (Core Integrity)", [["VALVE 1", " ۱", 338]], false);
+    pumpPage(9, 1, "Poly Backsheet", "فویل بکشیت", [], true);
+    pumpPage(9, 2, "Ears Reinforcement Poly O.S.", "بکرز و فرونترز روی فویل OS", [], true);
+    pumpPage(9, 3, "Ears Reinforcement Poly D.S.", "بکرز و فرونترز روی فویل DS", [], true);
+    pumpPage(9, 4, "Ears on Cuffs", "بکرز و فرونترز روی لگکاف OS/DS", [], true);
+    pumpPage(10, 1, "Frontal Tape", "عروسکی", [], true);
+    pumpPage(10, 2, "Nonwoven Backsheet", "لمینه بکشیت", [], true);
+    pumpPage(11, 1, "Core Integrity", "پالپ روی درام", [["VALVE 1", " ۱", 338]], false);
 })();
 
 let tooltipAnchor = null, tooltipLong = false;
@@ -3552,7 +3580,48 @@ function addLabel(x, y, w, h, text, minW, minH){
     let fs = 14;
     d.style.fontSize = fs + "px";
     while (fs > 10 && (d.scrollHeight > d.clientHeight + 1 || d.scrollWidth > d.clientWidth + 1)) { fs--; d.style.fontSize = fs + "px"; }
-    if (d.scrollHeight > d.clientHeight + 1 || d.scrollWidth > d.clientWidth + 1) d.style.overflow = "visible";
+    /* اگر متن هنوز جا نشد، کادر به اندازه متن بزرگ می‌شود (به‌جای بیرون‌زدن متن روی کادرهای کناری) */
+    if (d.scrollWidth > d.clientWidth + 1) { const nw = d.scrollWidth + 8; d.style.left = (x - (nw - w) / 2) + "px"; d.style.width = nw + "px"; w = nw; }
+    if (d.scrollHeight > d.clientHeight + 1) { const nh = d.scrollHeight + 2; d.style.top = (y - (nh - h) / 2) + "px"; d.style.height = nh + "px"; h = nh; }
+}
+/* جلوگیری از روی هم افتادن برچسب‌ها: هر دو کادر متداخل کمی از هم دور می‌شوند (کادرها داخل صفحه می‌مانند) */
+function resolveLabelOverlaps(){
+    const els = [...hmiPanel.querySelectorAll(".hmi-label")];
+    if (els.length < 2) return;
+    const W = hmiPanel.offsetWidth, H = hmiPanel.offsetHeight;
+    const R = els.map(e => ({ e, x: e.offsetLeft, y: e.offsetTop, w: e.offsetWidth, h: e.offsetHeight }));
+    const ovl = (a, b) => [Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y)];
+    /* کادر بزرگی که چند کادر کوچک (کلیدها/عنوان‌ها) را در خودش دارد (مثل نمودار): کوچک و وسط‌چین می‌شود */
+    R.forEach(a => {
+        if (a.w < 260 || a.h < 60) return;
+        const inside = R.filter(b => { if (b === a) return false; const [ox, oy] = ovl(a, b); return ox > 0 && oy > 0 && ox * oy >= 0.1 * b.w * b.h && a.w * a.h > 4 * b.w * b.h; }).length;
+        if (!inside) return;
+        const cx = a.x + a.w / 2, cy = a.y + a.h / 2, nw = Math.min(a.w, 260);
+        a.e.style.width = nw + "px"; a.e.style.height = "auto";
+        a.w = a.e.offsetWidth; a.h = a.e.offsetHeight; a.x = cx - a.w / 2; a.y = cy - a.h / 2;
+    });
+    for (let it = 0; it < 400; it++) {
+        let moved = false;
+        for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) {
+            const a = R[i], b = R[j], [ox, oy] = ovl(a, b);
+            if (ox <= 0.5 || oy <= 0.5) continue;
+            moved = true;
+            if (oy <= ox) {
+                const s = oy / 2 + 0.6, up = a.y + a.h / 2 <= b.y + b.h / 2;
+                if (oy <= 7) {   /* هم‌پوشانی کم: کادرها کمی کوچک می‌شوند */
+                    if (up) { a.h -= s; b.y += s; b.h -= s; } else { b.h -= s; a.y += s; a.h -= s; }
+                } else if (up) { a.y -= s; b.y += s; } else { a.y += s; b.y -= s; }
+            } else {
+                const s = ox / 2 + 0.6, left = a.x + a.w / 2 <= b.x + b.w / 2;
+                if (ox <= 11) {
+                    if (left) { a.w -= s; b.x += s; b.w -= s; } else { b.w -= s; a.x += s; a.w -= s; }
+                } else if (left) { a.x -= s; b.x += s; } else { a.x += s; b.x -= s; }
+            }
+        }
+        if (W && H) R.forEach(r => { r.x = Math.max(0, Math.min(r.x, W - r.w)); r.y = Math.max(0, Math.min(r.y, H - r.h)); });
+        if (!moved) break;
+    }
+    R.forEach(r => { r.e.style.left = r.x + "px"; r.e.style.top = r.y + "px"; r.e.style.width = r.w + "px"; r.e.style.height = r.h + "px"; if (r.e.scrollHeight > r.e.clientHeight + 1 || r.e.scrollWidth > r.e.clientWidth + 1) r.e.style.overflow = "visible"; });
 }
 function showAllLabels(){
     hideLabels();
@@ -3572,6 +3641,7 @@ function showAllLabels(){
         } else addLabel(b.offsetLeft, b.offsetTop, b.offsetWidth, b.offsetHeight, d[1]);
     });
     (INFO_ZONES[(currentPage.key || "").toLowerCase()] || []).forEach(z => { if (z.m !== "h") addLabel(z.x1, z.y1, z.x2 - z.x1, z.y2 - z.y1, z.d); });
+    resolveLabelOverlaps();
     hmiPanel.classList.add("labels-on");
     labelsTimer = setTimeout(hideLabels, 6000);
 }
