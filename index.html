@@ -472,6 +472,13 @@ function sha256(str){
     }
     return H.map(v=>("00000000"+(v>>>0).toString(16)).slice(-8)).join("");
 }
+/* رمز فقط وقتی لازم است که صفحه از آدرس‌های این لیست (مثلاً گیت‌هاب) باز شود. روی سیستم‌های شرکت (فایل محلی یا سرور داخلی) رمز خواسته نمی‌شود. اگر دامنه اختصاصی دارید، اینجا اضافه کنید. */
+const GATE_HOSTS = ["github.io"];
+const NEEDS_GATE = GATE_HOSTS.some(h => location.hostname === h || location.hostname.endsWith("." + h));
+if (!NEEDS_GATE) {
+    document.getElementById("gate").remove();
+    document.body.classList.remove("locked");
+}
 document.getElementById("gateForm").addEventListener("submit",function(e){
     e.preventDefault();
     const v=document.getElementById("gatePass").value;
