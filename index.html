@@ -260,7 +260,7 @@ button{position:absolute;padding:0;cursor:pointer;z-index:50;font-family:inherit
 .alarm-list-history{left:317px;top:505px}
 .alarm-list-warning{left:440px;top:505px}
 .warning-list-history{left:378px;top:504px;width:124px;height:49px}
-.panel.hide-nav .sensors,.panel.hide-nav .unwinders,.panel.hide-nav .module-phasing,.panel.hide-nav .layout-button,.panel.hide-nav .melter,.panel.hide-nav .valves{display:none!important}
+.panel.hide-nav .sensors,.panel.hide-nav .unwinders,.panel.hide-nav .module-phasing,.panel.hide-nav .layout-button,.panel.hide-nav .melter,.panel.hide-nav .valves,.panel.hide-nav .asynchronous-motors{display:none!important}
 
 .valves-button,.valves-page2-button,.micro-reed-button,.micro-reed-page2-button,.proportional-valve-button,.proportional-valve-page2-button{z-index:200}
 .valves-micro-reed{left:925px;top:450px;width:69px;height:41px}
@@ -1573,6 +1573,7 @@ Object.keys(AXES_ROWS).forEach(n => {
         Zp(778, 26, 1063, 44, "ACTUAL RECIPE", "سایز فعال دستگاه");
         Zp(778, 45, 1063, 63, "MACHINE SPEED", "سرعت فعلی دستگاه");
         /* سرستون‌ها */
+        Zp(15, 80, 115, 98, "ENABLED / DISABLED", "فعال / غیر فعال کردن موتور");
         Zp(541, 80, 620, 98, "MODE", "حالت کار موتور (AUTO RUN = اتوماتیک)");
         Zp(628, 80, 706, 98, "STATUS", "وضعیت موتور (در حال کار / متوقف)");
         Zp(714, 80, 792, 98, "FAULT", "وضعیت خطای موتور و درایو");
@@ -2998,9 +2999,9 @@ Object.keys(AXES_ROWS).forEach(n => {
         const R = [
             ["GRID", "گرید (صفحهٔ ذوب چسب)", 163], ["RESERVOIR", "مخزن چسب", 197],
             ["01) Upper NW Side OS Hose 1", "شلنگ ۱ - کنار نانواون آپر (سمت اپراتور)", 231],
-            ["02) Upper NW Side OS Gun 1", "گان ۱ - کنار نانواون آپر (سمت اپراتور)", 264],
+            ["02) Upper NW Side OS Gun 1", "هد ۱ - کنار نانواون آپر (سمت اپراتور)", 264],
             ["03) Upper NW Side DS Hose 2", "شلنگ ۲ - کنار نانواون آپر (سمت درایو)", 298],
-            ["04) Upper NW Side DS Gun 2", "گان ۲ - کنار نانواون آپر (سمت درایو)", 332],
+            ["04) Upper NW Side DS Gun 2", "هد ۲ - کنار نانواون آپر (سمت درایو)", 332],
             ["05) Upper NW Ends Hose 3", "شلنگ ۳ - انتهای نانواون آپر", 365],
             ["07) Core Channel 1 Int. Hose 4", "شلنگ ۴ - کانال هستهٔ ۱ (داخلی)", 433],
             ["09) Core Channel 2 Ext. Hose 5", "شلنگ ۵ - کانال هستهٔ ۲ (خارجی)", 501]];
@@ -3106,9 +3107,9 @@ Object.keys(AXES_ROWS).forEach(n => {
          ["01) Flow Divider Hose 1", "شلنگ ۱ - تقسیم‌کنندهٔ جریان چسب", 231],
          ["02) Flow Divider", "تقسیم‌کنندهٔ جریان چسب (Flow Divider)", 264],
          ["03) Leg Elastic OS Hose 2", "شلنگ ۲ - کش دورپا (سمت اپراتور)", 298],
-         ["04) Leg Elastic OS Gun 2", "گان ۲ - کش دورپا (سمت اپراتور)", 332],
+         ["04) Leg Elastic OS Gun 2", "هد ۲ - کش دورپا (سمت اپراتور)", 332],
          ["05) Leg Elastic DS Hose 3", "شلنگ ۳ - کش دورپا (سمت درایو)", 365],
-         ["06) Leg Elastic DS Gun 3", "گان ۳ - کش دورپا (سمت درایو)", 399]].forEach(([en, fa, y]) => {
+         ["06) Leg Elastic DS Gun 3", "هد ۳ - کش دورپا (سمت درایو)", 399]].forEach(([en, fa, y]) => {
             Zp(70, y - 17, 292, y + 17, en, fa);
             Zp(300, y - 17, 398, y + 17, "SETPOINT", "دمای تنظیمی", "h");
             Zp(420, y - 17, 495, y + 17, "ACTUAL", "دمای واقعی", "h");
@@ -3277,24 +3278,24 @@ Object.keys(AXES_ROWS).forEach(n => {
     }
     tempPage("MELTER 3 TEMP", 3, [
         ["01) Flow Divider Hose 1", "شلنگ ۱ - فلو دیوایدر (تقسیم‌کنندهٔ جریان چسب)", 231], ["02) Flow Divider", "فلو دیوایدر (تقسیم‌کنندهٔ جریان چسب)", 264],
-        ["03) Cuffs Elastics OS Hose 2", "شلنگ ۲ - الاستیک کاف (سمت اپراتور)", 298], ["04) Cuffs Elastics OS Gun 2", "گان ۲ - الاستیک کاف (سمت اپراتور)", 332],
-        ["05) Cuffs Elastics DS Hose 3", "شلنگ ۳ - الاستیک کاف (سمت درایو)", 365], ["06) Cuffs Elastics DS Gun 3", "گان ۳ - الاستیک کاف (سمت درایو)", 399]], []);
+        ["03) Cuffs Elastics OS Hose 2", "شلنگ ۲ - الاستیک کاف (سمت اپراتور)", 298], ["04) Cuffs Elastics OS Gun 2", "هد ۲ - الاستیک کاف (سمت اپراتور)", 332],
+        ["05) Cuffs Elastics DS Hose 3", "شلنگ ۳ - الاستیک کاف (سمت درایو)", 365], ["06) Cuffs Elastics DS Gun 3", "هد ۳ - الاستیک کاف (سمت درایو)", 399]], []);
     tempPage("MELTER 4 TEMP", 4, [
         ["01) RMS 1 Hose 1", "شلنگ ۱ - RMS شمارهٔ ۱", 231], ["02) RMS 1", "RMS شمارهٔ ۱", 264],
         ["03) RMS 2 Hose 4", "شلنگ ۴ - RMS شمارهٔ ۲", 298], ["04) RMS 2", "RMS شمارهٔ ۲", 332],
-        ["05) Tape OS Hose 2", "شلنگ ۲ - چسب بغل (سمت اپراتور)", 365], ["06) Tape OS Gun 2", "گان ۲ - چسب بغل (سمت اپراتور)", 399],
-        ["07) Tape DS Hose 3", "شلنگ ۳ - چسب بغل (سمت درایو)", 433], ["08) Tape DS Gun 3", "گان ۳ - چسب بغل (سمت درایو)", 467],
-        ["09) Hook 1 Hose 5", "شلنگ ۵ - هوک ۱", 501], ["10) Hook 1 Gun 5", "گان ۵ - هوک ۱", 534], ["11) Hook 2 Hose 6", "شلنگ ۶ - هوک ۲", 568]], []);
+        ["05) Tape OS Hose 2", "شلنگ ۲ - چسب بغل (سمت اپراتور)", 365], ["06) Tape OS Gun 2", "هد ۲ - چسب بغل (سمت اپراتور)", 399],
+        ["07) Tape DS Hose 3", "شلنگ ۳ - چسب بغل (سمت درایو)", 433], ["08) Tape DS Gun 3", "هد ۳ - چسب بغل (سمت درایو)", 467],
+        ["09) Hook 1 Hose 5", "شلنگ ۵ - هوک ۱", 501], ["10) Hook 1 Gun 5", "هد ۵ - هوک ۱", 534], ["11) Hook 2 Hose 6", "شلنگ ۶ - هوک ۲", 568]], []);
     tempPage("MELTER 5 TEMP", 5, [
-        ["01) Close on Folding OS Hose 1", "شلنگ ۱ - بستن لبهٔ تاشده (سمت اپراتور)", 231], ["02) Close on Folding OS Gun 1", "گان ۱ - بستن لبهٔ تاشده (سمت اپراتور)", 264],
-        ["03) Close on Folding DS Hose 2", "شلنگ ۲ - بستن لبهٔ تاشده (سمت درایو)", 298], ["04) Close on Folding DS Gun 2", "گان ۲ - بستن لبهٔ تاشده (سمت درایو)", 332],
+        ["01) Close on Folding OS Hose 1", "شلنگ ۱ - بستن لبهٔ تاشده (سمت اپراتور)", 231], ["02) Close on Folding OS Gun 1", "هد ۱ - بستن لبهٔ تاشده (سمت اپراتور)", 264],
+        ["03) Close on Folding DS Hose 2", "شلنگ ۲ - بستن لبهٔ تاشده (سمت درایو)", 298], ["04) Close on Folding DS Gun 2", "هد ۲ - بستن لبهٔ تاشده (سمت درایو)", 332],
         ["05) RMS 1 Topsheet Hose 3", "شلنگ ۳ - RMS شمارهٔ ۱ تاپ‌شیت", 365], ["06) RMS 1 Topsheet", "RMS شمارهٔ ۱ تاپ‌شیت", 399],
         ["07) RMS 2 Lower NW Hose 4", "شلنگ ۴ - RMS شمارهٔ ۲ نانواون لاور", 433], ["08) RMS 2 Lower NW", "RMS شمارهٔ ۲ نانواون لاور", 467]], [
-        ["13) Topsheet Side Hose 4", "شلنگ ۴ - تاپ‌شیت کنار", 197], ["14) Topsheet Side Gun 4", "گان ۴ - تاپ‌شیت کنار", 231],
-        ["15) Topsheet Central Hose 5", "شلنگ ۵ - تاپ‌شیت وسط", 264], ["16) Topsheet Central Gun 5", "گان ۵ - تاپ‌شیت وسط", 298],
+        ["13) Topsheet Side Hose 4", "شلنگ ۴ - تاپ‌شیت کنار", 197], ["14) Topsheet Side Gun 4", "هد ۴ - تاپ‌شیت کنار", 231],
+        ["15) Topsheet Central Hose 5", "شلنگ ۵ - تاپ‌شیت وسط", 264], ["16) Topsheet Central Gun 5", "هد ۵ - تاپ‌شیت وسط", 298],
         ["17) Topsheet Air 1 Side", "هوای ۱ - تاپ‌شیت کنار", 332], ["18) Topsheet Air 2 Central", "هوای ۲ - تاپ‌شیت وسط", 365],
-        ["19) Lower NW Side Center Hose 3", "شلنگ ۳ - نانواون لاور کنار و وسط", 399], ["20) Lower NW Side Center Gun 3", "گان ۳ - نانواون لاور کنار و وسط", 433],
-        ["21) Lower NW Ends Hose 4", "شلنگ ۴ - نانواون لاور انتها", 467], ["22) Lower NW Ends Gun 4", "گان ۴ - نانواون لاور انتها", 501]]);
+        ["19) Lower NW Side Center Hose 3", "شلنگ ۳ - نانواون لاور کنار و وسط", 399], ["20) Lower NW Side Center Gun 3", "هد ۳ - نانواون لاور کنار و وسط", 433],
+        ["21) Lower NW Ends Hose 4", "شلنگ ۴ - نانواون لاور انتها", 467], ["22) Lower NW Ends Gun 4", "هد ۴ - نانواون لاور انتها", 501]]);
 
     /* ---------- IMAGE (GLUE APPLICATION) ---------- */
     const DS_OS = (Zp, ds, os) => { Zp(8, ds[0], 50, ds[1], "D.S.", "سمت درایو (DS)"); Zp(8, os[0], 50, os[1], "O.S.", "سمت اپراتور (OS)"); };
@@ -3422,14 +3423,14 @@ Object.keys(AXES_ROWS).forEach(n => {
     pumpPage(5, 8, "Lower Nonwoven End", "نانواون لاور - انتها", [], true);
 
     /* ===== MELTER 6 / 7 / 8 ===== */
-    tempPage("MELTER 6 TEMP", 6, [["01) Wetness Indicator Hose 1", "شلنگ ۱ - نشانگر رطوبت", 231], ["02) Wetness Indicator Gun 1", "گان ۱ - نشانگر رطوبت", 264]], []);
-    tempPage("MELTER 7 TEMP", 7, [["01) Lotion Hose 1", "شلنگ ۱ - لوسیون", 231], ["02) Lotion Gun 1", "گان ۱ - لوسیون", 264]], []);
+    tempPage("MELTER 6 TEMP", 6, [["01) Wetness Indicator Hose 1", "شلنگ ۱ - نشانگر رطوبت", 231], ["02) Wetness Indicator Gun 1", "هد ۱ - نشانگر رطوبت", 264]], []);
+    tempPage("MELTER 7 TEMP", 7, [["01) Lotion Hose 1", "شلنگ ۱ - لوسیون", 231], ["02) Lotion Gun 1", "هد ۱ - لوسیون", 264]], []);
     tempPage("MELTER 8 TEMP", 8, [
-        ["01) Cuffs Side OS Hose 1", "شلنگ ۱ - کاف کنار (سمت اپراتور)", 231], ["02) Cuffs Side Gun 1", "گان ۱ - کاف کنار", 264],
+        ["01) Cuffs Side OS Hose 1", "شلنگ ۱ - کاف کنار (سمت اپراتور)", 231], ["02) Cuffs Side Gun 1", "هد ۱ - کاف کنار", 264],
         ["03) Cuffs Side DS Hose 2", "شلنگ ۲ - کاف کنار (سمت درایو)", 298],
-        ["05) AQL Hose 3", "شلنگ ۳ - اکشن (AQL)", 365], ["06) AQL Gun 3", "گان ۳ - اکشن (AQL)", 399],
-        ["07) Cuffs End OS Hose 4", "شلنگ ۴ - کاف انتها", 433], ["08) Cuffs End OS Gun 4", "گان ۴ - کاف انتها", 467],
-        ["09) Cuffs End OS Hose 5", "شلنگ ۵ - کاف انتها", 501], ["10) Cuffs End OS Gun 5", "گان ۵ - کاف انتها", 534],
+        ["05) AQL Hose 3", "شلنگ ۳ - اکشن (AQL)", 365], ["06) AQL Gun 3", "هد ۳ - اکشن (AQL)", 399],
+        ["07) Cuffs End OS Hose 4", "شلنگ ۴ - کاف انتها", 433], ["08) Cuffs End OS Gun 4", "هد ۴ - کاف انتها", 467],
+        ["09) Cuffs End OS Hose 5", "شلنگ ۵ - کاف انتها", 501], ["10) Cuffs End OS Gun 5", "هد ۵ - کاف انتها", 534],
         ["11) AQL Air 1", "هوای ۱ - اکشن (AQL)", 568]], []);
 
     (function () {
@@ -3481,17 +3482,17 @@ Object.keys(AXES_ROWS).forEach(n => {
 
     /* ===== MELTER 9 / 10 / 11 ===== */
     tempPage("MELTER 9 TEMP", 9, [
-        ["01) Poly Backsheet Hose 1", "شلنگ ۱ - پلی بک‌شیت (فویل)", 231], ["02) Poly Backsheet Gun 1", "گان ۱ - پلی بک‌شیت (فویل)", 264],
+        ["01) Poly Backsheet Hose 1", "شلنگ ۱ - پلی بک‌شیت (فویل)", 231], ["02) Poly Backsheet Gun 1", "هد ۱ - پلی بک‌شیت (فویل)", 264],
         ["03) Ears Reinf. Poly OS Hose 2", "شلنگ ۲ - تقویت گوشی پلی (سمت اپراتور)", 298], ["05) Ears Reinf. Poly DS Hose 3", "شلنگ ۳ - تقویت گوشی پلی (سمت درایو)", 365],
         ["07) Flow Divider Hose 4", "شلنگ ۴ - فلو دیوایدر (تقسیم‌کنندهٔ جریان چسب)", 433], ["08) Flow Divider", "فلو دیوایدر (تقسیم‌کنندهٔ جریان چسب)", 467],
-        ["09) Ears on Cuff 1 Hose 5", "شلنگ ۵ - گوشی روی کاف ۱", 501], ["10) Ears on Cuff 1 Gun 5", "گان ۵ - گوشی روی کاف ۱", 534],
+        ["09) Ears on Cuff 1 Hose 5", "شلنگ ۵ - گوشی روی کاف ۱", 501], ["10) Ears on Cuff 1 Gun 5", "هد ۵ - گوشی روی کاف ۱", 534],
         ["11) Ears on Cuff 2 Hose 6", "شلنگ ۶ - گوشی روی کاف ۲", 568]], [
-        ["12) Ears on Cuff 2 Gun 6", "گان ۶ - گوشی روی کاف ۲", 163]]);
+        ["12) Ears on Cuff 2 Gun 6", "هد ۶ - گوشی روی کاف ۲", 163]]);
     tempPage("MELTER 10 TEMP", 10, [
-        ["01) Frontal Tape Hose 1", "شلنگ ۱ - فرونتال تیپ (عروسکی)", 231], ["02) Frontal Tape Gun 1", "گان ۱ - فرونتال تیپ (عروسکی)", 264],
-        ["03) NW Backsheet Hose 2", "شلنگ ۲ - نانواون بک‌شیت (لمینه فویل)", 298], ["04) NW Backsheet Gun 2", "گان ۲ - نانواون بک‌شیت (لمینه فویل)", 332]], []);
+        ["01) Frontal Tape Hose 1", "شلنگ ۱ - فرونتال تیپ (عروسکی)", 231], ["02) Frontal Tape Gun 1", "هد ۱ - فرونتال تیپ (عروسکی)", 264],
+        ["03) NW Backsheet Hose 2", "شلنگ ۲ - نانواون بک‌شیت (لمینه فویل)", 298], ["04) NW Backsheet Gun 2", "هد ۲ - نانواون بک‌شیت (لمینه فویل)", 332]], []);
     tempPage("MELTER 11 TEMP", 11, [
-        ["01) Core Integrity 1 Hose 1", "شلنگ ۱ - یکپارچگی هسته (Core Integrity)", 231], ["02) Core Integrity 1 Gun 1", "گان ۱ - یکپارچگی هسته (Core Integrity)", 264],
+        ["01) Core Integrity 1 Hose 1", "شلنگ ۱ - یکپارچگی هسته (Core Integrity)", 231], ["02) Core Integrity 1 Gun 1", "هد ۱ - یکپارچگی هسته (Core Integrity)", 264],
         ["11) Core Integrity - Air", "هوای اسپری - یکپارچگی هسته (Core Integrity)", 568]], []);
 
     (function () {
